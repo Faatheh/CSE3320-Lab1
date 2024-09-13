@@ -1,5 +1,6 @@
 // #define K2_DEBUG_VERBOSE
-#define K2_DEBUG_WARN
+#define K2_DEBUG_INFO
+// #define K2_DEBUG_WARN
 
 #include "plat.h"
 #include "mmu.h"
@@ -146,7 +147,9 @@ struct vtimer {
 }; 
 static struct vtimer timers[N_TIMERS]; 
 
-void sys_timer_test() { // will fire shortly in the future
+// test hw, should fire shortly in the future
+__attribute__((unused))
+static void sys_timer_test() { 
 	unsigned int curVal = get32(TIMER_CLO);
 	curVal += interval;
 	put32(TIMER_C1, curVal);	
@@ -159,7 +162,7 @@ void sys_timer_init(void)
 	sys_timer_tune_delay(); 
 }
 
-// we have added/removed a vtimer, now adjust the phys timer accordingly
+// we have added/removed a virt timer, now adjust the phys timer accordingly
 // caller must hold timerlock
 // return 0 on success
 static int adjust_sys_timer(void)
@@ -280,6 +283,7 @@ int ktimer_cancel(int t) {
 	return 0;  
 }
 
+// the irq handler for sys_timer
 // called by irq.c 
 void sys_timer_irq(void) 
 {

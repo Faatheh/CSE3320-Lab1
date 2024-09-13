@@ -55,6 +55,8 @@ void kernel_main() {
 
 	if (fb_init()!=0) BUG();  // will show the OS logo
 
+	test_ktimer();
+
     while (1)
         asm volatile("wfi"); // what happen here?
 }

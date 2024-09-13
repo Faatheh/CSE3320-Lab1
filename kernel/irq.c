@@ -83,9 +83,10 @@ void handle_irq(void) {
             p1 &= (~SYSTEM_TIMER_IRQ_1);
         }
         if (p1) {
-            W("unknown pending irq in IRQ_PENDING_1"); 
+            E("unknown pending irq in IRQ_PENDING_1 p1 %08x", p1); 
             goto unknown; 
         }          
+        irq &= (~GPU_SIDE_INTERRUPT);
     } 
 
     if (!irq) 
@@ -93,7 +94,7 @@ void handle_irq(void) {
 
 unknown:
     E("Unknown pending irq: INT_SOURCE_0 %08x IRQ_BASIC_PENDING %08x " 
-            "IRQ_PENDING_1 %08x IRQ_PENDING_2 %08x\r\n", 
+            "IRQ_PENDING_1 %08x IRQ_PENDING_2 %08x", 
         irq0, 
         get32(IRQ_BASIC_PENDING), 
         get32(IRQ_PENDING_1),
