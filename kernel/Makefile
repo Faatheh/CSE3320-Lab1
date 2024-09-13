@@ -84,6 +84,7 @@ C_OBJS += $(BUILD_DIR)/string_c.o
 C_OBJS += $(BUILD_DIR)/spinlock_c.o
 C_OBJS += $(BUILD_DIR)/timer_c.o
 C_OBJS += $(BUILD_DIR)/mbox_c.o
+C_OBJS += $(BUILD_DIR)/donut_c.o
 C_OBJS += $(BUILD_DIR)/unittests_c.o
 
 ASM_OBJS = $(BUILD_DIR)/boot_s.o

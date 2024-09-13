@@ -75,7 +75,6 @@ void handle_irq(void) {
         irq &= (~GENERIC_TIMER_INTERRUPT);
     } 
     
-    // TODO: refactor cf sound/sample/env.c _int_irq()
     if (irq & GPU_SIDE_INTERRUPT) {
         unsigned int p1 = get32(IRQ_PENDING_1);
         if (p1 & SYSTEM_TIMER_IRQ_1) {
@@ -86,7 +85,7 @@ void handle_irq(void) {
             E("unknown pending irq in IRQ_PENDING_1 p1 %08x", p1); 
             goto unknown; 
         }          
-        irq &= (~GPU_SIDE_INTERRUPT);
+        irq &= (~GPU_SIDE_INTERRUPT);  // clear all "GPU side" irqs
     } 
 
     if (!irq) 

@@ -1,5 +1,5 @@
-#define K2_DEBUG_WARN
-// #define K2_DEBUG_INFO
+// #define K2_DEBUG_WARN
+#define K2_DEBUG_INFO
 
 /* 
     the mailbox driver (&framebuffer, display) for rpi3.
@@ -400,6 +400,7 @@ out:
 /* 
     Display a string using fixed size PSF update x,y screen coordinates
     x/y (IN|OUT): the postion before/after the screen output 
+    NB these are pixel coordinates (not character locations)
 */
 void fb_print(int *x, int *y, char *s)
 {

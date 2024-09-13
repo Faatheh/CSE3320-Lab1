@@ -50,7 +50,7 @@ extern void fb_showpicture(void);
 
 #define PIXELSIZE 4 /*ARGB, expected by /dev/fb*/ 
 typedef unsigned int PIXEL; 
-#define N 256
+#define N 256       // project idea: four color quads has glitches. fix it 
 
 static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) {
     assert(x>=0 && y>=0); 
@@ -64,6 +64,10 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
     create a vir fb with four quads, with R/G/B/black. 
     phys (viewport) is of one quad size. 
     then cycle the viewport through the four quads 
+
+    depends on delay
+    project idea: use virtual timer instead 
+        (better efficiency)
 */
 void test_fb() {
     // fb_showpicture();        // works
@@ -80,6 +84,7 @@ void test_fb() {
 
     if (fb_init() != 0) BUG();     
 
+    // prefill the fb with four color tiles, once 
     PIXEL b=0x00ff0000, g=0x0000ff00, r=0x000000ff; 
     int x, y;
     int pitch = the_fb.pitch; 
@@ -99,7 +104,7 @@ void test_fb() {
         for (x=N;x<2*N;x++)
             setpixel(the_fb.fb,x,y,pitch,b);             
 
-    // // test
+    // // test --- fill all quads the same color
     // for (y=0;y<2*N;y++)
     //     for (x=0;x<2*N;x++)
     //         setpixel(the_fb.fb,x,y,pitch,b);             
@@ -109,12 +114,12 @@ void test_fb() {
 
     while (1) {
         fb_set_voffsets(0,0);
-        ms_delay(500); 
+        ms_delay(1500); 
         fb_set_voffsets(0,N);
-        ms_delay(500); 
+        ms_delay(1500); 
         fb_set_voffsets(N,0);
-        ms_delay(500); 
+        ms_delay(1500); 
         fb_set_voffsets(N,N);
-        ms_delay(500); 
+        ms_delay(1500); 
     }
 }
