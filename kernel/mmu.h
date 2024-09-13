@@ -12,9 +12,6 @@
 #define SECTION_SIZE		(1 << SECTION_SHIFT)	
 #define SUPERSECTION_SIZE       (1 << SUPERSECTION_SHIFT)
 
-#define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
-#define PGROUNDDOWN(a) (((a)) & ~(PAGE_SIZE-1))
-
 // ------------------ phys mem layout ----------------------------------------//
 // region reserved for ramdisk. the actual ramdisk can be smaller.
 // at this time, uncompressed ramdisk is linked into kernel image and used in place. 

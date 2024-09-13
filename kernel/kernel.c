@@ -28,7 +28,6 @@ void uart_send_string(char* str);
 // test_ktimer(); while (1);
 // test_sys_sleep(); while (1); 
 // test_malloc(); while (1); 
-// test_mbox(); while (1); 
 // test_usb_kb(); while (1); 
 // test_usb_storage(); while (1); 
 // test_fb(); while (1); 
@@ -52,8 +51,10 @@ void kernel_main() {
 	enable_interrupt_controller(0/*coreid*/);
 	enable_irq();
 	
-    while (1) {
-        V("idle task");
-        asm volatile("wfi");
-    }
+	generic_timer_init();  // periodic ticks alive
+
+	if (fb_init()!=0) BUG();  // will show the OS logo
+
+    while (1)
+        asm volatile("wfi"); // what happen here?
 }

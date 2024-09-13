@@ -65,7 +65,7 @@ $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 	$(VB) $(ARMGNU)-gcc-9 $(COPS) -MMD -c $< -o $@
 
 # font build rules. 
-# NB: the symbols in the binary will have prefix "_binary". 
+# NB: the symbols in the binary will have prefix "_binary" (added by ld)
 $(BUILD_DIR)/%_psf.o: %.psf
 	$(VB) mkdir -p $(@D)
 	$(VB) $(ARMGNU)-ld -r -b binary -o $@ $<
@@ -83,7 +83,7 @@ C_OBJS += $(BUILD_DIR)/printf_c.o
 C_OBJS += $(BUILD_DIR)/string_c.o
 C_OBJS += $(BUILD_DIR)/spinlock_c.o
 C_OBJS += $(BUILD_DIR)/timer_c.o
-# C_OBJS += $(BUILD_DIR)/mbox_c.o
+C_OBJS += $(BUILD_DIR)/mbox_c.o
 # C_OBJS += $(BUILD_DIR)/unittests_c.o
 
 ASM_OBJS = $(BUILD_DIR)/boot_s.o

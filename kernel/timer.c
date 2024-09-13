@@ -62,14 +62,8 @@ void generic_timer_init (void) {
 	generic_timer_reset(interval);	// kickoff 1st time firing
 }
 
-// on UP, sys_sleep() may be implemented by counting # of schedule ticks. 
-// hence, "arm generic timer" (which drives schedule ticks) is sufficient;
-// no need for "arm system timer". 
-// Drawback: 
-// - inefficient design ... search for (UP sys_sleep()) 
-// - how it works for SMP? (each core has own schedule ticks)
-
 void handle_generic_timer_irq(void)  {
+	V("generic_timer fired");
 	generic_timer_reset(interval);
 }
 

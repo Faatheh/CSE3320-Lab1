@@ -1,55 +1,31 @@
 #define K2_DEBUG_WARN
 // #define K2_DEBUG_INFO
 
-/*
- * Copyright (C) 2018 bzt (bztsrc@github)
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- *
- */
+/* 
+    the mailbox driver (&framebuffer, display) for rpi3.
+    use mailbox "property" interface
+    cf: https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
 
- // https://github.com/raspberrypi/firmware/wiki/Mailboxes
-// ref: https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c 
-// ref: https://www.valvers.com/open-software/raspberry-pi/bare-metal-programming-in-c-part-5/#part-5armc-016
-// ref: uboot arch/arm/mach-bcm283x/msg.c
+    CREDITS, more ref: see the end of this file
+*/
 
 #include "plat.h"
-#include "mmu.h"
 #include "utils.h"
 #include "spinlock.h"
 
 struct spinlock mboxlock = {.locked=0, .cpu=0, .name="mbox_lock"};
 
 /* mailbox message buffer */
-// xzl: dont have to be "coherent" mem?
 volatile unsigned int  __attribute__((aligned(16))) mbox[36];
 
-#define MMIO_BASE       0x3F000000
+#define MMIO_BASE       0x3F000000UL
 #define VIDEOCORE_MBOX  (MMIO_BASE+0x0000B880)
-#define MBOX_READ       ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x0))
-#define MBOX_POLL       ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x10))
-#define MBOX_SENDER     ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x14))
-#define MBOX_STATUS     ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x18))
-#define MBOX_CONFIG     ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x1C))
-#define MBOX_WRITE      ((volatile unsigned int*)(PA2VA(VIDEOCORE_MBOX)+0x20))
+#define MBOX_READ       ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x0))
+#define MBOX_POLL       ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x10))
+#define MBOX_SENDER     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x14))
+#define MBOX_STATUS     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x18))
+#define MBOX_CONFIG     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x1C))
+#define MBOX_WRITE      ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x20))
 #define MBOX_RESPONSE   0x80000000
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
@@ -65,8 +41,7 @@ volatile unsigned int  __attribute__((aligned(16))) mbox[36];
 int mbox_call(unsigned char ch)
 {
     // the buf addr (pa) w/ ch (chan id) in LSB 
-    // unsigned int r = (((unsigned int)((unsigned long)&mbox)&~0xF) | (ch&0xF));
-    unsigned int r = (unsigned int)(VA2PA(&mbox)&~0xF) | (ch&0xF);
+    unsigned int r = (((unsigned int)((unsigned long)&mbox)&~0xF) | (ch&0xF));
     r = BUS_ADDRESS(r); 
     /* wait until we can write to the mailbox */
     do{asm volatile("nop");}while(*MBOX_STATUS & MBOX_FULL);
@@ -110,40 +85,37 @@ int mbox_call(unsigned char ch)
 #define MBOX_CH_COUNT   7
 #define MBOX_CH_PROP    8
 
-/* tags */ // redundant, TO DEL
-// #define MBOX_TAG_SETPOWER       0x28001
-// #define MBOX_TAG_SETCLKRATE     0x38002
+/* tags */
 #define MBOX_TAG_LAST           0
 
 // in a successful resp, b31 is set; b30-0 is "value length in bytes"
 #define VALUE_LENGTH_RESPONSE	(1 << 31)
 
-#define PROPTAG_GET_FIRMWARE_REVISION	0x00000001
-#define PROPTAG_GET_BOARD_MODEL		0x00010001
-#define PROPTAG_GET_BOARD_REVISION	0x00010002
-#define PROPTAG_GET_MAC_ADDRESS		0x00010003
-#define PROPTAG_GET_BOARD_SERIAL	0x00010004
-#define PROPTAG_GET_ARM_MEMORY		0x00010005
-#define PROPTAG_GET_VC_MEMORY		0x00010006
-#define PROPTAG_SET_POWER_STATE		0x00028001
-    #define DEVICE_ID_SD_CARD	0   // FL: SDHCI, not SDHOST
-	#define DEVICE_ID_USB_HCD	3
-    #define POWER_STATE_OFF		(0 << 0)
-	#define POWER_STATE_ON		(1 << 0)
-	#define POWER_STATE_WAIT	(1 << 1)
-	#define POWER_STATE_NO_DEVICE	(1 << 1)	// in response
-#define PROPTAG_GET_CLOCK_RATE		0x00030002
-#define PROPTAG_GET_TEMPERATURE		0x00030006
-#define PROPTAG_GET_EDID_BLOCK		0x00030020
-#define PROPTAG_GET_DISPLAY_DIMENSIONS	0x00040003
-#define PROPTAG_GET_COMMAND_LINE	0x00050001
-// undocumented. cf https://github.com/raspberrypi/firmware/issues/719
-// also sound/sample/env.c EnableVCHIQ
-#define PROPTAG_VCHIQ_INIT  	    0x48010 
+// #define PROPTAG_GET_FIRMWARE_REVISION	0x00000001
+// #define PROPTAG_GET_BOARD_MODEL		0x00010001
+// #define PROPTAG_GET_BOARD_REVISION	0x00010002
+// #define PROPTAG_GET_MAC_ADDRESS		0x00010003
+// #define PROPTAG_GET_BOARD_SERIAL	0x00010004
+// #define PROPTAG_GET_ARM_MEMORY		0x00010005
+// #define PROPTAG_GET_VC_MEMORY		0x00010006
+// #define PROPTAG_SET_POWER_STATE		0x00028001
+//     #define DEVICE_ID_SD_CARD	0   // FL: SDHCI, not SDHOST
+// 	#define DEVICE_ID_USB_HCD	3
+//     #define POWER_STATE_OFF		(0 << 0)
+// 	#define POWER_STATE_ON		(1 << 0)
+// 	#define POWER_STATE_WAIT	(1 << 1)
+// 	#define POWER_STATE_NO_DEVICE	(1 << 1)	// in response
+// #define PROPTAG_GET_CLOCK_RATE		0x00030002
+// #define PROPTAG_GET_TEMPERATURE		0x00030006
+// #define PROPTAG_GET_EDID_BLOCK		0x00030020
+// #define PROPTAG_GET_DISPLAY_DIMENSIONS	0x00040003
+// #define PROPTAG_GET_COMMAND_LINE	0x00050001
+// // undocumented. cf https://github.com/raspberrypi/firmware/issues/719
+// // also sound/sample/env.c EnableVCHIQ
+// #define PROPTAG_VCHIQ_INIT  	    0x48010 
 
 ///////////////////////////////////////////////////
-//  a simple framebuffer 
-//
+//  framebuffer driver (via mbox)
 #include "fb.h"
 
 /* PC Screen Font as used by Linux Console */
@@ -158,26 +130,26 @@ typedef struct {
     unsigned int width;
     unsigned char glyphs;
 } __attribute__((packed)) psf_t;
-extern volatile unsigned char _binary_font_psf_start;
+// cf: Makefile font build rules
+extern volatile unsigned char _binary_font_psf_start;  
 
-/* Scalable Screen Font (https://gitlab.com/bztsrc/scalable-font2) */
-typedef struct {
-    unsigned char  magic[4];
-    unsigned int   size;
-    unsigned char  type;
-    unsigned char  features;
-    unsigned char  width;
-    unsigned char  height;
-    unsigned char  baseline;
-    unsigned char  underline;
-    unsigned short fragments_offs;
-    unsigned int   characters_offs;
-    unsigned int   ligature_offs;
-    unsigned int   kerning_offs;
-    unsigned int   cmap_offs;
-} __attribute__((packed)) sfn_t;
-
-extern volatile unsigned char _binary_font_sfn_start; // linker script
+// /* Scalable Screen Font (https://gitlab.com/bztsrc/scalable-font2) */
+// typedef struct {
+//     unsigned char  magic[4];
+//     unsigned int   size;
+//     unsigned char  type;
+//     unsigned char  features;
+//     unsigned char  width;
+//     unsigned char  height;
+//     unsigned char  baseline;
+//     unsigned char  underline;
+//     unsigned short fragments_offs;
+//     unsigned int   characters_offs;
+//     unsigned int   ligature_offs;
+//     unsigned int   kerning_offs;
+//     unsigned int   cmap_offs;
+// } __attribute__((packed)) sfn_t;
+// extern volatile unsigned char _binary_font_sfn_start; // cf: linker script
 
 // default (upon boot): 1024x768, phys WH = virt WH, offset (0,0)
 // said to support up to 1920x1080
@@ -206,17 +178,17 @@ struct fb_struct the_fb = {
     .offsety = 0,
     .size = 0, 
 }; 
-// isrgb: whatever the doc says, 0 seems rgb; 1 seems bgr
+// isrgb: whatever the doc says, 0 seems rgb; 1 seems bgr (per my test)
 // rpi3 hw will return "0" even if we asks for "1"
-// qemu will do whatever we ask ("0" or "1"), but if "1", color channels are bgr
+// qemu will do whatever we ask ("0" or "1"); if "1", channel order is bgr
 
-/* detect phys display optimal x/y, if unconfigured
+/* 
+    detect phys display optimal x/y, if unconfigured
     caller must hold mboxlock
     return: 0 on success 
 
     FL's 720p monitor: 1360 768
     qemu 640 480 (initial? subject to reconfig for larger fb)
-
 */
 int fb_detect_scr_dim(uint *w, uint *h) {
     mbox[0] = 8*4;     // size of the whole buf that follows
@@ -237,14 +209,14 @@ int fb_detect_scr_dim(uint *w, uint *h) {
     return 0; 
 }
 
+// set virt offset
 // caller must hold mboxlock
 // 0 on success
 int fb_set_voffsets(int offsetx, int offsety) {
 
     mbox[0] = 8*4;
     mbox[1] = MBOX_REQUEST;
-
-    //set virt offset
+    
     mbox[2] = 0x48009; 
     mbox[3] = 8;
     mbox[4] = 8;
@@ -267,21 +239,9 @@ int fb_set_voffsets(int offsetx, int offsety) {
      return 0; 
 }
 
-
-/**
- * For mailbox property interface,
- * cf: https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
- * 
- * more undocumented cf: 
- * https://github.com/raspberrypi/firmware/issues/719
- * 
- * below uses mbox "property channel". another way is to use the "fb" channel 
- * directly. cf: https://github.com/rsta2/circle/blob/master/lib/bcmframebuffer.cpp
- * 
- * code ex: 
- * https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c
- * 
- * return 0 if succeeds. 
+/* 
+    init the actual fb hw, by invoking the mbox interface
+    return 0 if succeeds. 
  */
 static int do_fb_init(struct fb_struct *fbs)
 {    
@@ -303,7 +263,6 @@ static int do_fb_init(struct fb_struct *fbs)
     mbox[1] = MBOX_REQUEST; // cpu->gpu request
 
     // a sequence of tags below 
-
     mbox[2] = 0x48003;  //set phy width & height
     mbox[3] = 8;        // total buf size of this tag
     mbox[4] = 8;        // req val size (needed?), to be overwritten as resp val size
@@ -351,7 +310,7 @@ static int do_fb_init(struct fb_struct *fbs)
         && mbox[28]!=0 /*framebuf*/) {
         // extract framebuf info from resp...
         mbox[28]&=0x3FFFFFFF;  
-        fbs->fb = PA2VA((unsigned long)mbox[28]);   // save framebuf ptr
+        fbs->fb = (unsigned char *)((unsigned long)mbox[28]);   // save framebuf ptr
         fbs->width=mbox[5];
         fbs->height=mbox[6];
         fbs->vwidth=mbox[10];
@@ -370,15 +329,23 @@ static int do_fb_init(struct fb_struct *fbs)
         return -2; 
     }
     release(&mboxlock); 
-    if (reserve_phys_region(mbox[28], fbs->size)) {
-        E("failed to reserve fb mem. pa 0x%x size 0x%x already in use.",
-            mbox[28], fbs->size); BUG(); 
-        return -1; 
-    } else 
-        return 0; 
+
+    // wont need this until labs for simple/rich user
+    // if (reserve_phys_region(mbox[28], fbs->size)) {
+    //     E("failed to reserve fb mem. pa 0x%x size 0x%x already in use.",
+    //         mbox[28], fbs->size); BUG(); 
+    //     return -1; 
+    // } else 
+    //     return 0; 
+
+    return 0; 
 }
 
 void fb_showpicture();
+
+/* init the fb, show a picture (OS logo) 
+    return 0 on success (display will go black)
+*/
 int fb_init(void) {
     static int once = 1; 
     int ret = do_fb_init(&the_fb); 
@@ -387,7 +354,9 @@ int fb_init(void) {
     return ret; 
 }
 
-// return 0 on success (display will go black)
+/* finalize the fb, clean up. 
+    return 0 on success (display will go blank)
+*/
 int fb_fini(void) {
     int ret = 0; 
 
@@ -414,19 +383,24 @@ int fb_fini(void) {
         I("failed to rls fb with GPU."); 
         // response code always 0x80000001 (failure). couldn't figure out why
 
-    if (free_phys_region(VA2PA(the_fb.fb), the_fb.size)) {
-        E("failed to free fb memory. bug?"); 
-        ret = -2; 
-    }
+    // wont need this until flavor simple/rich user
+    // if (free_phys_region(VA2PA(the_fb.fb), the_fb.size)) {
+    //     E("failed to free fb memory. bug?"); 
+    //     ret = -2; 
+    // }
     the_fb.fb = 0; 
 out:
     release(&mboxlock);          
     return ret; 
 }
 
-// Display a string using fixed size PSF update x,y screen coordinates
-// x/y IN|OUT: the postion before/after the screen output
-// void fb_print(struct fb_struct *fbs, int *x, int *y, char *s)
+///////////////////////////////////////////////////
+//  draw: picture/text on the fb display 
+
+/* 
+    Display a string using fixed size PSF update x,y screen coordinates
+    x/y (IN|OUT): the postion before/after the screen output 
+*/
 void fb_print(int *x, int *y, char *s)
 {
     unsigned pitch = the_fb.pitch; 
@@ -436,7 +410,7 @@ void fb_print(int *x, int *y, char *s)
     psf_t *font = (psf_t*)&_binary_font_psf_start;
     // draw next character if it's not zero
     while(*s) {
-        // get the offset of the glyph. Need to adjust this to support unicode table
+        /* get offset of the glyph. Need to adjust this to support unicode table */
         unsigned char *glyph = (unsigned char*)&_binary_font_psf_start +
          font->headersize + (*((unsigned char*)s)<font->numglyph?*s:0)*font->bytesperglyph;
         // calculate the offset on screen
@@ -473,74 +447,11 @@ void fb_print(int *x, int *y, char *s)
     }
 }
 
-#if 0
-/**
- * Display a string using proportional SSFN
- */
-void lfb_proprint(int x, int y, char *s)
-{
-    // get our font
-    sfn_t *font = (sfn_t*)&_binary_font_sfn_start;
-    unsigned char *ptr, *chr, *frg;
-    unsigned int c;
-    unsigned long o, p;
-    int i, j, k, l, m, n;
-
-    while(*s) {
-        // UTF-8 to UNICODE code point
-        if((*s & 128) != 0) {
-            if(!(*s & 32)) { c = ((*s & 0x1F)<<6)|(*(s+1) & 0x3F); s += 1; } else
-            if(!(*s & 16)) { c = ((*s & 0xF)<<12)|((*(s+1) & 0x3F)<<6)|(*(s+2) & 0x3F); s += 2; } else
-            if(!(*s & 8)) { c = ((*s & 0x7)<<18)|((*(s+1) & 0x3F)<<12)|((*(s+2) & 0x3F)<<6)|(*(s+3) & 0x3F); s += 3; }
-            else c = 0;
-        } else c = *s;
-        s++;
-        // handle carrige return
-        if(c == '\r') {
-            x = 0; continue;
-        } else
-        // new line
-        if(c == '\n') {
-            x = 0; y += font->height; continue;
-        }
-        // find glyph, look up "c" in Character Table
-        for(ptr = (unsigned char*)font + font->characters_offs, chr = 0, i = 0; i < 0x110000; i++) {
-            if(ptr[0] == 0xFF) { i += 65535; ptr++; }
-            else if((ptr[0] & 0xC0) == 0xC0) { j = (((ptr[0] & 0x3F) << 8) | ptr[1]); i += j; ptr += 2; }
-            else if((ptr[0] & 0xC0) == 0x80) { j = (ptr[0] & 0x3F); i += j; ptr++; }
-            else { if((unsigned int)i == c) { chr = ptr; break; } ptr += 6 + ptr[1] * (ptr[0] & 0x40 ? 6 : 5); }
-        }
-        if(!chr) continue;
-        // uncompress and display fragments
-        ptr = chr + 6; o = (unsigned long)lfb + y * pitch + x * 4;
-        for(i = n = 0; i < chr[1]; i++, ptr += chr[0] & 0x40 ? 6 : 5) {
-            if(ptr[0] == 255 && ptr[1] == 255) continue;
-            frg = (unsigned char*)font + (chr[0] & 0x40 ? ((ptr[5] << 24) | (ptr[4] << 16) | (ptr[3] << 8) | ptr[2]) :
-                ((ptr[4] << 16) | (ptr[3] << 8) | ptr[2]));
-            if((frg[0] & 0xE0) != 0x80) continue;
-            o += (int)(ptr[1] - n) * pitch; n = ptr[1];
-            k = ((frg[0] & 0x1F) + 1) << 3; j = frg[1] + 1; frg += 2;
-            for(m = 1; j; j--, n++, o += pitch)
-                for(p = o, l = 0; l < k; l++, p += 4, m <<= 1) {
-                    if(m > 0x80) { frg++; m = 1; }
-                    if(*frg & m) *((unsigned int*)p) = 0xFFFFFF;
-                }
-        }
-        // add advances
-        x += chr[4]+1; y += chr[5];
-    }
-}
-#endif
-
 #include "uvalogo.h"
 #define IMG_DATA header_data      
 #define IMG_HEIGHT height
 #define IMG_WIDTH width
 
-// #include "rev_uva_logo_color3-resized.h"
-// #define IMG_DATA img_data      
-// #define IMG_HEIGHT img_height
-// #define IMG_WIDTH img_width
 void fb_showpicture()
 {
     int x,y;
@@ -558,189 +469,68 @@ void fb_showpicture()
     for(y=0;y<img_fb_height;y++) {
         for(x=0;x<img_fb_width;x++) {
             HEADER_PIXEL(data, pixel);
-            // the image is in RGB. So if we have an RGB framebuffer, we can copy the pixels
-            // directly, but for BGR we must swap R (pixel[0]) and B (pixel[2]) channels.
-            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel) : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);
+            /* the image is in RGB. So if we have an RGB framebuffer, we copy
+            the pixels directly, but for BGR we must swap R (pixel[0]) and B
+            (pixel[2]) channels. */
+            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel) 
+                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);
             // *((unsigned int*)ptr)=(!the_fb.isrgb) ? *((unsigned int *)&pixel) : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);
             ptr+=4;
         }
         ptr+=the_fb.pitch-img_fb_width*4;
     }
 
+    // show text strings (project idea: print own strings
     x = (the_fb.vwidth-img_fb_width)/2;
     y = the_fb.vheight/2 + img_fb_height/2;
     fb_print(&x, &y, "UVA OS");
     char res[16]; 
-    sprintf(res, " %dx%d", the_fb.width, the_fb.height);
+    sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);
     __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
 }
 
-/////////////////////////////
-// other property tag operations. 
+/*
+ * Copyright (C) 2018 bzt (bztsrc@github)
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ */
 
-// 0 on success, <0 on errors
-int set_powerstate(unsigned deviceid, int on) {
-    int ret = 0; 
-    unsigned power = on ? 
-        (POWER_STATE_ON | POWER_STATE_WAIT) : (POWER_STATE_OFF | POWER_STATE_WAIT);
 
-    acquire(&mboxlock); 
-
-    mbox[0] = 8*4;
-    mbox[1] = MBOX_REQUEST;
-
-    mbox[2] = PROPTAG_SET_POWER_STATE; 
-    mbox[3] = 8; 
-    mbox[4] = 8; 
-    mbox[5] = deviceid; 
-    mbox[6] = power;
-
-    mbox[7] = MBOX_TAG_LAST;   // the end of tag seq
-
-    // make call, then check some response vals that may fail
-    if(!mbox_call(MBOX_CH_PROP))
-        {ret = -1; goto fail;}
-    // routine checks 
-    if (mbox[1] != CODE_RESPONSE_SUCCESS)
-        {ret = -2; goto fail;}
-    if (!(mbox[4] & VALUE_LENGTH_RESPONSE)) 	// resp bit not set
-        {ret = -3; goto fail;}
-    if ((mbox[4] &= ~VALUE_LENGTH_RESPONSE) == 0)  // resp val length is 0 
-        {ret = -4; goto fail;}
-    // resp checks
-    power = mbox[6];
-    if (power & POWER_STATE_NO_DEVICE)
-        {ret = -5; goto fail;}
-    if (on && !(power & POWER_STATE_ON))
-        {ret = -6; goto fail;}
-    if (!on && (power & POWER_STATE_ON))
-        {ret = -6; goto fail;}
-
-    release(&mboxlock); 
-    return 0; 
-fail:
-    release(&mboxlock); 
-    W("%s failed. %d", __func__, ret); 
-    return ret; 
-}
-
-// 0 on success, <0 on errors
-// resp length: 6
-int get_mac_addr(unsigned char buf[MAC_SIZE]) {
-    int ret = 0; 
-
-    acquire(&mboxlock); 
-    mbox[0] = 8*4;
-    mbox[1] = MBOX_REQUEST;
-
-    mbox[2] = PROPTAG_GET_MAC_ADDRESS; 
-    mbox[3] = 8;                // total buf size of this tag
-    mbox[4] = 0;                // req val size, to be overwritten as resp val size
-    mbox[5] = 0;                // for returned mac addr
-    mbox[6] = 0;                // for returned mac addr. 2 bytes padding
-
-    mbox[7] = MBOX_TAG_LAST;   // the end of tag seq    
-
-    // make call, then check some response vals that may fail
-    if(!mbox_call(MBOX_CH_PROP))
-        {ret = -1; W("mbox[1] 0x%x  mbox[5] 0x%x", mbox[1], mbox[5]); goto fail;}
-    // routine checks 
-    if (mbox[1] != CODE_RESPONSE_SUCCESS)
-        {ret = -2; goto fail;}
-    if (!(mbox[4] & VALUE_LENGTH_RESPONSE)) 	// resp bit not set
-        {ret = -3; goto fail;}
-    if ((mbox[4] &= ~VALUE_LENGTH_RESPONSE) == 0)  // resp val length is 0 
-        {ret = -4; goto fail;}
-    // resp checks
-    if (mbox[4] != MAC_SIZE)      
-        {ret = -5; goto fail;}
-    memmove(buf, (void *)&mbox[5], MAC_SIZE); 
-
-    release(&mboxlock); 
-    return 0; 
-fail:
-    release(&mboxlock); 
-    W("%s failed. %d", __func__, ret); 
-    return ret; 
-}
-
-// return 0 on success
-// resp length: 8
-int get_board_serial(unsigned long *s) {
-    if (!s) return -1;
-
-    acquire(&mboxlock); 
-
-    // get the board's unique serial number with a mailbox call
-    mbox[0] = 8*4;                  // length of the message
-    mbox[1] = MBOX_REQUEST;         // this is a request message
+/*  Ref: 
+    https://github.com/raspberrypi/firmware/wiki/Mailboxes
+    ref: https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c 
+    ref: https://www.valvers.com/open-software/raspberry-pi/bare-metal-programming-in-c-part-5/#part-5armc-016
+    ref: uboot arch/arm/mach-bcm283x/msg.c  
     
-    mbox[2] = PROPTAG_GET_BOARD_SERIAL;   // get serial number command
-    mbox[3] = 8;                    // buffer size
-    mbox[4] = 8;
-    mbox[5] = 0;                    // clear output buffer
-    mbox[6] = 0;  // unused
+    for do_fb_init():
 
-    mbox[7] = MBOX_TAG_LAST;
-
-    // send the message to the GPU and receive answer
-    if (mbox_call(MBOX_CH_PROP)) {      
-        release(&mboxlock);   
-        memmove(s, (void*)&mbox[5], 8); 
-        return 0; 
-    } else {
-        release(&mboxlock); 
-        return -2; 
-    }
-}
-
-// "p": argument to the cmd
-// return: 0 on ok 
-int enable_vchiq(unsigned buf /*arg*/, unsigned *resp) {
-
-    acquire(&mboxlock); 
-
-    mbox[0] = 8*4;                  // length of the message
-    mbox[1] = MBOX_REQUEST;         // this is a request message
-    
-    mbox[2] = PROPTAG_VCHIQ_INIT;   
-    mbox[3] = 8;                    // total buffer size
-    mbox[4] = 4;                    // req/resp size
-    mbox[5] = buf;                   
-    mbox[6] = 0;                //unused. ok       
-
-    mbox[7] = MBOX_TAG_LAST;
-
-    // send the message to the GPU and receive answer
-    if (mbox_call(MBOX_CH_PROP)) {      
-        release(&mboxlock);   
-        *resp = mbox[5]; 
-        return 0; 
-    } else {
-        release(&mboxlock); 
-        return -2; 
-    }    
-}
-
-#include "fcntl.h"
-int procfs_parse_fbctl(int args[PROCFS_MAX_ARGS]) {    
-    if (args[0]>0 || args[1]>0 || args[2]>0 || args[3]>0) {
-        fb_fini(); 
-        acquire(&mboxlock); 
-        the_fb.width = args[0];
-        the_fb.height = args[1];
-        the_fb.vwidth = args[2];
-        the_fb.vheight = args[3];
-        release(&mboxlock);      
-        fb_init(); 
-    }
-    
-    acquire(&mboxlock); 
-    if (fb_set_voffsets(args[4], args[5]) <0)
-        E("failed to set voffsets");
-    release(&mboxlock);      
-
-    return 0; 
-}
-
+     * more undocumented cf: 
+    * https://github.com/raspberrypi/firmware/issues/719
+    * 
+    * below uses mbox "property channel". another way is to use the "fb" channel 
+    * directly. cf: https://github.com/rsta2/circle/blob/master/lib/bcmframebuffer.cpp
+    * 
+    * code ex: 
+    * https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c
+    *     
+*/

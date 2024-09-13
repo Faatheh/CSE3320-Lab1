@@ -1,4 +1,8 @@
-/*  GIMP header image file format (RGB): C:\Users\xl6yq\OneDrive - University of Virginia\Documents\uvalogo.h  */
+/*  
+	This file is automatically created from an image file, by the GIMP tool. 
+	
+	GIMP header image file format (RGB): 
+	C:\Users\xl6yq\OneDrive - University of Virginia\Documents\uvalogo.h  */
 
 static unsigned int width = 116;
 static unsigned int height = 118;

@@ -160,6 +160,10 @@ static inline void warn_failed (const char *pExpr, const char *pFile, unsigned n
 // debug.h
 #include "debug.h"
 
+// from mmu.h 
+#define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
+#define PGROUNDDOWN(a) (((a)) & ~(PAGE_SIZE-1))
+
 // cache ops, util.S
 void __asm_invalidate_dcache_range(void* start_addr, void* end_addr);
 void __asm_flush_dcache_range(void* start_addr, void* end_addr);
