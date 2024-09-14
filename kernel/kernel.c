@@ -23,6 +23,7 @@ extern void test_spinlock();
 extern void test_sem();
 extern void test_sf();
 extern void donut(); 	//donut.c
+extern void donut_uart(); 	//donut.c
 
 void uart_send_string(char* str);
 
@@ -58,7 +59,8 @@ void kernel_main() {
 
 	// test_ktimer();		// useful. passed
 	// test_fb(); 		// cycle through color quads
-	donut();
+	// donut();
+	donut_uart();
 
     while (1)
         asm volatile("wfi"); // what happen here?

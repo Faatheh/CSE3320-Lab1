@@ -20,7 +20,7 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
     *(PIXEL *)(buf + y*pit + x*PIXELSIZE) = p; 
 }
 
-static void donut_init(void) {
+static void canvas_init(void) {
     fb_fini(); 
 
     // acquire(&mboxlock);      //it's a test. so no lock
@@ -69,7 +69,7 @@ static signed char z[1760];         // z buffer
 void donut(void) {
   int sA = 1024, cA = 0, sB = 1024, cB = 0, _;
 
-    donut_init(); 
+    canvas_init(); 
   while(1) {
     memset(b, 32, 1760);  // text buffer
     memset(z, 127, 1760);   // z buffer
@@ -112,7 +112,7 @@ void donut(void) {
     int y = 0, x = 0;
     for (int k = 0; 1761 > k; k++) {
       if (k % 80) {
-        if (x < 50) print_char(b[k], x, y); // xzl: clip x at 50 (why
+        if (x < 50) print_char(b[k], x, y); // xzl: clip x at col 50 
         x ++;
       } else {  // xzl: new row (wont print char
         y ++;
@@ -124,6 +124,57 @@ void donut(void) {
     ms_delay(100); 
   }
 }
+
+// same as above, but print chars to uart. need a terminal program (putty) 
+// that can interpret special chars
+void donut_uart(void) {
+  int sA = 1024, cA = 0, sB = 1024, cB = 0, _;
+
+  while(1) {
+    memset(b, 32, 1760);  // text buffer
+    memset(z, 127, 1760);   // z buffer
+    int sj = 0, cj = 1024;
+    for (int j = 0; j < 90; j++) {
+      int si = 0, ci = 1024;  // sine and cosine of angle i
+      for (int i = 0; i < 324; i++) {
+        int R1 = 1, R2 = 2048, K2 = 5120*1024;
+
+        int x0 = R1*cj + R2,
+            x1 = ci*x0 >> 10,
+            x2 = cA*sj >> 10,
+            x3 = si*x0 >> 10,
+            x4 = R1*x2 - (sA*x3 >> 10),
+            x5 = sA*sj >> 10,
+            x6 = K2 + R1*1024*x5 + cA*x3,
+            x7 = cj*si >> 10,
+            x = 25 + 30*(cB*x1 - sB*x4)/x6,
+            y = 12 + 15*(cB*x4 + sB*x1)/x6,
+            N = (((-cA*x7 - cB*((-sA*x7>>10) + x2) - ci*(cj*sB >> 10)) >> 10) - x5) >> 7;
+
+        int o = x + 80 * y; // xzl: 80 chars per row
+        signed char zz = (x6-K2)>>15;
+        if (22 > y && y > 0 && x > 0 && 80 > x && zz < z[o]) {
+          z[o] = zz;
+          // luminance_index is now in the range 0..11 (8*sqrt(2) = 11.3)
+          // now we lookup the character corresponding to the
+          // luminance and plot it in our output:
+          // xzl: cycle through these chars (N:index)
+          b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0]; 
+        }
+        R(5, 8, ci, si)  // rotate i
+      }
+      R(9, 7, cj, sj)  // rotate j
+    }
+    R(5, 7, cA, sA);
+    R(5, 8, cB, sB);
+
+    for (int k = 0; 1761 > k; k++)
+      putc(0, k % 80 ? b[k] : 10);
+    printf("\x1b[23A");
+    ms_delay(10); 
+  }
+}
+
 
 /**
  * Original author:
