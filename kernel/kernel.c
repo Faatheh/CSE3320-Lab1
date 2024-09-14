@@ -58,9 +58,9 @@ void kernel_main() {
 	if (fb_init()!=0) BUG();  // will show the OS logo
 
 	// test_ktimer();		// useful. passed
-	// test_fb(); 		// cycle through color quads
+	test_fb(); 		// cycle through color quads
 	// donut();
-	donut_uart();
+	// donut_uart();
 
     while (1)
         asm volatile("wfi"); // what happen here?

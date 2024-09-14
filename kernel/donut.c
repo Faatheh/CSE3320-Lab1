@@ -98,7 +98,6 @@ void donut(void) {
           // luminance_index is now in the range 0..11 (8*sqrt(2) = 11.3)
           // now we lookup the character corresponding to the
           // luminance and plot it in our output:
-          // xzl: cycle through these chars (N:index)
           b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0]; 
         }
         R(5, 8, ci, si)  // rotate i
@@ -158,7 +157,6 @@ void donut_uart(void) {
           // luminance_index is now in the range 0..11 (8*sqrt(2) = 11.3)
           // now we lookup the character corresponding to the
           // luminance and plot it in our output:
-          // xzl: cycle through these chars (N:index)
           b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0]; 
         }
         R(5, 8, ci, si)  // rotate i
@@ -171,7 +169,7 @@ void donut_uart(void) {
     for (int k = 0; 1761 > k; k++)
       putc(0, k % 80 ? b[k] : 10);
     printf("\x1b[23A");
-    ms_delay(10); 
+    ms_delay(100); 
   }
 }
 
