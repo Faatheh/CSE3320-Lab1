@@ -22,7 +22,6 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
 
 static void canvas_init(void) {
     fb_fini();
-
     // acquire(&mboxlock);      //it's a test. so no lock
 
     the_fb.width = NN;
@@ -282,6 +281,8 @@ void donut(void) {
     // donut_uart();
     // donut_char_canvas();
 }
+
+/// project idea: use ktimer to drive the animation. periodically
 
 /**
  * Original author:

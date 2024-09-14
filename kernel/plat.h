@@ -6,9 +6,15 @@
 #error "unimpl"
 #endif
 
-#define PAGE_SHIFT	 	    12
-#define TABLE_SHIFT 		9
+// from mmu.h 
+
+// -------------------------- page size constants  ------------------------------ //
+#define PAGE_MASK			    0xfffffffffffff000
+#define PAGE_SHIFT	 	        12
+#define TABLE_SHIFT 		    9
 #define SECTION_SHIFT		(PAGE_SHIFT + TABLE_SHIFT)
+#define SUPERSECTION_SHIFT      (PAGE_SHIFT + 2*TABLE_SHIFT)      //30, 2^30 = 1GB
 
 #define PAGE_SIZE   		(1 << PAGE_SHIFT)	
 #define SECTION_SIZE		(1 << SECTION_SHIFT)	
+#define SUPERSECTION_SIZE       (1 << SUPERSECTION_SHIFT)

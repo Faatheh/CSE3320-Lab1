@@ -76,7 +76,6 @@ $(BUILD_DIR)/%_s.o: $(SRC_DIR)/%.S
 	$(VB) $(ARMGNU)-gcc-9 $(ASMOPS) -MMD -c $< -o $@
 
 # generic kernel
-C_OBJS += $(BUILD_DIR)/gic_c.o
 C_OBJS += $(BUILD_DIR)/irq_c.o
 C_OBJS += $(BUILD_DIR)/kernel_c.o
 C_OBJS += $(BUILD_DIR)/printf_c.o

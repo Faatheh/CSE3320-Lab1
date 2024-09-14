@@ -4,7 +4,7 @@
 #include "param.h"
 #include "sysregs.h"
 #include "plat.h"
-#include "mmu.h"
+// #include "mmu.h"
 
 .section ".text.boot"
 
