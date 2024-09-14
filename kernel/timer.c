@@ -100,11 +100,17 @@ static inline unsigned long current_counter() {
 
 ////////////  delay, timekeeping 
 
-// # of cpu cycles per ms, per us. will be tuned
-static unsigned int cycles_per_ms = 602409; // measured values. before tuning
-static unsigned int cycles_per_us = 599; 
+// # of cpu cycles per ms, per us. measured. will be tuned
+// when cache is on
+// static unsigned int cycles_per_ms = 602409;
+// static unsigned int cycles_per_us = 599; 
+// when cache is off, much slower
+static unsigned int cycles_per_ms = 5011;
+static unsigned int cycles_per_us = 5; 
 
 // use sys timer to measure: # of cpu cycles per ms 
+// can be slow if cache is off
+__attribute__((unused))
 static void sys_timer_tune_delay() {
 	unsigned long cur0 = current_counter(), ms, us; 
 	unsigned long ncycles = 100 * 1000 * 1000; 	// run 100M cycles. delay should >1ms
@@ -159,7 +165,7 @@ void sys_timer_init(void)
 {
 	initlock(&timerlock, "timer"); 
 	memzero(timers, sizeof(timers)); 	// all field zeros	
-	sys_timer_tune_delay(); 
+	// sys_timer_tune_delay(); 		// can be slow when cache is off 
 }
 
 // we have added/removed a virt timer, now adjust the phys timer accordingly

@@ -3,7 +3,7 @@
 
 // if we do UP, the spinlock really boils down to interrupt off/on
 // I left most spinning code here just in case. 
-// besides, the push_off/pop_off code also coudl be useful. 
+// besides, the push_off/pop_off code also could be useful. 
 
 // cpu cache and memory attributes must be configured (cacheable, shareable)
 // otherwise exclusive load/str instructions (e.g. ldxr) will throw memory 
@@ -40,18 +40,21 @@ acquire(struct spinlock *lk)
   if(!lk || holding(lk))
     {printf("%s ", lk->name); panic("acquire");}
 
-  while(__sync_lock_test_and_set(&lk->locked, 1) != 0)
-  {
-#if SPINLOCK_DEBUG
-    if (cnt++>1000*602409 /* about 10 secs on real hw */) {
-      E("acquire takes too long. deadlock? %s", lk->name); 
-      show_stack(myproc(),"");
-      procdump();
-      BUG();
-    }
-#endif
-    ;
-  }
+//   while(__sync_lock_test_and_set(&lk->locked, 1) != 0)
+//   {
+// #if SPINLOCK_DEBUG
+//     if (cnt++>1000*602409 /* about 10 secs on real hw */) {
+//       E("acquire takes too long. deadlock? %s", lk->name); 
+//       show_stack(myproc(),"");
+//       procdump();
+//       BUG();
+//     }
+// #endif
+//     ;
+//   }
+  while (lk->locked == 1)
+    ; 
+  lk->locked = 1; 
 
   // Tell the C compiler and the processor to not move loads or stores
   // past this point, to ensure that the critical section's memory
@@ -91,7 +94,8 @@ release(struct spinlock *lk)
   // On RISC-V, sync_lock_release turns into an atomic swap:
   //   s1 = &lk->locked
   //   amoswap.w zero, zero, (s1)
-  __sync_lock_release(&lk->locked);
+  // __sync_lock_release(&lk->locked);
+  lk->locked = 0; 
 
   pop_off();
 }
