@@ -23,7 +23,6 @@ extern void test_spinlock();
 extern void test_sem();
 extern void test_sf();
 extern void donut(); 	//donut.c
-extern void donut_uart(); 	//donut.c
 
 void uart_send_string(char* str);
 
@@ -58,9 +57,8 @@ void kernel_main() {
 	if (fb_init()!=0) BUG();  // will show the OS logo
 
 	// test_ktimer();		// useful. passed
-	test_fb(); 		// cycle through color quads
-	// donut();
-	// donut_uart();
+	// test_fb(); 		// cycle through color quads
+	donut();	
 
     while (1)
         asm volatile("wfi"); // what happen here?

@@ -65,9 +65,12 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
     phys (viewport) is of one quad size. 
     then cycle the viewport through the four quads 
 
-    depends on delay
+    dependency: delay 
     project idea: use virtual timer instead 
         (better efficiency)
+
+    known bug on qemu: some color quads wont dispay correctly.
+    ok on rpi3 hw. likely a qemu bug
 */
 void test_fb() {
     // fb_showpicture();        // works
