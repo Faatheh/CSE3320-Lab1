@@ -178,6 +178,8 @@ static void donut_uart(void) {
     }
 }
 
+static PIXEL int2rgb (int value); 
+
 // draw dots on canvas, closer to the original js version (see comment at the end)
 __attribute__((unused)) 
 void donut_dots(void) {
@@ -233,7 +235,8 @@ void donut_dots(void) {
                 if (x < 50) {
                     // to display, scale x by K, y by 2K (so we have a round donut)
                     int K=6, xx=x*K, yy=y*K*2;
-                    PIXEL clr = b[k]/*only blue*/; 
+                    // PIXEL clr = b[k]; // blue only, simple
+                    PIXEL clr = int2rgb(b[k]); // to a color spectrum
                     setpixel(the_fb.fb, xx, yy, the_fb.pitch, clr);
                     setpixel(the_fb.fb, xx+1, yy, the_fb.pitch, clr);
                     setpixel(the_fb.fb, xx, yy+1, the_fb.pitch, clr);
@@ -247,6 +250,31 @@ void donut_dots(void) {
         }
         ms_delay(500);
     }
+}
+
+// value: 0..255, PIXEL: argb
+static PIXEL int2rgb (int value) {
+    int r,g,b;     
+    if (value >= 0 && value <= 85) {
+        // Red to Yellow (R stays 255, G increases, B stays 0)
+        r = 255;
+        g = (value * 3);
+        b = 0;
+    } else if (value > 85 && value <= 170) {
+        // Yellow to Cyan (G stays 255, R decreases, B increases)
+        r = 255 - ((value - 85) * 3);
+        g = 255;
+        b = (value - 85) * 3;
+    } else if (value > 170 && value <= 255) {
+        // Cyan to Blue (G decreases, B stays 255, R stays 0)
+        r = 0;
+        g = 255 - ((value - 170) * 3);
+        b = 255;
+    } else {
+        // Value out of range
+        r=g=b=0;
+    }    
+    return (r<<16)|(g<<8)|b; 
 }
 
 void donut(void) {
