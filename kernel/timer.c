@@ -148,6 +148,7 @@ struct spinlock timerlock;
 struct vtimer {
 	TKernelTimerHandler *handler; 
 	unsigned long elapseat; 	// sys timer ticks (=us)
+	unsigned delayms; 
 	void *param; 
 	void *context; 
 }; 
@@ -236,6 +237,7 @@ static int ktimer_start_nolock(unsigned delayms, TKernelTimerHandler *handler,
 	timers[t].param = para; 
 	timers[t].context = context; 
 	timers[t].elapseat = cur + TICKPERMS * delayms; 
+	timers[t].delayms = delayms; 
 
 	adjust_sys_timer(); 
 
@@ -243,7 +245,8 @@ static int ktimer_start_nolock(unsigned delayms, TKernelTimerHandler *handler,
 }
 
 // see above
-// 
+// cannot be called from TKernelTimerHandler, which will have timerlock held
+// thus, deadlock 
 int ktimer_start(unsigned delayms, TKernelTimerHandler *handler, 
 		void *para, void *context) {
 	int ret;
@@ -299,6 +302,7 @@ void sys_timer_irq(void)
 	put32(TIMER_CS, TIMER_CS_M1);	// clear timer1 match
 
 	unsigned long cur = current_counter(); 
+	int ret; 
 
 	acquire(&timerlock); 
 	for (int t = 0; t < N_TIMERS; t++) {
@@ -307,10 +311,14 @@ void sys_timer_irq(void)
 			continue; 
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
-			timers[t].handler = 0; 
 			// NB: exec the callback w/ timerlock held
 			// TODO: do callback w/o holding timerlock... (see below)
-			(*h)(t, timers[t].param, timers[t].context); 			
+			ret = (*h)(t, timers[t].param, timers[t].context);
+			if (ret==1) { // restart the ktimer in place
+				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms;
+				adjust_sys_timer(); 
+			} else 
+				timers[t].handler = 0; 
 		}		
 	}
 	adjust_sys_timer(); 

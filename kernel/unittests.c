@@ -2,11 +2,12 @@
 #include "utils.h"
 #include "debug.h"
 
-static void handler(TKernelTimerHandle hTimer, void *param, void *context) {
+static int handler(TKernelTimerHandle hTimer, void *param, void *context) {
 	unsigned sec, msec; 
 	current_time(&sec, &msec);
 	I("%u.%03u: fired. on cpu %d. htimer %ld, param %lx, contex %lx", sec, msec,
 		cpuid(), hTimer, (unsigned long)param, (unsigned long)context); 
+    return 0; // don't restart the timer
 }
 
 // to be called in a kernel process
@@ -47,54 +48,65 @@ void test_ktimer() {
 ///////////////////
 /* 
     test multiple ktimers periodically firing
-    pressing key 1,2,3,4... to toggle on/off ktimer instances. 
+    pressing key 1,2,3,4...9 to toggle on/off ktimer instances, 
+    each printing a msg in different periods, in different colors 
+    press 0 to kill all timers
     each ktimer has different firing period
-
-    c: char received from uart, support 1..9; 0 to kill all timers
-    to be called in uart rx irq handler 
 
     project idea: make this a project 
 */    
 
-static void test_ktimer2_handler(TKernelTimerHandle hTimer, void *param, 
+static int test_ktimer2_handler(TKernelTimerHandle hTimer, void *param, 
     void *context) {
 	unsigned sec, msec; 
 	current_time(&sec, &msec);
-	I("%u.%03u: fired. on cpu %d. htimer %ld, param %lx, contex %lx", sec, msec,
-		cpuid(), hTimer, (unsigned long)param, (unsigned long)context); 
+	printf("%s %u.%03u: fired. on cpu %d. htimer %ld\n" _k2clr_none, 
+        (char *)param, sec, msec, cpuid(), hTimer); 
+    return 1; // restart the timer 
 }
 
 #define N_TIMERS_TEST 9
 static int timers[N_TIMERS_TEST]= \
     {-1,-1,-1,-1,-1,-1,-1,-1,-1};
 
+// color-coded msgs from diff timers. cf debug.h 
+static const char *colors[]= \
+    { _k2clr_gray, _k2clr_gray_bold, _k2clr_gray_underline, 
+     _k2clr_red, _k2clr_red_bold, _k2clr_red_underline, 
+     _k2clr_brown, _k2clr_brown_bold, _k2clr_brown_underline};
+    
+/* 
+    c: char received from uart, support 1..9; 0 to kill all timers
+    to be called in uart rx irq handler 
+*/
 void test_ktimer2(int c) {
     if (c<'0' || c>'9') return; 
-    int idx = c-'0'; 
     int ret; 
-    if (idx==0) {
+    if (c=='0') {
         for (int i=0;i<N_TIMERS_TEST;i++) {
             if (timers[i]!=-1) {
                 ret = ktimer_cancel(timers[i]); 
-                BUG_ON(ret != -1); // no such timer
+                BUG_ON(ret == -1); // no such timer
                 timers[i]=-1;
+                W("ktimer_cancel idx %d", i+1); 
             }
         }
     } else {
+        int idx = c-'1'; 
         if (timers[idx]!=-1) { // cancel the timer
+            W("ktimer_cancel %d", idx+1); 
             ret = ktimer_cancel(timers[idx]); 
-            BUG_ON(ret != -1); // no such timer
+            // BUG_ON(ret == -1); // no such timer (maybe benign? like just fired?
             timers[idx]=-1;
         } else { // start a new timer
-            ktimer_start(200*(idx+1), /*firing interval, ms*/
-
-                (void *)200*(idx+1), /*args*/
-                0, /* context */
-
+            W("ktimer_start %d", idx+1); 
+            ret = ktimer_start(200*(idx+1), /*firing interval, ms*/
+                test_ktimer2_handler, (void*)colors[idx] /*args*/, 0 /* context */); 
+            BUG_ON(ret<0); 
+            timers[idx]=ret; 
         }
     }
 }
-
 
 ///////////////////
 extern void fb_showpicture(void); 

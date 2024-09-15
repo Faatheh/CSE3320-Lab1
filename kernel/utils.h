@@ -63,7 +63,8 @@ void current_time(unsigned *sec, unsigned *msec);
 
 // kernel timers w/ callbacks, atop sys timer
 typedef unsigned long TKernelTimerHandle;	// =idx in kernel table for timers 
-typedef void TKernelTimerHandler (TKernelTimerHandle hTimer, void *pParam, void *pContext);
+// return: 1 if requested to restart the timer
+typedef int TKernelTimerHandler (TKernelTimerHandle hTimer, void *pParam, void *pContext);
 
 int ktimer_start(unsigned delayms, TKernelTimerHandler *handler, 
 		void *para, void *context); 

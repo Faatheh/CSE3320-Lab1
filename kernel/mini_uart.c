@@ -86,9 +86,11 @@ void putc ( void* p, char c) {
 	uart_send(c);
 }
 
+void test_ktimer2(int c); // unittest.c
+
 /* handle a uart interrupt, raised because input has
 	arrived. only handle rx irq for simplicity
-	called from handle_irq() */
+	called from handle_irq() */	
 void uart_irq(void) {
     //  check AUX_MU_IIR_REG bit0 for pending irq
     //    and bit 2:1 for irq causes
@@ -104,7 +106,8 @@ void uart_irq(void) {
             c = uart_try_recv(); // read the char
             if (c == -1)  // no more char
                 break;
-			W("char %d", c); 
+			V("char %d", c); 
+			test_ktimer2(c); 
         }
     }
 }

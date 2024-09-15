@@ -27,16 +27,26 @@
 #define print_to_tracebuffer printf
 
 /* colorful output support. minicom -c on */
-#define _k2clr_red   "\033[0;31m"        /* 0 -> normal ;  31 -> red */
+#define _k2clr_red   		  "\033[0;31m"        /* 0 -> normal ;  31 -> red */
+#define _k2clr_red_bold  	  "\033[1;31m"        /* 1 -> bold */
+#define _k2clr_red_underline  "\033[4;31m"        /* 4 -> underline */
+
+#define _k2clr_gray  		"\033[0;37m"		/* gray */
+#define _k2clr_gray_bold  	"\033[1;37m"		/* gray bold (white?)*/
+#define _k2clr_gray_underline  "\033[4;37m"   	/* 4 -> underline, gray */
+
+#define _k2clr_brown  			"\033[0;33m"
+#define _k2clr_brown_bold  		"\033[1;33m"
+#define _k2clr_brown_underline  "\033[4;33m"
+
+
 #define _k2clr_cyan  "\033[1;36m"        /* 1 -> bold ;  36 -> cyan */
 #define _k2clr_green "\033[0;32m"        /* 4 -> underline ;  32 -> green */
 #define _k2clr_blue  "\033[1;34m"        /* 9 -> strike ;  34 -> blue */
 
 #define _k2clr_black  "\033[0;30m"
-#define _k2clr_brown  "\033[0;33m"
 #define _k2clr_magenta  "\033[0;35m"
-#define _k2clr_gray  "\033[0;37m"
-#define _k2clr_u_gray  "\033[4;37m"   /* 4 -> underline, gray */
+
 
 #define _k2clr_none   "\033[0m"        /* to flush the previous property */
 
