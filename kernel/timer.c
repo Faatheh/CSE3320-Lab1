@@ -219,8 +219,6 @@ static int ktimer_start_nolock(unsigned delayms, TKernelTimerHandler *handler,
 	unsigned t; 
 	unsigned long cur; 
 
-	// acquire(&timerlock); 
-
 	for (t = 0; t < N_TIMERS; t++) {
 		if (timers[t].handler == 0) 
 			break; 
@@ -241,10 +239,11 @@ static int ktimer_start_nolock(unsigned delayms, TKernelTimerHandler *handler,
 
 	adjust_sys_timer(); 
 
-	// release(&timerlock); 
 	return t; 
 }
 
+// see above
+// 
 int ktimer_start(unsigned delayms, TKernelTimerHandler *handler, 
 		void *para, void *context) {
 	int ret;
@@ -309,6 +308,7 @@ void sys_timer_irq(void)
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
 			timers[t].handler = 0; 
+			// NB: exec the callback w/ timerlock held
 			// TODO: do callback w/o holding timerlock... (see below)
 			(*h)(t, timers[t].param, timers[t].context); 			
 		}		

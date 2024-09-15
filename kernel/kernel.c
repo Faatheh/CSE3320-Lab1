@@ -15,7 +15,7 @@ extern void test_malloc();
 extern void test_mbox(); 
 extern void test_usb_kb(); 
 extern void test_usb_storage(); 
-extern void test_fb(); 
+extern void test_fb_voffset(); 
 extern void test_sound(); 
 extern void test_sd(); 
 extern void test_kernel_tasks();
@@ -31,7 +31,7 @@ void uart_send_string(char* str);
 // test_malloc(); while (1); 
 // test_usb_kb(); while (1); 
 // test_usb_storage(); while (1); 
-// test_fb(); while (1); 
+// test_fb_voffset(); while (1); 
 // test_sound(); while (1); 
 // test_sd(); while (1); 	// works for both rpi3 hw & qemu
 // test_spinlock(); while (1);
@@ -57,7 +57,7 @@ void kernel_main() {
 	if (fb_init()!=0) BUG();  // will show the OS logo
 
 	// test_ktimer();		// useful. passed
-	// test_fb(); 		// cycle through color quads
+	// test_fb_voffset(); 		// cycle through color quads
 	donut();	
 
     while (1)

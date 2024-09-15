@@ -45,6 +45,58 @@ void test_ktimer() {
 }
 
 ///////////////////
+/* 
+    test multiple ktimers periodically firing
+    pressing key 1,2,3,4... to toggle on/off ktimer instances. 
+    each ktimer has different firing period
+
+    c: char received from uart, support 1..9; 0 to kill all timers
+    to be called in uart rx irq handler 
+
+    project idea: make this a project 
+*/    
+
+static void test_ktimer2_handler(TKernelTimerHandle hTimer, void *param, 
+    void *context) {
+	unsigned sec, msec; 
+	current_time(&sec, &msec);
+	I("%u.%03u: fired. on cpu %d. htimer %ld, param %lx, contex %lx", sec, msec,
+		cpuid(), hTimer, (unsigned long)param, (unsigned long)context); 
+}
+
+#define N_TIMERS_TEST 9
+static int timers[N_TIMERS_TEST]= \
+    {-1,-1,-1,-1,-1,-1,-1,-1,-1};
+
+void test_ktimer2(int c) {
+    if (c<'0' || c>'9') return; 
+    int idx = c-'0'; 
+    int ret; 
+    if (idx==0) {
+        for (int i=0;i<N_TIMERS_TEST;i++) {
+            if (timers[i]!=-1) {
+                ret = ktimer_cancel(timers[i]); 
+                BUG_ON(ret != -1); // no such timer
+                timers[i]=-1;
+            }
+        }
+    } else {
+        if (timers[idx]!=-1) { // cancel the timer
+            ret = ktimer_cancel(timers[idx]); 
+            BUG_ON(ret != -1); // no such timer
+            timers[idx]=-1;
+        } else { // start a new timer
+            ktimer_start(200*(idx+1), /*firing interval, ms*/
+
+                (void *)200*(idx+1), /*args*/
+                0, /* context */
+
+        }
+    }
+}
+
+
+///////////////////
 extern void fb_showpicture(void); 
 #include "fb.h"
 
@@ -72,7 +124,7 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
     known bug on qemu: some color quads wont dispay correctly.
     ok on rpi3 hw. likely a qemu bug
 */
-void test_fb() {
+void test_fb_voffset() {
     // fb_showpicture();        // works
 
     // acquire(&mboxlock);      //it's a test. so no lock

@@ -57,6 +57,8 @@ void enable_interrupt_controller(int coreid)
 #endif
 }
 
+void uart_irq(void); // mini_uart.c
+
 // called from hw irq handler (el1_irq, entry.S)
 // call from entry.S, el{0|1}_irq
 #if defined(PLAT_RPI3) || defined(PLAT_RPI3QEMU)
@@ -77,6 +79,10 @@ void handle_irq(void) {
     
     if (irq & GPU_SIDE_INTERRUPT) {
         unsigned int p1 = get32(IRQ_PENDING_1);
+        if (p1 & IRQ_PENDING_1_AUX) {   // mini uart 
+            uart_irq(); 
+            p1 &= (~IRQ_PENDING_1_AUX); 
+        }        
         if (p1 & SYSTEM_TIMER_IRQ_1) {
             sys_timer_irq(); 
             p1 &= (~SYSTEM_TIMER_IRQ_1);
