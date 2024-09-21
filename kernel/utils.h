@@ -1,3 +1,6 @@
+/*
+    the common header for the kernel 
+*/
 #ifndef	_UTILS_H
 #define	_UTILS_H
 
@@ -5,7 +8,6 @@
 
 #include "param.h"
 
-// the kernel's HAL
 #include "printf.h"
 
 #ifdef PLAT_VIRT

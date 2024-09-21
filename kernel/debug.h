@@ -5,7 +5,7 @@
   
    In compiler option or makefile: 
    
-   set CONFIG_KAGE_GLOBAL_DEBUG_LEVEL=XX, where XX can be 10--50
+   set CONFIG_GLOBAL_DEBUG_LEVEL=XX, where XX can be 10--50
    
 	To supress a C file's debug messages, do: 
    // as the 1st line of a C file
@@ -20,8 +20,8 @@
 #define __K2_TRACEBUFFER__
 
 
-#ifndef CONFIG_KAGE_GLOBAL_DEBUG_LEVEL
-#define CONFIG_KAGE_GLOBAL_DEBUG_LEVEL 30 // default
+#ifndef CONFIG_GLOBAL_DEBUG_LEVEL
+#define CONFIG_GLOBAL_DEBUG_LEVEL 30 // default
 #endif
 
 #define print_to_tracebuffer printf
@@ -87,8 +87,8 @@
 
 /* global or local debug level, we select the higher one (i.e. fewer msgs)
  * (so that msgs are effectively suppressed) */
-#if CONFIG_KAGE_GLOBAL_DEBUG_LEVEL > K2_LOCAL_DEBUG_LEVEL
-#define K2_ACTUAL_DEBUG_LEVEL CONFIG_KAGE_GLOBAL_DEBUG_LEVEL
+#if CONFIG_GLOBAL_DEBUG_LEVEL > K2_LOCAL_DEBUG_LEVEL
+#define K2_ACTUAL_DEBUG_LEVEL CONFIG_GLOBAL_DEBUG_LEVEL
 #else
 #define K2_ACTUAL_DEBUG_LEVEL K2_LOCAL_DEBUG_LEVEL
 #endif
@@ -142,7 +142,7 @@
 /* When specified global NO_DEBUG, if no local flag, fake one.
  * helps to suppress info msgs by print_to_tracebuffer() and guarded with K2_NO_DEBUG.
  * eg see fault.c */
-#if (CONFIG_KAGE_GLOBAL_DEBUG_LEVEL == 50) && !defined(K2_NO_DEBUG)
+#if (CONFIG_GLOBAL_DEBUG_LEVEL == 50) && !defined(K2_NO_DEBUG)
 #define K2_NO_DEBUG
 #endif
 

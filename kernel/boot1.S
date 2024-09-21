@@ -1,7 +1,11 @@
-// kernel boot code, shall be used with newer rpi3 firmware that builds in
-//	armstub, which boots kernel at 0x80000 and EL2
+/* 
+	boot1.S
 
-// 	no mmu/pgtable, single core, no bootstack
+	kernel boot code, shall be used with newer rpi3 firmware that builds in
+	armstub, which boots kernel at 0x80000 and EL2
+
+	no mmu/pgtable, single core, no bootstack
+*/ 	
 
 #include "param.h"
 #include "sysregs.h"
@@ -9,8 +13,6 @@
 
 .section ".text.boot"
 
-// all cpus start to execute here. 
-// yet, on power up, only cpu0 runs, which may release cpu1+ later (cf start_cores())
 .globl _start
 _start:		
 	// MMU off, until we set pgtables. cf: sysregs.h
@@ -19,26 +21,26 @@ _start:
 	
 	// No trapping EL0/EL1 access to advanced simd, fp registers.
 	// cf: https://developer.arm.com/documentation/ddi0595/2021-03/AArch64-Registers/CPACR-EL1--Architectural-Feature-Access-Control-Register
-	//	some code may access them (e.g. usblib StringFormat uses q0/q1...)
-	MRS     x1, CPACR_EL1
-	ORR     x1, x1, #(0x3 << 20)    // Write CPACR_EL1.FPEN bits
-	MSR     CPACR_EL1, x1
-	ISB
+	//	Some code may access them (e.g. usblib StringFormat uses q0/q1...)
+	; MRS     x1, CPACR_EL1
+	; ORR     x1, x1, #(0x3 << 20)    // Write CPACR_EL1.FPEN bits
+	; MSR     CPACR_EL1, x1
+	; ISB
 
 	/* -------- Exception level switch -------------- */
-	// Check the current exception level: EL3 or EL2?	
+	// Check the current exception level: EL2 or EL3?
 	mrs x0, CurrentEL
   	lsr x0, x0, #2
 	cmp x0, #3
 	beq el3
 
-	# Current EL: EL2 
-	# set EL1 to be running in AArch64
+	// Current EL is EL2 
+	// set EL1 to be running in AArch64
 	mrs	x0, hcr_el2
 	orr	x0, x0, #HCR_RW  
 	msr	hcr_el2, x0
 
-	# prepare to switch to EL1
+	// prepare to switch to EL1
 	mov x0, #SPSR_VALUE
 	msr	spsr_el2, x0
 
@@ -55,7 +57,7 @@ el3: 		// Current EL: EL3
 	ldr	x0, =SCR_VALUE
 	msr	scr_el3, x0
 
-	# prepare to switch to EL1
+	// prepare to switch to EL1
 	ldr	x0, =SPSR_VALUE
 	msr	spsr_el3, x0
 
@@ -65,19 +67,19 @@ el3: 		// Current EL: EL3
 
 	/* ------- Start of EL1 execution ------- */
 el1_entry:	
-	// Below: cpu0 only. Clean up bss region. 
-	// bss_begin/end are linking addr (kernel virt). convert them to phys.
-	// they are (at least) 8 bytes aligned in link script
+	/* Below: clean up bss region. 
+	  bss_begin/end must be 8 bytes aligned, per the linker script */
 	ldr	x0, =bss_begin
 	ldr	x1, =bss_end
 	sub	x1, x1, x0
 	bl 	memzero_aligned
 	
 setup_sp: 	
-	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  // NB: we aren't use sp yet -- until we call a C function for the 1st time
+	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  
+	// NB: we aren't use sp yet -- until we start to execute kernel_main(below)
 
 	// install irq vectors
-	ldr x0, =vectors	// load VBAR_EL1 vector table addr (kern VA)
+	ldr x0, =vectors	// load VBAR_EL1 vector table addr
 	msr	vbar_el1, x0	
 
 	// load the addr of kernel_main
