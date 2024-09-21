@@ -1,10 +1,11 @@
 // kernel boot code, shall be used with newer rpi3 firmware that builds in
 //	armstub, which boots kernel at 0x80000 and EL2
 
+// 	no mmu/pgtable, single core, no bootstack
+
 #include "param.h"
 #include "sysregs.h"
 #include "plat.h"
-// #include "mmu.h"
 
 .section ".text.boot"
 
