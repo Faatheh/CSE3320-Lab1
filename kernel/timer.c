@@ -101,12 +101,18 @@ static inline unsigned long current_counter() {
 ////////////  delay, timekeeping 
 
 // # of cpu cycles per ms, per us. measured. will be tuned
-// when cache is on
+#ifdef PLAT_RPI3
+//  cache on
 // static unsigned int cycles_per_ms = 602409;
 // static unsigned int cycles_per_us = 599; 
-// when cache is off, much slower
+// cache off, much slower
 static unsigned int cycles_per_ms = 5011;
 static unsigned int cycles_per_us = 5; 
+#elif defined(PLAT_RPI3QEMU)
+// cache off: 
+static unsigned int cycles_per_ms = 434782;
+static unsigned int cycles_per_us = 434; 
+#endif
 
 // use sys timer to measure: # of cpu cycles per ms 
 // can be slow if cache is off

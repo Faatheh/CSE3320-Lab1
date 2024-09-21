@@ -137,8 +137,8 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
     project idea: use virtual timer instead 
         (better efficiency)
 
-    known bug on qemu: some color quads wont dispay correctly.
-    ok on rpi3 hw. likely a qemu bug
+    ok on rpi3 hw. 
+    known bug on qemu: some color quads wont dispay correctly. likely a qemu bug
 */
 void test_fb_voffset() {
     // fb_showpicture();        // works
@@ -181,7 +181,7 @@ void test_fb_voffset() {
     //         setpixel(the_fb.fb,x,y,pitch,b);             
 
     //what if we dont flush cache?
-    __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
+    // __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
 
     while (1) {
         fb_set_voffsets(0,0);

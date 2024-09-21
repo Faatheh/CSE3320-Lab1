@@ -21,14 +21,19 @@
 	 triggers some unwanted exceptions due to our programming mistakes */
 	.macro handle_invalid_entry type
 	kernel_entry
-	// below: arguments to handle_invalid_entry are passed in 3 registers: x0, x1, and x2.
-	// x0: the exception type. It can take one of the values defined in entry.h. It tells us exactly which exception handler has been executed
+	/* Below: arguments to handle_invalid_entry are passed in 3 registers: x0,
+		x1, and x2. */
+	/* x0: the exception type. It can take one of the values defined in entry.h.
+		It tells us exactly which exception handler has been executed. */
 	mov	x0, #\type   
-	// x1: what causes the exception. Value from `esr_el1` (Exception Syndrome Register). EL1 implies "when the exception is handled at EL1".
+	/* x1: what causes the exception. Value from `esr_el1` (Exception Syndrome 
+			Register). EL1 means "when the exception is handled at EL1". */
 	mrs	x1, esr_el1
-	// x2: the address of the instruction being executed when the exception happens. EL1 implies "when taking an exception to EL1, (this reg) holds the address to return to" 
+	/* x2: the address of the instruction being executed when the exception 
+		happens. EL1 means "when taking an exception to EL1, (this reg) holds 
+		the address to return to"  */
 	mrs	x2, elr_el1
-	// x3: data faulty address 
+	/* x3: data faulty address  */
 	mrs x3, far_el1
 	bl	show_invalid_entry_message	// irq.c
 	msr	daifset, #0b0010 		// disable irq
@@ -36,13 +41,16 @@
 	.endm
 	
 	.macro	ventry	label
-	.align	7	// We need `.align 7` because all exception vectors should be spaced at `0x80` bytes (2<<7) one from another
+	.align	7	
+	/* We need `.align 7` because all exception vectors should be spaced 
+		at `0x80` bytes (2<<7) one from another.  */
 	b	\label
 	.endm
 
 	.macro	kernel_entry
-	// The first thing to do in handling an exception: saving the processor state, notably registers x0 - x30, to the stack.
-	// subtracts from `sp` the size of total stored registers (#S_FRAME_SIZE) ...
+	/* The first thing to do in handling an exception: saving the processor
+	state, notably registers x0 - x30, to the stack. subtracts from `sp` the
+	size of total stored registers (#S_FRAME_SIZE) ... */
 	sub	sp, sp, #S_FRAME_SIZE  
 	// ... and then fills the stack space
 	stp	x0, x1, [sp, #16 * 0]
@@ -63,7 +71,8 @@
 	str	x30, [sp, #16 * 15] 
 	.endm
 
-	// A mirror of kernel_entry (above), to be called as the last thing of an exception handler
+	/* A mirror of kernel_entry (above), to be called as the last thing of an
+		exception handler */
 	.macro	kernel_exit
 	// restores the CPU state by copying back the values of x0 - x30
 	ldp	x0, x1, [sp, #16 * 0]
@@ -100,28 +109,30 @@
 .align	11
 .globl vectors 
 vectors:
-	//  EL1t -- Exception happens when CPU is at EL1 while the stack pointer (SP) was set to be shared with EL0
+	/* EL1t -- Exception happens when CPU is at EL1 while the stack pointer (SP)
+	was set to be shared with EL0 */
 	ventry	sync_invalid_el1t			// Synchronous EL1t
 	ventry	irq_invalid_el1t			// IRQ EL1t
 	ventry	fiq_invalid_el1t			// FIQ EL1t
 	ventry	error_invalid_el1t			// Error EL1t
 
-	// EL1h -- Exception happens at EL1 at the time when a dedicated SP was allocated for EL1.
-	//  		This is the mode that our kernel is currently using
+	/* EL1h -- Exception happens at EL1 at the time when a dedicated SP was
+	 	allocated for EL1. This is the mode that our kernel is currently
+	 	using */
 	ventry	sync_invalid_el1h			// Synchronous EL1h
 	ventry	el1_irq						// IRQ EL1h
 	ventry	fiq_invalid_el1h			// FIQ EL1h
 	ventry	error_invalid_el1h			// Error EL1h
 
-	// EL0_64 -- Exception is taken from EL0 executing in 64-bit mode. 
-	//		The exceptions caused in 64-bit user programs
+	/*  EL0_64 -- Exception is taken from EL0 executing in 64-bit mode. 
+		The exceptions caused in 64-bit user programs */
 	ventry	sync_invalid_el0_64			// Synchronous 64-bit EL0
 	ventry	irq_invalid_el0_64			// IRQ 64-bit EL0
 	ventry	fiq_invalid_el0_64			// FIQ 64-bit EL0
 	ventry	error_invalid_el0_64			// Error 64-bit EL0
 
-	// EL0_32 -- Exception is taken from EL0 executing in 32-bit mode
-	//		The exceptions caused in 32-bit user programs
+	/*  EL0_32 -- Exception is taken from EL0 executing in 32-bit mode
+			The exceptions caused in 32-bit user programs  */
 	ventry	sync_invalid_el0_32			// Synchronous 32-bit EL0
 	ventry	irq_invalid_el0_32			// IRQ 32-bit EL0
 	ventry	fiq_invalid_el0_32			// FIQ 32-bit EL0
@@ -173,17 +184,6 @@ error_invalid_el0_32:
 	handle_invalid_entry  ERROR_INVALID_EL0_32
 
 /* ---- end of EL1 vectors ----- */
-
-
-/* 
-   TODO: populate a vector table for EL2 here. 
-   The format is the same as that of EL1, e.g. 16 (=4x4) exception handlers. 
-   Note: EL2 vectors are for exceptions taken from EL2 and EL1
-*/
- .align	11
-.globl vectors_el2
-vectors_el2:
-	/* --- add yours ---  */
 
 
 el1_irq:

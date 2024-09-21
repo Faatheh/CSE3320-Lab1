@@ -162,4 +162,10 @@
     },
     // more terminal appearance https://code.visualstudio.com/docs/terminal/appearance
     "terminal.integrated.fontFamily" : "'Consolas', monospace",
+    "[ARM]": {
+      "editor.autoClosingBrackets": "never"
+    },
+    "[asm]": {
+      "editor.autoClosingBrackets": "never"
+    },
 }

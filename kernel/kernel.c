@@ -23,22 +23,9 @@ extern void test_spinlock();
 extern void test_sem();
 extern void test_sf();
 extern void donut(); 	//donut.c
+extern void donut_text(); 	//donut.c
 
 void uart_send_string(char* str);
-
-// test_ktimer(); while (1);
-// test_sys_sleep(); while (1); 
-// test_malloc(); while (1); 
-// test_usb_kb(); while (1); 
-// test_usb_storage(); while (1); 
-// test_fb_voffset(); while (1); 
-// test_sound(); while (1); 
-// test_sd(); while (1); 	// works for both rpi3 hw & qemu
-// test_spinlock(); while (1);
-// test_kernel_tasks(); while (1);
-// while (1) {test_sem();} while (1);	
-// dump_mem_info(); test_sf(); while (1);
-// show_stack(myproc(), "");
 
 struct cpu cpus[NCPU]; 
 
@@ -57,8 +44,9 @@ void kernel_main() {
 	if (fb_init()!=0) BUG();  // will show the OS logo
 
 	// test_ktimer();		// useful. passed
-	// test_fb_voffset(); 		// cycle through color quads
-	donut();	
+	// test_fb_voffset(); 	// cycle through color quads
+	// donut();
+	donut_text();
 
     while (1)
         asm volatile("wfi"); // what happen here?

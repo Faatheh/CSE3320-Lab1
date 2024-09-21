@@ -46,7 +46,7 @@ int mbox_call(unsigned char ch)
     /* wait until we can write to the mailbox */
     do{asm volatile("nop");}while(*MBOX_STATUS & MBOX_FULL);
     __asm__ volatile ("dmb sy" ::: "memory");    // mem barrier, ensuring msg in mem
-    __asm_flush_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox)); 
+    // __asm_flush_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox));  // not needed for lab1, no cache
 
     /* write the address of our message to the mailbox with channel identifier */
     *MBOX_WRITE = r; 
@@ -57,7 +57,7 @@ int mbox_call(unsigned char ch)
         /* is it a response to our message? */
         if(r == *MBOX_READ) {
             V("r is 0x%x", r); 
-            __asm_invalidate_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox)); 
+            // __asm_invalidate_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox)); 
             /* is it a valid successful response? (strange it's benign) */
             if (mbox[1]!=MBOX_RESPONSE) I("mbox[1] is %08x", mbox[1]);            
             return mbox[1]==MBOX_RESPONSE;
@@ -133,24 +133,6 @@ typedef struct {
 // cf: Makefile font build rules
 extern volatile unsigned char _binary_font_psf_start;  
 
-// /* Scalable Screen Font (https://gitlab.com/bztsrc/scalable-font2) */
-// typedef struct {
-//     unsigned char  magic[4];
-//     unsigned int   size;
-//     unsigned char  type;
-//     unsigned char  features;
-//     unsigned char  width;
-//     unsigned char  height;
-//     unsigned char  baseline;
-//     unsigned char  underline;
-//     unsigned short fragments_offs;
-//     unsigned int   characters_offs;
-//     unsigned int   ligature_offs;
-//     unsigned int   kerning_offs;
-//     unsigned int   cmap_offs;
-// } __attribute__((packed)) sfn_t;
-// extern volatile unsigned char _binary_font_sfn_start; // cf: linker script
-
 // default (upon boot): 1024x768, phys WH = virt WH, offset (0,0)
 // said to support up to 1920x1080
 struct fb_struct the_fb = {
@@ -178,9 +160,9 @@ struct fb_struct the_fb = {
     .offsety = 0,
     .size = 0, 
 }; 
-// isrgb: whatever the doc says, 0 seems rgb; 1 seems bgr (per my test)
-// rpi3 hw will return "0" even if we asks for "1"
-// qemu will do whatever we ask ("0" or "1"); if "1", channel order is bgr
+/* Note on "isrgb": whatever the doc says, 0 seems rgb; 1 seems bgr (per my
+test) rpi3 hw will return "0" even if we asks for "1" qemu will do whatever we
+ask ("0" or "1"); if "1", channel order is bgr */
 
 /* 
     detect phys display optimal x/y, if unconfigured
@@ -209,9 +191,9 @@ int fb_detect_scr_dim(uint *w, uint *h) {
     return 0; 
 }
 
-// set virt offset
-// caller must hold mboxlock
-// 0 on success
+/* Set virt offset
+    caller must hold mboxlock
+    Return 0 on success */
 int fb_set_voffsets(int offsetx, int offsety) {
 
     mbox[0] = 8*4;
@@ -262,7 +244,7 @@ static int do_fb_init(struct fb_struct *fbs)
     mbox[0] = 35*4;     // size of the whole buf that follows
     mbox[1] = MBOX_REQUEST; // cpu->gpu request
 
-    // a sequence of tags below 
+    /* a sequence of tags below  */
     mbox[2] = 0x48003;  //set phy width & height
     mbox[3] = 8;        // total buf size of this tag
     mbox[4] = 8;        // req val size (needed?), to be overwritten as resp val size
@@ -286,16 +268,16 @@ static int do_fb_init(struct fb_struct *fbs)
     mbox[19] = 4;
     mbox[20] = fbs->depth;       
 
-    mbox[21] = 0x48006;     //set pixel order
+    mbox[21] = 0x48006;     // set pixel order
     mbox[22] = 4;
     mbox[23] = 4;
-    mbox[24] = fbs->isrgb;           //RGB, not BGR preferably
+    mbox[24] = fbs->isrgb;           // RGB, not BGR preferably
 
-    mbox[25] = 0x40001;     //get framebuffer, gets alignment on request
+    mbox[25] = 0x40001;     // get framebuffer, gets alignment on request
     mbox[26] = 8;
-    mbox[27] = 8;           // xzl: should be 4?? (req para size)
-    mbox[28] = 4096;        //req: alignment; resp: FrameBufferInfo.pointer
-    mbox[29] = 0;           //resp: FrameBufferInfo.size
+    mbox[27] = 8;           // should be 4?? (req para size)
+    mbox[28] = 4096;        // req: alignment; resp: FrameBufferInfo.pointer
+    mbox[29] = 0;           // resp: FrameBufferInfo.size
 
     mbox[30] = 0x40008;     //get pitch
     mbox[31] = 4;
@@ -304,7 +286,7 @@ static int do_fb_init(struct fb_struct *fbs)
 
     mbox[34] = MBOX_TAG_LAST;   // the end of tag seq
 
-    // make call, then check some response vals that may fail
+    /* make call, then check some response vals that may fail */
     if(mbox_call(MBOX_CH_PROP) 
         && mbox[20]==fbs->depth /*depth*/ 
         && mbox[28]!=0 /*framebuf*/) {
@@ -448,7 +430,7 @@ void fb_print(int *x, int *y, char *s)
     }
 }
 
-#include "uvalogo.h"
+#include "uvalogo.h"    // stored pixel data
 #define IMG_DATA header_data      
 #define IMG_HEIGHT height
 #define IMG_WIDTH width
@@ -488,7 +470,7 @@ void fb_showpicture()
     char res[16]; 
     sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);
-    __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
+    // __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
 }
 
 /*
