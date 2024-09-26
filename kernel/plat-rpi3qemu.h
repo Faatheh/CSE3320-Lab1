@@ -1,3 +1,5 @@
+/* for both rpi3 (qemu) and rpi3 (hardware) */
+
 #ifndef _PLAT_RPI3QEMU_H
 #define _PLAT_RPI3QEMU_H
 

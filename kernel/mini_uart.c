@@ -48,6 +48,7 @@
 #define AUX_MU_BAUD_REG (PBASE+0x00215068)
 
 // busy wait
+// quest: complete below, cf uart_recv()
 void uart_send (char c) {
 	while(1) {
 		if(get32(AUX_MU_LSR_REG) & 0x20) 
@@ -82,7 +83,7 @@ void uart_send_string(char* str) {
 }
 
 // This function is required by printf function
-void putc ( void* p, char c) {
+void putc(void* p, char c) {
 	uart_send(c);
 }
 

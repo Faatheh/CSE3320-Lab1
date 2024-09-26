@@ -30,8 +30,8 @@ void uart_send_string(char* str);
 struct cpu cpus[NCPU]; 
 
 void kernel_main() {
-	uart_init();
-	init_printf(NULL, putc);	
+	uart_init();		// quest: make this call 
+	init_printf(NULL, putc);	// quest: make this call
 	printf("------ kernel boot ------  core %d\n\r", cpuid());
 	printf("build time (kernel.c) %s %s\n", __DATE__, __TIME__); // simplicity 
 			

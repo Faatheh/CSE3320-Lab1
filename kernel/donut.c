@@ -179,7 +179,7 @@ void donut_text(void) {
         for (int k = 0; 1761 > k; k++)
             putc(0, k % 80 ? b[k] : 10);
         printf("\x1b[23A");  // clear console 
-        // ms_delay(10);  // can delay in this way, but inefficient
+        ms_delay(10);  // can delay in this way, but inefficient
     }
 }
 

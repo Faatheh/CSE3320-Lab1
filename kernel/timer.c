@@ -95,6 +95,7 @@ void handle_generic_timer_irq(void)  {
 // NB: use current_time() below to get converted time
 static inline unsigned long current_counter() {
 	// assume these two are consistent, since the clock is only 1MHz...
+	// quest: complete below
 	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO); 
 }
 
@@ -129,11 +130,13 @@ static void sys_timer_tune_delay() {
 	I("cycles_per_us %u cycles_per_ms %u", cycles_per_us, cycles_per_ms);
 }
 
+// quest: complete below
 void ms_delay(unsigned ms) {
 	BUG_ON(!cycles_per_ms);
 	delay(cycles_per_ms * ms); 
 }
 
+// quest: complete below
 void us_delay(unsigned us) {
 	BUG_ON(!cycles_per_us);
 	delay(cycles_per_us * us); 
@@ -145,7 +148,12 @@ void current_time(unsigned *sec, unsigned *msec) {
 	unsigned long cur = current_counter();
 	*sec =  (unsigned) (cur / TICKPERSEC); 
 	cur -= (*sec) * TICKPERSEC; 
-	*msec = (unsigned) (cur / TICKPERMS);	
+	*msec = (unsigned) (cur / TICKPERMS);
+}
+
+void delay(unsigned long cycles) {
+	volatile unsigned long c = cycles; 
+	while (c!=0) c--; 
 }
 
 ////////////// virtual kernel timers 

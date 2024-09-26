@@ -19,14 +19,6 @@ _start:
 	ldr	x0, =SCTLR_VALUE_MMU_DISABLED  
 	msr	sctlr_el1, x0
 	
-	// No trapping EL0/EL1 access to advanced simd, fp registers.
-	// cf: https://developer.arm.com/documentation/ddi0595/2021-03/AArch64-Registers/CPACR-EL1--Architectural-Feature-Access-Control-Register
-	//	Some code may access them (e.g. usblib StringFormat uses q0/q1...)
-	; MRS     x1, CPACR_EL1
-	; ORR     x1, x1, #(0x3 << 20)    // Write CPACR_EL1.FPEN bits
-	; MSR     CPACR_EL1, x1
-	; ISB
-
 	/* -------- Exception level switch -------------- */
 	// Check the current exception level: EL2 or EL3?
 	mrs x0, CurrentEL
@@ -69,12 +61,14 @@ el3: 		// Current EL: EL3
 el1_entry:	
 	/* Below: clean up bss region. 
 	  bss_begin/end must be 8 bytes aligned, per the linker script */
+	// quest: complete below
 	ldr	x0, =bss_begin
 	ldr	x1, =bss_end
 	sub	x1, x1, x0
 	bl 	memzero_aligned
 	
 setup_sp: 	
+	// quest: complete below	
 	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  
 	// NB: we aren't use sp yet -- until we start to execute kernel_main(below)
 

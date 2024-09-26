@@ -20,8 +20,6 @@ struct spinlock;
 struct fb_struct; 
 
 // ------------------- utils.S ----------------------------- //
-extern void delay (unsigned long cycles);   
-
 // extern void put32(unsigned int *addr, unsigned int v); // TBD: change to C 
 // static inline void put32(volatile void *addr, unsigned int v) {
 //     *(volatile unsigned int *)addr = v; 
@@ -36,7 +34,6 @@ extern void delay (unsigned long cycles);
 //     return *(volatile unsigned int *)addr; 
 // }
 #define get32(addr)  (*(volatile unsigned int *)(addr))
-
 
 extern int get_el ( void );
 
@@ -57,9 +54,10 @@ int             uartgetc(void);
 void sys_timer_init ( void );
 void sys_timer_irq ( void );
 
-// both busy spinning
+// busy spinning
 void ms_delay(unsigned ms); 
 void us_delay(unsigned us);
+void delay (unsigned long cycles);
 
 void current_time(unsigned *sec, unsigned *msec);
 
