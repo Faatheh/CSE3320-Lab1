@@ -219,7 +219,7 @@ static int adjust_sys_timer(void)
 	// the compare reg is only 32 bits so we have to ignore the high 32 bits of
 	// the counter. this is ok even if the low 32 bits have to wrap around 
 	// in order to match TIMER_C1 (cf the isr)	
-	put32(TIMER_C1, (unsigned)next);  
+	put32(TIMER_C1, (unsigned)next);
 
 	return 0; 
 }
@@ -307,6 +307,7 @@ int ktimer_cancel(int t) {
 
 // the irq handler for sys_timer
 // called by irq.c 
+// quest: do this
 void sys_timer_irq(void) 
 {
 	V("called");	

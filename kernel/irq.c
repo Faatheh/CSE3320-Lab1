@@ -58,6 +58,7 @@ void enable_interrupt_controller(int coreid)
 }
 
 void uart_irq(void); // mini_uart.c
+extern void sys_timer_irq_simple();    // donut.c
 
 // called from hw irq handler (el1_irq, entry.S)
 // call from entry.S, el{0|1}_irq
@@ -84,7 +85,8 @@ void handle_irq(void) {
             p1 &= (~IRQ_PENDING_1_AUX); 
         }        
         if (p1 & SYSTEM_TIMER_IRQ_1) {
-            sys_timer_irq(); 
+            sys_timer_irq();         // quest: do this
+            // sys_timer_irq_simple(); 
             p1 &= (~SYSTEM_TIMER_IRQ_1);
         }
         if (p1) {

@@ -46,7 +46,6 @@ int mbox_call(unsigned char ch)
     /* wait until we can write to the mailbox */
     do{asm volatile("nop");}while(*MBOX_STATUS & MBOX_FULL);
     __asm__ volatile ("dmb sy" ::: "memory");    // mem barrier, ensuring msg in mem
-    // __asm_flush_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox));  // not needed for lab1, no cache
 
     /* write the address of our message to the mailbox with channel identifier */
     *MBOX_WRITE = r; 
@@ -90,29 +89,6 @@ int mbox_call(unsigned char ch)
 
 // in a successful resp, b31 is set; b30-0 is "value length in bytes"
 #define VALUE_LENGTH_RESPONSE	(1 << 31)
-
-// #define PROPTAG_GET_FIRMWARE_REVISION	0x00000001
-// #define PROPTAG_GET_BOARD_MODEL		0x00010001
-// #define PROPTAG_GET_BOARD_REVISION	0x00010002
-// #define PROPTAG_GET_MAC_ADDRESS		0x00010003
-// #define PROPTAG_GET_BOARD_SERIAL	0x00010004
-// #define PROPTAG_GET_ARM_MEMORY		0x00010005
-// #define PROPTAG_GET_VC_MEMORY		0x00010006
-// #define PROPTAG_SET_POWER_STATE		0x00028001
-//     #define DEVICE_ID_SD_CARD	0   // FL: SDHCI, not SDHOST
-// 	#define DEVICE_ID_USB_HCD	3
-//     #define POWER_STATE_OFF		(0 << 0)
-// 	#define POWER_STATE_ON		(1 << 0)
-// 	#define POWER_STATE_WAIT	(1 << 1)
-// 	#define POWER_STATE_NO_DEVICE	(1 << 1)	// in response
-// #define PROPTAG_GET_CLOCK_RATE		0x00030002
-// #define PROPTAG_GET_TEMPERATURE		0x00030006
-// #define PROPTAG_GET_EDID_BLOCK		0x00030020
-// #define PROPTAG_GET_DISPLAY_DIMENSIONS	0x00040003
-// #define PROPTAG_GET_COMMAND_LINE	0x00050001
-// // undocumented. cf https://github.com/raspberrypi/firmware/issues/719
-// // also sound/sample/env.c EnableVCHIQ
-// #define PROPTAG_VCHIQ_INIT  	    0x48010 
 
 ///////////////////////////////////////////////////
 //  framebuffer driver (via mbox)
@@ -292,6 +268,7 @@ static int do_fb_init(struct fb_struct *fbs)
         && mbox[28]!=0 /*framebuf*/) {
         // extract framebuf info from resp...
         mbox[28]&=0x3FFFFFFF;  
+        // quest: complete below
         fbs->fb = (unsigned char *)((unsigned long)mbox[28]);   // save framebuf ptr
         fbs->width=mbox[5];
         fbs->height=mbox[6];
@@ -311,15 +288,6 @@ static int do_fb_init(struct fb_struct *fbs)
         return -2; 
     }
     release(&mboxlock); 
-
-    // wont need this until labs for simple/rich user
-    // if (reserve_phys_region(mbox[28], fbs->size)) {
-    //     E("failed to reserve fb mem. pa 0x%x size 0x%x already in use.",
-    //         mbox[28], fbs->size); BUG(); 
-    //     return -1; 
-    // } else 
-    //     return 0; 
-
     return 0; 
 }
 
@@ -440,12 +408,13 @@ void fb_showpicture()
     int x,y;
     unsigned char *ptr=the_fb.fb;
     char *data=IMG_DATA, pixel[4];
+    char res[16]; 
+
     // fill framebuf. crop img data per the framebuf size
     unsigned int img_fb_height = the_fb.vheight < IMG_HEIGHT ? the_fb.vheight : IMG_HEIGHT; 
     unsigned int img_fb_width = the_fb.vwidth < IMG_WIDTH ? the_fb.vwidth : IMG_WIDTH; 
 
     // copy the image pixels to the start (top) of framebuf    
-    //ptr += (vheight-img_fb_height)/2*pitch + (vwidth-img_fb_width)*2;  
     ptr += (the_fb.vwidth-img_fb_width)/2*PIXELSIZE;  // top center
     ptr += (the_fb.vheight-img_fb_height)/2*the_fb.pitch; 
     
@@ -455,19 +424,19 @@ void fb_showpicture()
             /* the image is in RGB. So if we have an RGB framebuffer, we copy
             the pixels directly, but for BGR we must swap R (pixel[0]) and B
             (pixel[2]) channels. */
+            // quest: 2 lines below
             *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel) 
-                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);
-            // *((unsigned int*)ptr)=(!the_fb.isrgb) ? *((unsigned int *)&pixel) : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);
+                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);            
             ptr+=4;
         }
-        ptr+=the_fb.pitch-img_fb_width*4;
+        ptr+=the_fb.pitch-img_fb_width*4;       // quest: this 
     }
 
     // show text strings (project idea: print own strings
+    // quest: two lines below
     x = (the_fb.vwidth-img_fb_width)/2;
     y = the_fb.vheight/2 + img_fb_height/2;
-    fb_print(&x, &y, "UVA OS");
-    char res[16]; 
+    fb_print(&x, &y, "UVA OS");    
     sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);
     // __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 

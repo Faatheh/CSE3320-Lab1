@@ -129,6 +129,29 @@ void donut(void) {
     BUG_ON(ret<0);     
 }
 
+/* simple way to drive animation, NOT using vtimer. just hw irq 
+    quest: do below 
+*/
+void donut_simple(void) {
+    canvas_init();
+    put32(TIMER_C1, 100 * 1000);	// in us
+}
+// copied from timer.c. dirty. just to verify that this works
+static inline unsigned long current_counter() {
+	// assume these two are consistent, since the clock is only 1MHz...
+	// quest: complete below
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO); 
+}
+void sys_timer_irq_simple(void) 
+{
+	unsigned long cur; 
+    BUG_ON(!(get32(TIMER_CS) & TIMER_CS_M1));  
+	put32(TIMER_CS, TIMER_CS_M1);	// clear timer1 match
+    draw_frame(0, 0, 0); 
+    cur = current_counter(); 
+	put32(TIMER_C1, cur + 100 * 1000);	// in us
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 
