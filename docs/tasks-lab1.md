@@ -5,7 +5,7 @@ date: "Oct 2024"
 layout: "post"
 ---
 
-# Quests of Kernel Lab1
+# Quests of Kernel Lab1 "Baremetal"
 
 Total estimated time: XXX hours
 
