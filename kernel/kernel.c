@@ -32,7 +32,7 @@ struct cpu cpus[NCPU];
 
 void kernel_main() {
 	uart_init();                        // quest: make this call 
-	init_printf(NULL, putc);            // quest: make this call
+	init_printf(NULL, putc);            // quest: make this call (only ask for arg2)
 	printf("------ kernel boot ------  core %d\n\r", cpuid());
 	printf("build time (kernel.c) %s %s\n", __DATE__, __TIME__); // simplicity 
 

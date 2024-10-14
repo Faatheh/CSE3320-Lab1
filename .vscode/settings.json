@@ -114,7 +114,7 @@
         "*.txx": "c"
     },
     "files.exclude": {
-        "docs/**": true,
+        // "docs/**": true,
         "src/exp1/**": true,
         "src/exp2/**": true,
         "src/exp3/**": true,

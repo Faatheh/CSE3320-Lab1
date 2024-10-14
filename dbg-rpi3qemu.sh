@@ -8,8 +8,8 @@ p1-gen-hash-ports
 echo "Listen at port: ${MYGDBPORT}"
 echo "**To terminate QEMU, press Ctrl-a then x"
 echo 
-echo "  Next: in a separate window, launch gdb: "
-echo "      gdb-multiarch build/kernel8.elf "
+echo "  Next: in a separate window, launch gdb, e.g. (replace the path with your own)"
+echo "      gdb-multiarch kernel/build-rpi3qemu/kernel8.elf "
 echo 
 echo "  Example gdb commands -- "
 echo "      (gdb) file kernel/build/kernel8.elf"
@@ -51,7 +51,6 @@ qemu_small() {
     -kernel ${KERNEL} -serial null -serial mon:stdio \
     -d int -D qemu.log \
     -nographic \
-    -drive file=smallfat.bin,if=sd,format=raw \
     -gdb tcp::${MYGDBPORT} -S
 }
 
@@ -68,6 +67,6 @@ then
 elif [ "$1" = "full" ]
 then
     qemu_full
-else
+else        # default
     qemu_small
 fi
