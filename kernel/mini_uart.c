@@ -95,6 +95,7 @@ void test_ktimer2(int c); // unittest.c
 void uart_irq(void) {
     //  check AUX_MU_IIR_REG bit0 for pending irq
     //    and bit 2:1 for irq causes
+    // quest: complete below
 	int c; 
     uint iir = get32(AUX_MU_IIR_REG);
     if (iir & 1) // no pending

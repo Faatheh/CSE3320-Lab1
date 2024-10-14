@@ -130,7 +130,7 @@
         "src/current/addon/usb/**": true,  // usb 
     }, 
     "search.exclude": {
-        "docs/**": true,
+        // "docs/**": true,
         "src/exp1/**": true,
         "src/exp2/**": true,
         "src/exp3/**": true,
@@ -167,5 +167,9 @@
     },
     "[asm]": {
       "editor.autoClosingBrackets": "never"
-    },
+    },    
+    "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 80
+    }
 }
