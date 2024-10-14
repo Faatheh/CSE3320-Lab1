@@ -1,6 +1,15 @@
-# Quest0: setup & verify 
-CHECKPOINT: text output from QEMU Windows user: WSL2, Mac: VM + Ubuntu Estimated
-    time: XXX hours
+---
+title: "Quests of Kernel Lab1"
+author: "Felix Lin"
+date: "Oct 2024"
+layout: "post"
+---
+
+# Quests of Kernel Lab1
+
+Total estimated time: XXX hours
+
+## 🗺️ Quest0: setup & verify 
 
 | Your local machine: | Install...    |
 | ------------------------ | ---------------------- |
@@ -14,7 +23,7 @@ CHECKPOINT: text output from QEMU Windows user: WSL2, Mac: VM + Ubuntu Estimated
 
 * In writing below, we will refer to users using VMware Player as "VM users". 
 
-## install toolchain
+### install toolchain
 
 VM users: skip the installation part. Toolchains are already installed. 
 
@@ -38,7 +47,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ````
 
-## install gdb
+### install gdb
 VM users: skip the installation part
 
 ````
@@ -51,7 +60,7 @@ Install the "dashboard" enhancement
 wget -P ~ https://raw.githubusercontent.com/fxlin/gdb-dashboard-aarch64/master/.gdbinit
 ````
 
-## install qemu 
+### install qemu 
 
 VM users: skip the installation part
 
@@ -68,7 +77,7 @@ QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.18)
 Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 ````
 
-## test toolchain & qemu 
+### test toolchain & qemu 
 
 Test QEMU with Rpi3 baremetal code (NOTE: this repo is for validating your
 toolchain & QEMU build; it is NOT our course project)
@@ -91,7 +100,7 @@ My serial number is: 0000000000000000
 >  on your host machine. Kill the test program timely. 
 
 
-# SideQuest: setup vscode
+### ✨SideQuest1.1: setup vscode
 
 install vscode on your local machine. 
 
@@ -123,7 +132,7 @@ useful hotkeys:
 - ctrl+j toggle bottom panel
 - ctrl+b toggle left panel
 
-# Quest1: examine the kernel image
+## 🗺️ Quest1: examine the kernel image
 clone this git repo. Assume the path to be under your home path,
 `~/kernel-lab1/`. 
 
@@ -147,22 +156,22 @@ Answer the questions below:
 - What are these sections in the elf file?
 
 - What is the address of symbol kernel_main? What are the first 8 bytes at the
-  symbol? What are the corresponding instructions? 
+    symbol? What are the corresponding instructions? 
 
 - How many bytes does each aarch64 instruction contain? 
 
 - How is kernel8.img generated out of kernel8.elf?
 
 - Now examine kernel8.img (use the hexdump command or the VSCode plugin). Search
-  for the first 8 bytes of kernel_main(). Can you find it? At which offset of
-  kernel8.img? 
+    for the first 8 bytes of kernel_main(). Can you find it? At which offset of
+    kernel8.img? 
 
 
-# Quest2: bringup of the boot process
+## 🗺️ Quest2: bringup of the boot process
 
 OVERVIEW: complete boot.S so that the kernel boots to kernel_main() in kernel.c
 
-## Launch GDB
+### Launch GDB
 
 Briefly:
 
@@ -186,7 +195,7 @@ gdb-multiarch mypath/kernel8.elf
 More info on GDB (common commands, etc): refer to our short [writeup](gdb.md) or
 ask ChatGPT. 
 
-## Try single step the kernel 
+### Try single step the kernel 
 
 With GDB, start from the kernel `_start`, single step (per instruction). Compare
 the instructions executed to `boot.S`.  
@@ -195,7 +204,7 @@ Until you execute `eret`. Have you observed change in the EL displayed by GDB?
 
 ✔️ CHECKPOINT: Take a screenshot of GDB (picture). 
 
-## Coding: complete boot.S
+### Coding: complete boot.S
 
 **NOTE**. In the writeup below, we will refer to C function names and assembly
 labels. We will not always give out the file names. To quickly locate them, use
@@ -213,7 +222,7 @@ until the breakpoint is hit.
 
 ✔️ CHECKPOINT: take a screenshot of GDB. 
 
-# Quest3: bringup of UART (polling only)
+## 🗺️ Quest3: bringup of UART (polling only)
 
 complete `uart_send()` (as instructed by the code comments). 
 
@@ -226,7 +235,7 @@ in `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
 build time (kernel.c) ...
 ````
 
-# Quest4: bringup of sys_timer (needed for timed animation)
+## 🗺️ Quest4: bringup of sys_timer (needed for timed animation)
 
 - complete the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
@@ -237,15 +246,15 @@ returns the current value of the system timer.
 - read `donut_text()` and roughly understand what it does. 
 
 - in `kernel_main()`, call `donut_text()` see the timed animation on uart
-  output. 
+    output. 
 
 ✔️ CHECKPOINT: take a screenshot of the text donut.
 
-# SideQuest: change luminance of Donut 
+### ✨SideQuest4.1: change luminance of Donut 
 
-CHECKPOINT: take a screenshot of the donuts with different luminance.
+✔️ CHECKPOINT: take a screenshot of the donuts with different luminance.
 
-# 🗺️ Quest5: bringup of framebuffer (fb) 
+## 🗺️ Quest5: bringup of framebuffer (fb) 
 
 - complete the framebuffer initialization function `do_fb_init()`.
 
@@ -254,30 +263,35 @@ CHECKPOINT: take a screenshot of the donuts with different luminance.
 ✔️ CHECKPOINT: take a screenshot of the OS logo and name displayed on the
 screen.
 
-## SideQuest: change kernel debug level
+### ✨SideQuest5.1: change kernel debug level
 
 - in mbox.c, toggle the KERNEL DEBUG macro to show different sets of debug
-  messages.
+    messages.
 
 - in Makefile, toggle CONFIG_GLOBAL_DEBUG_LEVEL to control different sets of
-  debug messages.
+    debug messages.
 
 - Read the code comments, understand how these two work together to control the
-  debug messages.
+    debug messages.
 
-## ✨SideQuest: change the OS logo and name
+### ✨SideQuest5.2: change the OS logo and name
 
-## ✨SideQuest: explore the framebuffer virtual offsets
+✔️ CHECKPOINT: take a screenshot of the new OS logo and name displayed on the
+screen.
+
+### ✨SideQuest5.3: explore the framebuffer virtual offsets
 
 - try out `test_fb_voffset()` in (unittest.c). Read the code and understand what
-  it does.
+    it does.
 
 - understand what the virtual offsets are, and why the code does not work as
-  expected.
+    expected.
 
 - find a fix (without modifying QEMU) so that the test works as expected.
 
-# Quest6: bringup of sys_timer interrupts (irq) 
+✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec)
+
+## 🗺️ Quest6: bringup of sys_timer interrupts (irq) 
 
 - understand the table of exception vectors (`vectors:` in `entry.S`).
 
@@ -291,54 +305,55 @@ screen.
 - Place a call to `donut_simple()` in `kernel_main()`.
 
 - with the help of GDB or debug print, verify that the timer irq is fired:
-  i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shot or periodically. 
+    i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shot or periodically. 
 
-# Quest7: bringup of Donut (the pixel flavor)
+## 🗺️ Quest7: bringup of Donut (the pixel flavor)
 
 - complete the function `sys_timer_irq_simple()` (donut.c).
 
 - in `handle_irq()` (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
 
-CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
 
-## SideQuest: change the donut's color tone to your like 
+### ✨SideQuest7.1: change the donut's color tone to your like 
 
 - by modifying `draw_frame()` (donut.c), change the color tone of the donut.
 
-CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
 
-## SideQuest: bringup of virtual timers
+### ✨SideQuest7.2: bringup of virtual timers
 
 - complete `sys_timer_irq()` and `adjust_sys_timer()` (timer.c).
 
 - test the virtual timers with `test_ktimer()` (unittest.c); place a call to
-  `test_ktimer()` in `kernel_main()`.
+    `test_ktimer()` in `kernel_main()`.
 
 - in `handle_irq()`, replace the call to `sys_timer_irq_simple()` with
-  `sys_timer_irq()`, which is a generic timer irq handler.
+    `sys_timer_irq()`, which is a generic timer irq handler.
 
 - understand `donut()` (donut.c) and how it uses the virtual timers. Place a call to `donut()` in `kernel_main()`.
 
 - see the donut animation with the virtual timers.
 
-CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
 
-## SideQuest: bringup UART receive interrupt (rx irq)
+### ✨SideQuest7.3: bringup UART receive interrupt (rx irq)
 
 - understand what `test_ktimer2()` (unittest.c) does.
 
 - complete the function `uart_init()` (mini_uart.c) to enable the UART receive
-  interrupt.
+    interrupt.
 
 - complete the function `uart_irq()` (mini_uart.c) to handle the UART receive
-  interrupt. Place a call to `test_ktimer2()` in `uart_irq()`.
+    interrupt. Place a call to `test_ktimer2()` in `uart_irq()`.
 
 - call `test_ktimer2()` in `kernel_main()`.
 
 - Try: use terminal keystroke to start/kill periodic kernel messages as driven by virtual timers.
 
-CHECKPOINT: using a smarpthone, shot a short video (5-10sec)
+✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec)
 
-## SideQuest: reproduce all above CHECKPOINTS on a real Rpi3
+### ✨SideQuest7.4: reproduce all above CHECKPOINTS on a real Rpi3
 
-CHECKPOINT: using a smarpthone, shot short videos (5-10sec each) of the real Rpi3 output. 
+✔️ CHECKPOINT: using a smarpthone, shot short videos (5-10sec each) of the real Rpi3 output. 
+
