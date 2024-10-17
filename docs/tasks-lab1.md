@@ -100,7 +100,7 @@ My serial number is: 0000000000000000
 >  on your host machine. Kill the test program timely. 
 
 
-### ✨SideQuest1.1: setup vscode
+### ✨SideQuest0.1: setup vscode
 
 install vscode on your local machine. 
 
@@ -131,6 +131,7 @@ useful hotkeys:
 - ctrl+\ open the current file in a split view
 - ctrl+j toggle bottom panel
 - ctrl+b toggle left panel
+- ctrl+alt+click open the function in the other split view
 
 ## 🗺️ Quest1: examine the kernel image
 clone this git repo. Assume the path to be under your home path,
@@ -202,7 +203,7 @@ the instructions executed to `boot.S`.
 
 Until you execute `eret`. Have you observed change in the EL displayed by GDB? 
 
-✔️ CHECKPOINT: Take a screenshot of GDB (picture). 
+✔️ CHECKPOINT: Take a screenshoot of GDB (picture). 
 
 ### Coding: complete boot.S
 
@@ -220,7 +221,7 @@ and instructions.
 - set a breakpoint at the first printf() call in kernel_main(). run the kernel
 until the breakpoint is hit. 
 
-✔️ CHECKPOINT: take a screenshot of GDB. 
+✔️ CHECKPOINT: take a screenshoot of GDB. 
 
 ## 🗺️ Quest3: bringup of UART (polling only)
 
@@ -229,7 +230,7 @@ complete `uart_send()` (as instructed by the code comments).
 in `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
 `init_printf()`, as instructed by the code comments. 
 
-✔️ CHECKPOINT: take a screenshot of kernel printing: 
+✔️ CHECKPOINT: take a screenshoot of kernel printing: 
 ````
 ------ kernel boot ----- core 0
 build time (kernel.c) ...
@@ -248,11 +249,11 @@ returns the current value of the system timer.
 - in `kernel_main()`, call `donut_text()` see the timed animation on uart
     output. 
 
-✔️ CHECKPOINT: take a screenshot of the text donut.
+✔️ CHECKPOINT: take a screenshoot of the text donut.
 
 ### ✨SideQuest4.1: change luminance of Donut 
 
-✔️ CHECKPOINT: take a screenshot of the donuts with different luminance.
+✔️ CHECKPOINT: take a screenshoot of the donuts with different luminance.
 
 ## 🗺️ Quest5: bringup of framebuffer (fb) 
 
@@ -260,7 +261,7 @@ returns the current value of the system timer.
 
 - complete the function that displays the OS logo and name: `fb_showpicture()`.
 
-✔️ CHECKPOINT: take a screenshot of the OS logo and name displayed on the
+✔️ CHECKPOINT: take a screenshoot of the OS logo and name displayed on the
 screen.
 
 ### ✨SideQuest5.1: change kernel debug level
@@ -276,7 +277,7 @@ screen.
 
 ### ✨SideQuest5.2: change the OS logo and name
 
-✔️ CHECKPOINT: take a screenshot of the new OS logo and name displayed on the
+✔️ CHECKPOINT: take a screenshoot of the new OS logo and name displayed on the
 screen.
 
 ### ✨SideQuest5.3: explore the framebuffer virtual offsets
@@ -289,7 +290,7 @@ screen.
 
 - find a fix (without modifying QEMU) so that the test works as expected.
 
-✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec)
+✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec)
 
 ## 🗺️ Quest6: bringup of sys_timer interrupts (irq) 
 
@@ -305,7 +306,7 @@ screen.
 - Place a call to `donut_simple()` in `kernel_main()`.
 
 - with the help of GDB or debug print, verify that the timer irq is fired:
-    i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shot or periodically. 
+    i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shoot or periodically. 
 
 ## 🗺️ Quest7: bringup of Donut (the pixel flavor)
 
@@ -313,13 +314,13 @@ screen.
 
 - in `handle_irq()` (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
 
-✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec) of the donut animation.
 
 ### ✨SideQuest7.1: change the donut's color tone to your like 
 
 - by modifying `draw_frame()` (donut.c), change the color tone of the donut.
 
-✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec) of the donut animation.
 
 ### ✨SideQuest7.2: bringup of virtual timers
 
@@ -335,7 +336,7 @@ screen.
 
 - see the donut animation with the virtual timers.
 
-✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec) of the donut animation.
+✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec) of the donut animation.
 
 ### ✨SideQuest7.3: bringup UART receive interrupt (rx irq)
 
@@ -351,9 +352,9 @@ screen.
 
 - Try: use terminal keystroke to start/kill periodic kernel messages as driven by virtual timers.
 
-✔️ CHECKPOINT: using a smarpthone, shot a short video (5-10sec)
+✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec)
 
 ### ✨SideQuest7.4: reproduce all above CHECKPOINTS on a real Rpi3
 
-✔️ CHECKPOINT: using a smarpthone, shot short videos (5-10sec each) of the real Rpi3 output. 
+✔️ CHECKPOINT: using a smarpthone, shoot short videos (5-10sec each) of the real Rpi3 output. 
 
