@@ -46,9 +46,9 @@ void kernel_main() {
 
 	// test_ktimer();                   // useful. passed
 	// test_fb_voffset();               // cycle through color quads
-	donut();
+	// donut();
 	// donut_simple();
-	// donut_text();
+	donut_text();
 
 	while (1)
 		asm volatile("wfi");            // what happen here?

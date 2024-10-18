@@ -9,7 +9,7 @@ layout: "post"
 
 Total estimated time: XXX hours
 
-## 🗺️ Quest0: setup & verify 
+## 🗺️ Quest0: setup 
 
 | Your local machine: | Install...    |
 | ------------------------ | ---------------------- |
@@ -100,7 +100,7 @@ My serial number is: 0000000000000000
 >  on your host machine. Kill the test program timely. 
 
 
-### ✨SideQuest0.1: setup vscode
+### ✨SideQuest0.1: vscode
 
 install vscode on your local machine. 
 
@@ -133,7 +133,7 @@ useful hotkeys:
 - ctrl+b toggle left panel
 - ctrl+alt+click open the function in the other split view
 
-## 🗺️ Quest1: examine the kernel image
+## 🗺️ Quest1: kernel image
 clone this git repo. Assume the path to be under your home path,
 `~/kernel-lab1/`. 
 
@@ -168,7 +168,7 @@ Answer the questions below:
     kernel8.img? 
 
 
-## 🗺️ Quest2: bringup of the boot process
+## 🗺️ Quest2: boot bringup 
 
 OVERVIEW: complete boot.S so that the kernel boots to kernel_main() in kernel.c
 
@@ -223,7 +223,9 @@ until the breakpoint is hit.
 
 ✔️ CHECKPOINT: take a screenshoot of GDB. 
 
-## 🗺️ Quest3: bringup of UART (polling only)
+## 🗺️ Quest3: UART bringup 
+
+(polling only)
 
 complete `uart_send()` (as instructed by the code comments). 
 
@@ -236,7 +238,9 @@ in `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
 build time (kernel.c) ...
 ````
 
-## 🗺️ Quest4: bringup of sys_timer (needed for timed animation)
+## 🗺️ Quest4: textual donut
+
+OVERVIEW: you will bring up sys_timer, needed for timed animation.
 
 - complete the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
@@ -249,13 +253,22 @@ returns the current value of the system timer.
 - in `kernel_main()`, call `donut_text()` see the timed animation on uart
     output. 
 
-✔️ CHECKPOINT: take a screenshoot of the text donut.
+✔️ CHECKPOINT: 
+using a smarpthone, shoot a short video (5-10sec) of the donut animation. 
+[Requirements](screenshoot.md)
+
+Reference: 
+![donut-text](donut-text.gif)
+
+
 
 ### ✨SideQuest4.1: change luminance of Donut 
 
 ✔️ CHECKPOINT: take a screenshoot of the donuts with different luminance.
 
-## 🗺️ Quest5: bringup of framebuffer (fb) 
+## 🗺️ Quest5: OS logo
+
+OVERVIEW: you will bring up the framebuffer, needed for graphical display.
 
 - complete the framebuffer initialization function `do_fb_init()`.
 
@@ -308,13 +321,24 @@ screen.
 - with the help of GDB or debug print, verify that the timer irq is fired:
     i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shoot or periodically. 
 
-## 🗺️ Quest7: bringup of Donut (the pixel flavor)
+## 🗺️ Quest7: Pixel donut
+
+OVERVIEW: bring up the pixel donut animation.
 
 - complete the function `sys_timer_irq_simple()` (donut.c).
 
 - in `handle_irq()` (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
 
+- Call `donut()` in `kernel_main()`.
+
 ✔️ CHECKPOINT: using a smarpthone, shoot a short video (5-10sec) of the donut animation.
+
+![donut-pixel](donut-pixel.gif)
+
+NOTE: qemu with GUI may crash occasionally. If it happens, kill qemu and the terminal, and restart qemu. 
+
+![qemu-crash](qemu-crash.jpg)
+
 
 ### ✨SideQuest7.1: change the donut's color tone to your like 
 
