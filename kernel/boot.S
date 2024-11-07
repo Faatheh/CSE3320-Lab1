@@ -70,8 +70,8 @@ el1_entry:
 	bl 	memzero_aligned
 	
 setup_sp: 	
-	// quest: complete below	
-	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  
+	// quest: boot. set sp to somewhere above PHYS_BASE, far away from kernel image
+	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  	// !REMOVE_LINE
 	// NB: we aren't use sp yet -- until we start to execute kernel_main(below)
 
 	// install irq vectors

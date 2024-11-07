@@ -130,19 +130,22 @@ void donut(void) {
 }
 
 /* simple way to drive animation, NOT using vtimer. just hw irq 
-    to enable it,  irq handler must be modified to call sys_timer_irq_simple()
-    quest: do below 
+    to enable it,  irq handler must be modified to call sys_timer_irq_simple()    
 */
 void donut_simple(void) {
     canvas_init();
     put32(TIMER_C1, 100 * 1000);	// in us
 }
-// copied from timer.c. dirty. just to verify that this works
-static inline unsigned long current_counter() {
-	// assume these two are consistent, since the clock is only 1MHz...
-	// quest: complete below
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO); 
-}
+
+// // copied from timer.c. dirty. just to verify that this works
+// static inline unsigned long current_counter() {
+// 	// assume these two are consistent, since the clock is only 1MHz...
+// 	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO); 
+// }
+
+extern unsigned long current_counter(); // timer.c, dirty. 
+
+//quest: Pixel donut. 
 void sys_timer_irq_simple(void) 
 {
 	unsigned long cur; 
@@ -150,7 +153,8 @@ void sys_timer_irq_simple(void)
 	put32(TIMER_CS, TIMER_CS_M1);	// clear timer1 match
     draw_frame(0, 0, 0); 
     cur = current_counter(); 
-	put32(TIMER_C1, cur + 100 * 1000);	// in us
+    // reset the timer to fire in the future
+	put32(TIMER_C1, cur + 100 * 1000 /*in us*/);	//!REMOVE_LINE 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -188,6 +192,7 @@ void donut_text(void) {
                 signed char zz = (x6 - K2) >> 15;
                 if (22 > y && y > 0 && x > 0 && 80 > x && zz < z[o]) {
                     z[o] = zz;
+                    // quest: change luminance of Donut 
                     // luminance_index is now in the range 0..11 (8*sqrt(2) = 11.3)
                     // now we lookup the character corresponding to the
                     // luminance and plot it in our output:

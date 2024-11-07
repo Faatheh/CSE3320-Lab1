@@ -173,7 +173,7 @@
     },
     "todo-tree.general.tags": [
         "quest",
-        "!REMOVE_"
+        "!RE"
         // "xzl"
         ],
     "todo-tree.highlights.customHighlight": {
@@ -184,7 +184,7 @@
             "background": "yellow",
             "iconColour": "blue"
         },
-        "!REMOVE_": {
+        "!RE": {
             "icon": "circle-slash",
             "type": "text",
             "foreground": "red",

@@ -31,8 +31,10 @@ void uart_send_string(char* str);
 struct cpu cpus[NCPU]; 
 
 void kernel_main() {
-	uart_init();                        // quest: make this call 
-	init_printf(NULL, putc);            // quest: make this call (only ask for arg2)
+	// quest: UART. call uart_init() to initialize
+	uart_init();                      // !REMOVE_LINE
+	// quest: UART. init printf by init_printf(NULL, XXX)
+	init_printf(NULL, putc);          // !REMOVE_LINE
 	printf("------ kernel boot ------  core %d\n\r", cpuid());
 	printf("build time (kernel.c) %s %s\n", __DATE__, __TIME__); // simplicity 
 
@@ -44,13 +46,17 @@ void kernel_main() {
 
 	if (fb_init() != 0) BUG();          // will show the OS logo
 
-	// test_ktimer();                   // useful. passed
+	// test_ktimer();
 	// test_fb_voffset();               // cycle through color quads
-	donut();
-	// donut_simple();		// to enable it,  irq handler must be modified to call sys_timer_irq_simple()
-	// donut_text();
+	// donut();		// !REMOVE_LINE    uses virtual timer for animation
+
+	// quest: pixel donut. call donut_simple()
+	// to enable it,  irq handler must be modified to call sys_timer_irq_simple()
+	// donut_simple();		// !REMOVE_LINE		directly uses hw timer irq for animation
+	
+	// quest: textual donut. call donut_text()
+	// donut_text();		// !REMOVE_LINE
 
 	while (1)
 		asm volatile("wfi");            // what happen here?
-	// project idea: measure cpu util
 }

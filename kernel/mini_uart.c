@@ -48,13 +48,14 @@
 #define AUX_MU_BAUD_REG (PBASE+0x00215068)
 
 // busy wait
-// quest: complete below, cf uart_recv()
+// quest: UART. complete below cf uart_recv()
 void uart_send (char c) {
 	while(1) {
-		if(get32(AUX_MU_LSR_REG) & 0x20) 
-			break;
+        // read the status reg to check if the tx fifo is empty
+		if(get32(AUX_MU_LSR_REG) & 0x20) // !REMOVE_LINE
+			break;                       // !REMOVE_LINE
 	}
-	put32(AUX_MU_IO_REG, c);
+	put32(AUX_MU_IO_REG, c);    // !REMOVE_LINE
 }
  
 // busy wait until get a char 
@@ -95,21 +96,21 @@ void test_ktimer2(int c); // unittest.c
 void uart_irq(void) {
     //  check AUX_MU_IIR_REG bit0 for pending irq
     //    and bit 2:1 for irq causes
-    // quest: complete below
 	int c; 
     uint iir = get32(AUX_MU_IIR_REG);
     if (iir & 1) // no pending
         return;
     V("pending irq: p %d w %d r %d", (iir & 1), (iir & 2), (iir & 4));
 
-    // clear rx irq, must be done before we read (needed for mini uart??
+    // clear rx irq, must be done before we read 
     if (IS_RECEIVE_INTERRUPT(iir)) {
         while (1) {
-            c = uart_try_recv(); // read the char
-            if (c == -1)  // no more char
-                break;
+            // read a char, if there's no more, break
+            c = uart_try_recv();   //!REMOVE_LINE
+            if (c == -1)  //!REMOVE_LINE
+                break;      //!REMOVE_LINE
 			V("char %d", c); 
-			test_ktimer2(c); 
+			test_ktimer2(c);    //!REMOVE_LINE
         }
     }
 }
@@ -141,11 +142,12 @@ void uart_init(void) {
     put32(AUX_ENABLES, 1);     // Enable mini uart (this also enables access to it registers)
     put32(AUX_MU_CNTL_REG, 0); // Disable auto flow control and disable receiver and transmitter (for now)
 
-	// put32(AUX_MU_IER_REG, 0);  // Disable receive and transmit interrupts
+	// Disable receive and transmit interrupts
     put32(AUX_MU_IER_REG, (3 << 2) | (0xf << 4)); // bit 7:4 3:2 must be 1
 	{ // enable rx irq
 		unsigned int ier = get32(AUX_MU_IER_REG); 
-  		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE);
+        // flip the bits of ier that enable rx irq, and write back ier to the reg
+  		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE); //!REMOVE_LINE
 	} // leave tx irq disabled
 
     put32(AUX_MU_LCR_REG, 3);    // Enable 8 bit mode

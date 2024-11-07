@@ -309,12 +309,12 @@ until the breakpoint is hit.
 
 DELIVERABLE 📷: take a photo of the GDB screen. 
 
-## Quest04: UART bringup 
+## Quest04: UART 
 
 This quest is about bringing up the UART (which does poll only at this time). 
 UART is our primary I/O device for kernel debugging. 
 
-Complete `uart_send()` (as instructed by the code comments). 
+In `mini_uart.c`, complete `uart_send()` (as instructed by the code comments). 
 
 In `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
 `init_printf()`, as instructed by the code comments. 
@@ -329,11 +329,11 @@ build time (kernel.c) ...
 
 OVERVIEW: you will bring up sys_timer, needed for timed animation.
 
-- complete the core function of kernel timekeeping: `current_counter()`, which
+- in `timer.c`, complete the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
 
-- complete the delay functions (through busy waiting): `delay_ms()` and
-`delay_us()`.
+- complete the delay functions (through busy waiting): `ms_delay()` and
+`us_delay()`.
 
 - read `donut_text()` and roughly understand what it does. 
 
@@ -346,10 +346,11 @@ Reference (Note: yours must meet the [requirements](submission.md)):
 
 ![donut-text](donut-text.gif)
 
-
-
 ## Quest06 (side): change luminance of Donut 
 > This is a side quest.
+
+- in `donut_text()`, change the luminance of the donut by modifying how it fills
+    buffer b with different characters. 
 
 DELIVERABLE 📷: take a photo of the donuts with different luminance.
 
@@ -357,7 +358,9 @@ DELIVERABLE 📷: take a photo of the donuts with different luminance.
 
 OVERVIEW: you will bring up the framebuffer, needed for graphical display.
 
-- complete the framebuffer initialization function `do_fb_init()`.
+- Read `mbox.c`, grasp how framebuffer works in general. 
+
+- in `mbox.c`, complete the framebuffer initialization function `do_fb_init()`.
 
 - complete the function that displays the OS logo and name: `fb_showpicture()`.
 
@@ -367,13 +370,13 @@ screen.
 ## Quest08 (side): change kernel debug level
 > This is a side quest.
 
-- in mbox.c, toggle the KERNEL DEBUG macro to show different sets of debug
+- in mbox.c, switch the KERNEL DEBUG_XXX macro to show different sets of debug
     messages.
 
 - in Makefile, toggle CONFIG_GLOBAL_DEBUG_LEVEL to control different sets of
     debug messages.
 
-- Read the code comments, understand how these two work together to control the
+- Read the comments in Makefile and debug.h, understand how these two work together to control the
     debug messages.
 
 ## Quest09 (side): change the OS logo and name
@@ -388,6 +391,8 @@ screen.
 - try out `test_fb_voffset()` in (unittest.c). Read the code and understand what
     it does.
 
+- place a call to `test_fb_voffset()` in `kernel_main()`.
+
 - understand what the virtual offsets are, and why the code does not work as
     expected.
 
@@ -395,31 +400,34 @@ screen.
 
 DELIVERABLE 📷: shoot a short video (5-10sec)
 
-## Quest11: bringup of sys_timer interrupts (irq) 
+## Quest11: sys_timer irq
+
+OVERVIEW: you will bring up the sys_timer irq, needed for timed animation.
 
 - understand the table of exception vectors (`vectors:` in `entry.S`).
 
-- in the vector table, insert `el1_irq` at the right place.
+- in the vector table, place `el1_irq` at the right place.
 
-- in entry.S, complete the assembly macro `kernel_entry`, with the help of GDB and ChatGPT.
+- in entry.S, complete the assembly macro `kernel_entry`, with the help of GDB and AI.
 
-- Understand the key functions of the Donut: 
-`donut_simple()`, `sys_timer_irq_simple()` and `draw_frame()` (donut.c).
 
-- Place a call to `donut_simple()` in `kernel_main()`.
-
-- with the help of GDB or debug print, verify that the timer irq is fired:
+CHECKPOINT. with the help of GDB or debug print, verify that the timer irq is fired:
     i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shoot or periodically. 
+
+There is no DELIVERABLE for this quest. Continue below to enable animation. 
 
 ## Quest12: Pixel donut
 
 OVERVIEW: bring up the pixel donut animation.
 
+- Understand the key functions of the Donut: 
+`donut_simple()`, `sys_timer_irq_simple()` and `draw_frame()` (donut.c).
+
 - complete the function `sys_timer_irq_simple()` (donut.c).
 
 - in `handle_irq()` (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
 
-- Call `donut()` in `kernel_main()`.
+- Place a call to `donut_simple()` in `kernel_main()`.
 
 DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
 
@@ -446,7 +454,7 @@ DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
 
 - complete `sys_timer_irq()` and `adjust_sys_timer()` (timer.c).
 
-- test the virtual timers with `test_ktimer()` (unittest.c); place a call to
+- CHECKPOINT. test the virtual timers with `test_ktimer()` (unittest.c); place a call to
     `test_ktimer()` in `kernel_main()`.
 
 - in `handle_irq()`, replace the call to `sys_timer_irq_simple()` with
@@ -468,8 +476,6 @@ DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
 
 - complete the function `uart_irq()` (mini_uart.c) to handle the UART receive
     interrupt. Place a call to `test_ktimer2()` in `uart_irq()`.
-
-- call `test_ktimer2()` in `kernel_main()`.
 
 - Try: use terminal keystroke to start/kill periodic kernel messages as driven by virtual timers.
 

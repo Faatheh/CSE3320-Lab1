@@ -56,8 +56,6 @@ void test_ktimer() {
     each printing a msg in different periods, in different colors 
     press 0 to kill all timers
     each ktimer has different firing period
-
-    project idea: make this a project 
 */    
 
 static int test_ktimer2_handler(TKernelTimerHandle hTimer, void *param, 
@@ -126,20 +124,20 @@ static inline void setpixel(unsigned char *buf, int x, int y, int pit, PIXEL p) 
 }
 
 /* 
-    this shows how to flip fb, i.e. change display contents by changing only 
-    the "viewport" into the underlying pixel buffers.     
+    This function demonstrates how to flip the framebuffer (fb), i.e., change
+    display contents by changing only the "viewport" into the underlying pixel
+    buffers.     
 
-    create a vir fb with four quads, with R/G/B/black. 
-    phys (viewport) is of one quad size. 
-    then cycle the viewport through the four quads 
+    It creates a virtual framebuffer with four quadrants, each with a different
+    color: R/G/B/black. The physical (viewport) size is one quadrant. The
+    function then cycles the viewport through the four quadrants.
 
-    dependency: delay 
-    project idea: use virtual timer instead 
-        (better efficiency)
+    Dependency: delay Project idea: Use a virtual timer instead for better
+    efficiency.
 
-    ok on rpi3 hw. 
-    known bug on qemu: some color quads wont dispay correctly. likely a qemu bug
-*/
+    This works correctly on RPi3 hardware. Known bug on QEMU: Some color
+    quadrants won't display correctly, likely due to a QEMU bug.
+*/ 
 void test_fb_voffset() {
     // fb_showpicture();        // works
 

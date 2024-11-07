@@ -93,10 +93,12 @@ void handle_generic_timer_irq(void)  {
 
 // return # of ticks (=us when clock is 1MHz)
 // NB: use current_time() below to get converted time
-static inline unsigned long current_counter() {
-	// assume these two are consistent, since the clock is only 1MHz...
-	// quest: complete below
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO); 
+// static inline 
+unsigned long current_counter() {
+	// quest: textual donut. 
+	// read from TIMER_CHI and TIMER_CLO and return a 64bit counter
+	// (assume these two are consistent, since the clock is only 1MHz)
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !REMOVE_LINE
 }
 
 ////////////  delay, timekeeping 
@@ -130,16 +132,16 @@ static void sys_timer_tune_delay() {
 	I("cycles_per_us %u cycles_per_ms %u", cycles_per_us, cycles_per_ms);
 }
 
-// quest: complete below
+// quest: textual donut. implement by calling delay()
 void ms_delay(unsigned ms) {
 	BUG_ON(!cycles_per_ms);
-	delay(cycles_per_ms * ms); 
+	delay(cycles_per_ms * ms); 	// !REMOVE_LINE
 }
 
-// quest: complete below
+// quest: textual donut. implement by calling delay()
 void us_delay(unsigned us) {
 	BUG_ON(!cycles_per_us);
-	delay(cycles_per_us * us); 
+	delay(cycles_per_us * us); // !REMOVE_LINE
 }
 
 // can only be called after va is on, timers are init'd
@@ -219,7 +221,7 @@ static int adjust_sys_timer(void)
 	// the compare reg is only 32 bits so we have to ignore the high 32 bits of
 	// the counter. this is ok even if the low 32 bits have to wrap around 
 	// in order to match TIMER_C1 (cf the isr)	
-	put32(TIMER_C1, (unsigned)next);
+	put32(TIMER_C1, (unsigned)next);	//!REMOVE_LINE
 
 	return 0; 
 }
@@ -307,7 +309,6 @@ int ktimer_cancel(int t) {
 
 // the irq handler for sys_timer
 // called by irq.c 
-// quest: do this
 void sys_timer_irq(void) 
 {
 	V("called");	
@@ -327,10 +328,9 @@ void sys_timer_irq(void)
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
 			// NB: exec the callback w/ timerlock held
-			// TODO: do callback w/o holding timerlock... (see below)
-			ret = (*h)(t, timers[t].param, timers[t].context);
+			ret = (*h)(t, timers[t].param, timers[t].context); //!REMOVE_LINE
 			if (ret==1) { // restart the ktimer in place
-				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms;
+				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!REMOVE_LINE
 				adjust_sys_timer(); 
 			} else 
 				timers[t].handler = 0; 

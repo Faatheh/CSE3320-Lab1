@@ -268,15 +268,18 @@ static int do_fb_init(struct fb_struct *fbs)
         && mbox[28]!=0 /*framebuf*/) {
         // extract framebuf info from resp...
         mbox[28]&=0x3FFFFFFF;  
-        // quest: complete below
-        fbs->fb = (unsigned char *)((unsigned long)mbox[28]);   // save framebuf ptr
+        // quest: OS logo
+        // save framebuf ptr to fbs->fb
+        fbs->fb = (unsigned char *)((unsigned long)mbox[28]);       // !REMOVE_LINE
         fbs->width=mbox[5];
-        fbs->height=mbox[6];
+        // save height 
+        fbs->height=mbox[6];    // !REMOVE_LINE
         fbs->vwidth=mbox[10];
         fbs->vheight=mbox[11];        
         fbs->depth=mbox[20]; 
-        fbs->isrgb=mbox[24];         // channel order        
-        fbs->pitch=mbox[33];
+        fbs->isrgb=mbox[24];     // channel order        
+        // save pitch
+        fbs->pitch=mbox[33];    // !REMOVE_LINE
         if(fbs->pitch * fbs->vheight > mbox[29])  // possible that pitch*vheight < actual allocation
             {W("pitch %d x vheight %d!= mbox[29] %u", fbs->pitch, fbs->vheight, mbox[29]);BUG();}
         fbs->size = PGROUNDUP(fbs->pitch * fbs->vheight);  // roundup b/c we'll reserve pages for it
@@ -418,24 +421,28 @@ void fb_showpicture()
     ptr += (the_fb.vwidth-img_fb_width)/2*PIXELSIZE;  // top center
     ptr += (the_fb.vheight-img_fb_height)/2*the_fb.pitch; 
     
+    // quest: OS logo
     for(y=0;y<img_fb_height;y++) {
         for(x=0;x<img_fb_width;x++) {
             HEADER_PIXEL(data, pixel);
             /* the image is in RGB. So if we have an RGB framebuffer, we copy
             the pixels directly, but for BGR we must swap R (pixel[0]) and B
-            (pixel[2]) channels. */
-            // quest: 2 lines below
-            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel) 
-                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);            
-            ptr+=4;
+            (pixel[2]) channels. */            
+            // extract r,g,b from "pixel", then assign that to *ptr
+            // if you color does not look right, check "isrgb" in the_fb
+            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel)  // !REMOVE_LINE
+                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);    // !REMOVE_LINE
+            ptr+=4;     //!REMOVE_LINE
         }
-        ptr+=the_fb.pitch-img_fb_width*4;       // quest: this 
+        // advance ptr to the start of the next line of the pixels
+        ptr+=the_fb.pitch-img_fb_width*4;       // !REMOVE_LINE
     }
 
-    // show text strings (project idea: print own strings
-    // quest: two lines below
-    x = (the_fb.vwidth-img_fb_width)/2;
-    y = the_fb.vheight/2 + img_fb_height/2;
+    // show text strings
+    // quest: OS logo. 
+    // adjust x/y so that the text starts from right below the picture     
+    x = (the_fb.vwidth-img_fb_width)/2;         // !REMOVE_LINE
+    y = the_fb.vheight/2 + img_fb_height/2;     // !REMOVE_LINE
     fb_print(&x, &y, "UVA OS");    
     sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);
