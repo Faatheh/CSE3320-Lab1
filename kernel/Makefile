@@ -1,7 +1,7 @@
 include $(abspath ../config.mk)
 
 ifeq ($(filter $(PLAT),virt rpi3qemu rpi3),)
-$(error Invalid PLAT value. PLAT must be one of virt, rpi3qemu, or rpi3)
+$(error Invalid PLAT value. do "export PLAT=rpi3qemu" (for qemu build) or "export PLAT=rpi3" (for rpi3 build))
 endif
 
 BUILD_DIR = build-$(PLAT)

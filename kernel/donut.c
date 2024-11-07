@@ -130,6 +130,7 @@ void donut(void) {
 }
 
 /* simple way to drive animation, NOT using vtimer. just hw irq 
+    to enable it,  irq handler must be modified to call sys_timer_irq_simple()
     quest: do below 
 */
 void donut_simple(void) {

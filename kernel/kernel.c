@@ -46,9 +46,9 @@ void kernel_main() {
 
 	// test_ktimer();                   // useful. passed
 	// test_fb_voffset();               // cycle through color quads
-	// donut();
-	// donut_simple();
-	donut_text();
+	donut();
+	// donut_simple();		// to enable it,  irq handler must be modified to call sys_timer_irq_simple()
+	// donut_text();
 
 	while (1)
 		asm volatile("wfi");            // what happen here?
