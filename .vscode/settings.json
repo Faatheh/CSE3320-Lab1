@@ -86,7 +86,6 @@
         "chrono": "c",
         "compare": "c",
         "ratio": "c",
-        "*.py": "c",
         "nplayerc": "c",
         "condition_variable": "c",
         "future": "c",
@@ -171,5 +170,26 @@
     "[markdown]": {
     "editor.wordWrap": "on",
     "editor.wordWrapColumn": 80
+    },
+    "todo-tree.general.tags": [
+        "quest",
+        "!REMOVE_"
+        // "xzl"
+        ],
+    "todo-tree.highlights.customHighlight": {
+        "quest": {
+            "icon": "question",
+            "type": "text",
+            "foreground": "red",
+            "background": "yellow",
+            "iconColour": "blue"
+        },
+        "!REMOVE_": {
+            "icon": "circle-slash",
+            "type": "text",
+            "foreground": "red",
+            "background": "yellow",
+            "iconColour": "blue"
+        }
     }
 }

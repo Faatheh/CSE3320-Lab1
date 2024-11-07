@@ -87,7 +87,7 @@ C_OBJS += $(BUILD_DIR)/donut_c.o
 C_OBJS += $(BUILD_DIR)/unittests_c.o
 C_OBJS += $(BUILD_DIR)/mini_uart_c.o
 # (asm)
-ASM_OBJS = $(BUILD_DIR)/boot1_s.o
+ASM_OBJS = $(BUILD_DIR)/boot_s.o
 ASM_OBJS += $(BUILD_DIR)/entry_s.o
 ASM_OBJS += $(BUILD_DIR)/utils_s.o
 # binary objs: font

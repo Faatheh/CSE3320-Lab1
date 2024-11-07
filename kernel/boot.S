@@ -1,5 +1,5 @@
 /* 
-	boot1.S
+	boot.S
 
 	kernel boot code, shall be used with newer rpi3 firmware that builds in
 	armstub, which boots kernel at 0x80000 and EL2
@@ -61,10 +61,12 @@ el3: 		// Current EL: EL3
 el1_entry:	
 	/* Below: clean up bss region. 
 	  bss_begin/end must be 8 bytes aligned, per the linker script */
-	// quest: complete below
-	ldr	x0, =bss_begin
+	// quest: boot
+	// !REMOVE_START
+	ldr	x0, =bss_begin		
 	ldr	x1, =bss_end
 	sub	x1, x1, x0
+	// !REMOVE_END
 	bl 	memzero_aligned
 	
 setup_sp: 	

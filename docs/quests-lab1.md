@@ -5,10 +5,11 @@ date: "Oct 2024"
 layout: "post"
 ---
 
-# Quest Description for Lab 1:"Baremetal"
+# Quest Description for World 1:"Baremetal"
 
 Total estimated time: XXX hours
 
+![alt text](image-1.png)
 
 ## About this document
 
@@ -212,7 +213,7 @@ useful hotkeys:
 OVERVIEW: you will build the kernel image (kernel8.img) and inspect it.
 
 clone this git repo. Assume the path to be under your home path,
-`~/uva-os-lab1/`. 
+`~/uva-os-world1/`. 
 
 ````
 export PLAT=rpi3qemu
@@ -244,8 +245,7 @@ DELIVERABLE 📝. In 1-2 sentences, answer the questions below:
     for the first 8 bytes of kernel_main(). Can you find it? At which offset of
     kernel8.img? 
 
-
-## Quest03: boot bringup 
+## Quest03: boot 
 
 OVERVIEW: complete boot.S so that the kernel boots to kernel_main() in kernel.c.
 This quest also shows how to use GDB (important). 
@@ -269,7 +269,9 @@ because that is what is inside .gdbinit. To override that path, do
 gdb-multiarch mypath/kernel8.elf
 ````
 
-![alt text](gdb-launch.gif)
+<!-- ![alt text](gdb-launch.gif){width=200px} -->
+
+<img src="gdb-launch.gif" alt="description" width="300">
 
 More info on GDB (common commands, etc): refer to our short [writeup](gdb.md) or
 ask ChatGPT. 
@@ -286,11 +288,17 @@ DELIVERABLE 📷: Take a photo of the GDB screen.
 ### Coding: complete boot.S
 
 **NOTE**. In the description below (and in the future), we will refer to C function names and assembly
-labels. We will not always give out the full file paths. 
+labels. We do not always give out the full file paths. 
 To quickly locate them, use vscode `ctrl+t` for C functions and `ctrl+shift+f` for assembly labels.
 
-**NOTE**. In all coding exercise below, see the comments in the code for hints
+**NOTE**. In all coding exercise, always see the comments in the code for hints
 and instructions.
+
+**NOTE**. If you configured vscode and Todo-tree as described above, you can see all the quests lighlighted and listed in the Todo-tree panel.
+
+![alt text](image-3.png)
+
+STEPS
 
 - complete the code at `el1_entry` (as instructed by the code comments)
 
