@@ -98,7 +98,7 @@ unsigned long current_counter() {
 	// quest: textual donut. 
 	// read from TIMER_CHI and TIMER_CLO and return a 64bit counter
 	// (assume these two are consistent, since the clock is only 1MHz)
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !STUDENT_WILL_SEE_AS( return 0; )
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  //!STUDENT_WILL_SEE_AS( return 0; )
 }
 
 ////////////  delay, timekeeping 
