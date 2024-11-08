@@ -65,7 +65,7 @@
             // "icon": "circle-slash",
             "type": "text",
             // "foreground": "red",
-            // "background": "yellow",
+            "background": "lightgray",
             // "iconColour": "blue"
         }
     }

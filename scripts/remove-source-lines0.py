@@ -33,11 +33,6 @@ import sys
         becomes 
         YYYY # TODO: replace this
 
-        
-        #!STUDENT_WILL_SEE_AS(YYYY)
-        becomes 
-        YYYY # TODO: replace this
-
     when --mode=comment:
 
         (source...) // !STUDENT_DONOT_SEE   
@@ -66,8 +61,6 @@ STUDENT_DONOT_SEE_KEYWORD = "!STUDENT_DONOT_SEE"
 STUDENT_DONOT_BEGIN_KEYWORD = "!STUDENT_DONOT_BEGIN"
 STUDENT_DONOT_END_KEYWORD = "!STUDENT_DONOT_END"
 REPLACE_LINE_PATTERN = r"(.*)\s*//!STUDENT_WILL_SEE_AS\s*\((.*)\)"
-MAKEFILE_DONOT_SEE_PATTERN = r"(.*)\s*#\s*!STUDENT_DONOT_SEE"
-MAKEFILE_REPLACE_PATTERN = r"(.*)\s*#\s*!STUDENT_WILL_SEE_AS\s*\((.*)\)"
 
 def process_file(file_path, mode, write_to_stdout=False):
     with open(file_path, 'r') as file:
@@ -79,30 +72,7 @@ def process_file(file_path, mode, write_to_stdout=False):
     consecutive_STUDENT_DONOT_SEE = False
     last_indent = ""
 
-    is_makefile = file_path.endswith('Makefile')
-
     for line_num, line in enumerate(lines):
-        # Handle Makefile-specific syntax
-        if is_makefile:
-            # Remove or comment lines with MAKEFILE_DONOT_SEE_PATTERN
-            if re.search(MAKEFILE_DONOT_SEE_PATTERN, line):
-                lines_removed += 1
-                if mode == "comment" or mode == "remove":
-                    new_lines.append(f"# TODO: your code here\n")
-                continue
-
-            # Replace or comment lines with MAKEFILE_REPLACE_PATTERN
-            match = re.search(MAKEFILE_REPLACE_PATTERN, line)
-            if match:
-                original_text = match.group(1).strip()
-                replacement_text = match.group(2).strip()
-                if mode == "comment":
-                    new_lines.append(f"{replacement_text} # TODO: replace this !STUDENT_SHOULD_WRITE({original_text})\n")
-                else:
-                    new_lines.append(f"{replacement_text} # TODO: replace this\n")
-                lines_removed += 1
-                continue
-
         # Check if we need to start removing a block
         if STUDENT_DONOT_BEGIN_KEYWORD in line:
             if in_remove_block:

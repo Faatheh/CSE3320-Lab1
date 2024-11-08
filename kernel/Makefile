@@ -14,9 +14,9 @@ COPS = -Wall -Werror -nostdlib -nostartfiles -ffreestanding \
 -mgeneral-regs-only \
 -g 
 
-# often, not a good idea. but for this course we allow unused variables; 
-# otherwise there will be many errors
-COPS += -Wno-unused-variable -Wno-unused-but-set-variable
+# Temporarily allow unused variables to avoid compiler complaints.
+# This should be commented out after completing all quests.
+#!STUDENT_WILL_SEE_AS(COPS += -Wno-unused-variable -Wno-unused-but-set-variable)
 
 # the default debug level, to be overridden by less verbose levels in individual files 
 COPS += -DCONFIG_GLOBAL_DEBUG_LEVEL=10   # verbose
