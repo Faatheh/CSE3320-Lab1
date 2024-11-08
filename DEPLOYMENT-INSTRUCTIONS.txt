@@ -1,4 +1,28 @@
 Nov 2024
+UPDATE: 
+
+
+do all these on the main branch. (JUST DON'T COMMIT)
+
+# clean code, first dry run, sanity check 
+ ./scripts/remove-source-lines.py --mode=dry-run -d .
+ 
+# update: do this on main br for testing...
+# then 
+# ./scripts/remove-source-lines.py --mode=comment
+(try to replay the quests, walkthrough the quest dsecription...)
+
+# finally 
+./scripts/remove-source-lines.py --mode=remove -d .
+
+
+# will push to the remote github br, delete any history 
+./prep-push.sh 
+
+# reset local main br
+git reset --hard
+
+
 # switch to student branch
 git co student
 
@@ -29,3 +53,11 @@ git rm -r exp??
 grep STUDENT -r *
 
 
+
+############### push to remote ###################
+
+git checkout --orphan student
+git add . 
+git commit -m "init"
+git remote add uva-os git@github.com:fxlin/uva-os-world1.git
+git push -u uva-os student --force
