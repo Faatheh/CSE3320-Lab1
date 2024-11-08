@@ -28,7 +28,7 @@ rsync -av --delete \
     --exclude='*.a' \
     --exclude='.vscode' \
     --exclude='.github' \
-    --exclude='docs' \
+    --exclude='docs/archived' \
     --exclude='.gdb_history' \
     "$SRC_DIR/" "$DEST_DIR/"
 

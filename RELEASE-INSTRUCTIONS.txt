@@ -24,6 +24,8 @@ do all these on the main branch. (JUST DON'T COMMIT)
 # reset local main br
 git reset --hard
 
+############### end ############################
+
 
 # switch to student branch
 git co student
