@@ -52,24 +52,24 @@
 	/* The first thing to do in handling an exception: saving the processor
 	state, notably registers x0 - x30, to the stack. subtracts from `sp` the
 	size of total stored registers (#S_FRAME_SIZE) ... */
-	sub	sp, sp, #S_FRAME_SIZE  	//!REMOVE_LINE
+	sub	sp, sp, #S_FRAME_SIZE  	//!STUDENT_DONOT_SEE
 	// ... and then fills the stack space
-	stp	x0, x1, [sp, #16 * 0]	//!REMOVE_LINE
-	stp	x2, x3, [sp, #16 * 1]	//!REMOVE_LINE
-	stp	x4, x5, [sp, #16 * 2]	//!REMOVE_LINE
-	stp	x6, x7, [sp, #16 * 3]	//!REMOVE_LINE
-	stp	x8, x9, [sp, #16 * 4]	//!REMOVE_LINE
-	stp	x10, x11, [sp, #16 * 5]		//!REMOVE_LINE
-	stp	x12, x13, [sp, #16 * 6]		//!REMOVE_LINE
-	stp	x14, x15, [sp, #16 * 7]		//!REMOVE_LINE
-	stp	x16, x17, [sp, #16 * 8]		//!REMOVE_LINE
-	stp	x18, x19, [sp, #16 * 9]		//!REMOVE_LINE
-	stp	x20, x21, [sp, #16 * 10]	//!REMOVE_LINE
-	stp	x22, x23, [sp, #16 * 11]	//!REMOVE_LINE
-	stp	x24, x25, [sp, #16 * 12]	//!REMOVE_LINE
-	stp	x26, x27, [sp, #16 * 13]	//!REMOVE_LINE
-	stp	x28, x29, [sp, #16 * 14]	//!REMOVE_LINE
-	str	x30, [sp, #16 * 15] 		//!REMOVE_LINE
+	stp	x0, x1, [sp, #16 * 0]	//!STUDENT_DONOT_SEE
+	stp	x2, x3, [sp, #16 * 1]	//!STUDENT_DONOT_SEE
+	stp	x4, x5, [sp, #16 * 2]	//!STUDENT_DONOT_SEE
+	stp	x6, x7, [sp, #16 * 3]	//!STUDENT_DONOT_SEE
+	stp	x8, x9, [sp, #16 * 4]	//!STUDENT_DONOT_SEE
+	stp	x10, x11, [sp, #16 * 5]		//!STUDENT_DONOT_SEE
+	stp	x12, x13, [sp, #16 * 6]		//!STUDENT_DONOT_SEE
+	stp	x14, x15, [sp, #16 * 7]		//!STUDENT_DONOT_SEE
+	stp	x16, x17, [sp, #16 * 8]		//!STUDENT_DONOT_SEE
+	stp	x18, x19, [sp, #16 * 9]		//!STUDENT_DONOT_SEE
+	stp	x20, x21, [sp, #16 * 10]	//!STUDENT_DONOT_SEE
+	stp	x22, x23, [sp, #16 * 11]	//!STUDENT_DONOT_SEE
+	stp	x24, x25, [sp, #16 * 12]	//!STUDENT_DONOT_SEE
+	stp	x26, x27, [sp, #16 * 13]	//!STUDENT_DONOT_SEE
+	stp	x28, x29, [sp, #16 * 14]	//!STUDENT_DONOT_SEE
+	str	x30, [sp, #16 * 15] 		//!STUDENT_DONOT_SEE
 	.endm
 
 	/* A mirror of kernel_entry (above), to be called as the last thing of an
@@ -123,7 +123,7 @@ vectors:
 	 	using */
 	ventry	sync_invalid_el1h			// Synchronous EL1h
 	// IRQ EL1h
-	ventry	el1_irq						//!REPLACE_LINE_WITH (ventry	irq_invalid_el1h)
+	ventry	el1_irq						//!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
 	ventry	fiq_invalid_el1h			// FIQ EL1h
 	ventry	error_invalid_el1h			// Error EL1h
 

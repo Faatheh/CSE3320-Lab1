@@ -60,7 +60,7 @@
     },
     "todo-tree.general.tags": [
         "quest",
-        "!RE"
+        "!STUDENT_"
         // "xzl"
         ],
     "todo-tree.highlights.customHighlight": {
@@ -71,7 +71,7 @@
             "background": "yellow",
             "iconColour": "blue"
         },
-        "!RE": {
+        "!STUDENT_": {
             "icon": "circle-slash",
             "type": "text",
             "foreground": "red",

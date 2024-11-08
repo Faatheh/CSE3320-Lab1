@@ -270,16 +270,16 @@ static int do_fb_init(struct fb_struct *fbs)
         mbox[28]&=0x3FFFFFFF;  
         // quest: OS logo
         // save framebuf ptr to fbs->fb
-        fbs->fb = (unsigned char *)((unsigned long)mbox[28]);       // !REMOVE_LINE
+        fbs->fb = (unsigned char *)((unsigned long)mbox[28]);       // !STUDENT_DONOT_SEE
         fbs->width=mbox[5];
         // save height 
-        fbs->height=mbox[6];    // !REMOVE_LINE
+        fbs->height=mbox[6];    // !STUDENT_DONOT_SEE
         fbs->vwidth=mbox[10];
         fbs->vheight=mbox[11];        
         fbs->depth=mbox[20]; 
         fbs->isrgb=mbox[24];     // channel order        
         // save pitch
-        fbs->pitch=mbox[33];    // !REMOVE_LINE
+        fbs->pitch=mbox[33];    // !STUDENT_DONOT_SEE
         if(fbs->pitch * fbs->vheight > mbox[29])  // possible that pitch*vheight < actual allocation
             {W("pitch %d x vheight %d!= mbox[29] %u", fbs->pitch, fbs->vheight, mbox[29]);BUG();}
         fbs->size = PGROUNDUP(fbs->pitch * fbs->vheight);  // roundup b/c we'll reserve pages for it
@@ -430,19 +430,19 @@ void fb_showpicture()
             (pixel[2]) channels. */            
             // extract r,g,b from "pixel", then assign that to *ptr
             // if you color does not look right, check "isrgb" in the_fb
-            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel)  // !REMOVE_LINE
-                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);    // !REMOVE_LINE
-            ptr+=4;     //!REMOVE_LINE
+            *((unsigned int*)ptr)=the_fb.isrgb ? *((unsigned int *)&pixel)  // !STUDENT_DONOT_SEE
+                : (unsigned int)(pixel[0]<<16 | pixel[1]<<8 | pixel[2]);    // !STUDENT_DONOT_SEE
+            ptr+=4;     //!STUDENT_DONOT_SEE
         }
         // advance ptr to the start of the next line of the pixels
-        ptr+=the_fb.pitch-img_fb_width*4;       // !REMOVE_LINE
+        ptr+=the_fb.pitch-img_fb_width*4;       // !STUDENT_DONOT_SEE
     }
 
     // show text strings
     // quest: OS logo. 
     // adjust x/y so that the text starts from right below the picture     
-    x = (the_fb.vwidth-img_fb_width)/2;         // !REMOVE_LINE
-    y = the_fb.vheight/2 + img_fb_height/2;     // !REMOVE_LINE
+    x = (the_fb.vwidth-img_fb_width)/2;         // !STUDENT_DONOT_SEE
+    y = the_fb.vheight/2 + img_fb_height/2;     // !STUDENT_DONOT_SEE
     fb_print(&x, &y, "UVA OS");    
     sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);

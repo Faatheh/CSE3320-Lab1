@@ -6,17 +6,17 @@ import re
 '''
 remove lines with keywords. examples: 
 
-(source...) // !REMOVE_LINE   
+(source...) // !STUDENT_DONOT_SEE   
 becomes
 /* TODO: your code here */
 
-// !REMOVE_BEGIN
+// !STUDENT_DONOT_BEGIN
 (source...) 
-// !REMOVE_END
+// !STUDENT_DONOT_END
 becomes
 /* TODO: your code here */
 
-ventry	el1_irq	  //!REPLACE_LINE_WITH (ventry	irq_invalid_el1h)
+ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
 becomes 
 ventry	irq_invalid_el1h /* TODO: replace this */
 
@@ -26,11 +26,11 @@ when --mode=dryrun, do the current --dry-run logic
 when --mode=remove, do the current logic for removing/replacing lines
 when --mode=comment:
 
-(source...) // !REMOVE_LINE   
+(source...) // !STUDENT_DONOT_SEE   
 becomes
-// (source...) // !REMOVE_LINE   
+// (source...) // !STUDENT_DONOT_SEE   
 
-ventry	el1_irq	  //!REPLACE_LINE_WITH (ventry	irq_invalid_el1h)
+ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
 becomes 
 ventry	irq_invalid_el1h //!STUDENT_SHOULD_WRITE(ventry	el1_irq)
 
@@ -40,10 +40,10 @@ ventry	irq_invalid_el1h //!STUDENT_SHOULD_WRITE(ventry	el1_irq)
 directory = "."
 
 # Keywords for line and block removal
-REMOVE_LINE_KEYWORD = "!REMOVE_LINE"
-REMOVE_BEGIN_KEYWORD = "!REMOVE_BEGIN"
-REMOVE_END_KEYWORD = "!REMOVE_END"
-REPLACE_LINE_PATTERN = r"//!REPLACE_LINE_WITH \((.*)\)"
+STUDENT_DONOT_SEE_KEYWORD = "!STUDENT_DONOT_SEE"
+STUDENT_DONOT_BEGIN_KEYWORD = "!STUDENT_DONOT_BEGIN"
+STUDENT_DONOT_END_KEYWORD = "!STUDENT_DONOT_END"
+REPLACE_LINE_PATTERN = r"//!STUDENT_WILL_SEE_AS \((.*)\)"
 
 def process_file(file_path, dry_run):
     with open(file_path, 'r') as file:
@@ -52,22 +52,22 @@ def process_file(file_path, dry_run):
     new_lines = []
     in_remove_block = False
     lines_removed = 0
-    consecutive_remove_line = False
+    consecutive_STUDENT_DONOT_SEE = False
 
     for line_num, line in enumerate(lines):
         # Check if we need to start removing a block
-        if REMOVE_BEGIN_KEYWORD in line:
+        if STUDENT_DONOT_BEGIN_KEYWORD in line:
             if in_remove_block:
-                print(f"Error: Nested or unmatched {REMOVE_BEGIN_KEYWORD} at line {line_num + 1} in {file_path}")
+                print(f"Error: Nested or unmatched {STUDENT_DONOT_BEGIN_KEYWORD} at line {line_num + 1} in {file_path}")
                 return False, 0
             in_remove_block = True
             lines_removed += 1
             continue
 
         # Check if we need to end removing a block
-        if REMOVE_END_KEYWORD in line:
+        if STUDENT_DONOT_END_KEYWORD in line:
             if not in_remove_block:
-                print(f"Error: {REMOVE_END_KEYWORD} found without matching {REMOVE_BEGIN_KEYWORD} at line {line_num + 1} in {file_path}")
+                print(f"Error: {STUDENT_DONOT_END_KEYWORD} found without matching {STUDENT_DONOT_BEGIN_KEYWORD} at line {line_num + 1} in {file_path}")
                 return False, 0
             in_remove_block = False
             lines_removed += 1
@@ -79,10 +79,10 @@ def process_file(file_path, dry_run):
             lines_removed += 1
             continue
 
-        # Remove single line containing the REMOVE_LINE_KEYWORD
-        if REMOVE_LINE_KEYWORD in line:
+        # Remove single line containing the STUDENT_DONOT_SEE_KEYWORD
+        if STUDENT_DONOT_SEE_KEYWORD in line:
             lines_removed += 1
-            consecutive_remove_line = True
+            consecutive_STUDENT_DONOT_SEE = True
             continue
 
         # Replace line with REPLACE_LINE_PATTERN
@@ -93,17 +93,17 @@ def process_file(file_path, dry_run):
             lines_removed += 1
             continue
 
-        # Add TODO comment if consecutive lines with REMOVE_LINE_KEYWORD were removed
-        if consecutive_remove_line:
+        # Add TODO comment if consecutive lines with STUDENT_DONOT_SEE_KEYWORD were removed
+        if consecutive_STUDENT_DONOT_SEE:
             new_lines.append("/* TODO: your code here */\n")
-            consecutive_remove_line = False
+            consecutive_STUDENT_DONOT_SEE = False
 
         # Otherwise, keep the line
         new_lines.append(line)
 
-    # Check if we ended in a remove block without finding REMOVE_END_KEYWORD
+    # Check if we ended in a remove block without finding STUDENT_DONOT_END_KEYWORD
     if in_remove_block:
-        print(f"Error: {REMOVE_BEGIN_KEYWORD} without matching {REMOVE_END_KEYWORD} in {file_path} (started at line {line_num + 1})")
+        print(f"Error: {STUDENT_DONOT_BEGIN_KEYWORD} without matching {STUDENT_DONOT_END_KEYWORD} in {file_path} (started at line {line_num + 1})")
         return False, 0
 
     # Write the modified content back to the file if changes were made and not in dry-run mode

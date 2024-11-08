@@ -98,7 +98,7 @@ unsigned long current_counter() {
 	// quest: textual donut. 
 	// read from TIMER_CHI and TIMER_CLO and return a 64bit counter
 	// (assume these two are consistent, since the clock is only 1MHz)
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !REMOVE_LINE
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !STUDENT_DONOT_SEE
 }
 
 ////////////  delay, timekeeping 
@@ -135,13 +135,13 @@ static void sys_timer_tune_delay() {
 // quest: textual donut. implement by calling delay()
 void ms_delay(unsigned ms) {
 	BUG_ON(!cycles_per_ms);
-	delay(cycles_per_ms * ms); 	// !REMOVE_LINE
+	delay(cycles_per_ms * ms); 	// !STUDENT_DONOT_SEE
 }
 
 // quest: textual donut. implement by calling delay()
 void us_delay(unsigned us) {
 	BUG_ON(!cycles_per_us);
-	delay(cycles_per_us * us); // !REMOVE_LINE
+	delay(cycles_per_us * us); // !STUDENT_DONOT_SEE
 }
 
 // can only be called after va is on, timers are init'd
@@ -221,7 +221,7 @@ static int adjust_sys_timer(void)
 	// the compare reg is only 32 bits so we have to ignore the high 32 bits of
 	// the counter. this is ok even if the low 32 bits have to wrap around 
 	// in order to match TIMER_C1 (cf the isr)	
-	put32(TIMER_C1, (unsigned)next);	//!REMOVE_LINE
+	put32(TIMER_C1, (unsigned)next);	//!STUDENT_DONOT_SEE
 
 	return 0; 
 }
@@ -328,9 +328,9 @@ void sys_timer_irq(void)
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
 			// NB: exec the callback w/ timerlock held
-			ret = (*h)(t, timers[t].param, timers[t].context); //!REMOVE_LINE
+			ret = (*h)(t, timers[t].param, timers[t].context); //!STUDENT_DONOT_SEE
 			if (ret==1) { // restart the ktimer in place
-				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!REMOVE_LINE
+				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!STUDENT_DONOT_SEE
 				adjust_sys_timer(); 
 			} else 
 				timers[t].handler = 0; 

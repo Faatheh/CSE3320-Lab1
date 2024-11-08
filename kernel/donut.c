@@ -154,7 +154,7 @@ void sys_timer_irq_simple(void)
     draw_frame(0, 0, 0); 
     cur = current_counter(); 
     // reset the timer to fire in the future
-	put32(TIMER_C1, cur + 100 * 1000 /*in us*/);	//!REMOVE_LINE 
+	put32(TIMER_C1, cur + 100 * 1000 /*in us*/);	//!STUDENT_DONOT_SEE 
 }
 
 ///////////////////////////////////////////////////////////////////////////////

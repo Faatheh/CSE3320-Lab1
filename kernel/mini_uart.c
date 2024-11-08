@@ -52,10 +52,10 @@
 void uart_send (char c) {
 	while(1) {
         // read the status reg to check if the tx fifo is empty
-		if(get32(AUX_MU_LSR_REG) & 0x20) // !REMOVE_LINE
-			break;                       // !REMOVE_LINE
+		if(get32(AUX_MU_LSR_REG) & 0x20) // !STUDENT_DONOT_SEE
+			break;                       // !STUDENT_DONOT_SEE
 	}
-	put32(AUX_MU_IO_REG, c);    // !REMOVE_LINE
+	put32(AUX_MU_IO_REG, c);    // !STUDENT_DONOT_SEE
 }
  
 // busy wait until get a char 
@@ -106,11 +106,11 @@ void uart_irq(void) {
     if (IS_RECEIVE_INTERRUPT(iir)) {
         while (1) {
             // read a char, if there's no more, break
-            c = uart_try_recv();   //!REMOVE_LINE
-            if (c == -1)  //!REMOVE_LINE
-                break;      //!REMOVE_LINE
+            c = uart_try_recv();   //!STUDENT_DONOT_SEE
+            if (c == -1)  //!STUDENT_DONOT_SEE
+                break;      //!STUDENT_DONOT_SEE
 			V("char %d", c); 
-			test_ktimer2(c);    //!REMOVE_LINE
+			test_ktimer2(c);    //!STUDENT_DONOT_SEE
         }
     }
 }
@@ -147,7 +147,7 @@ void uart_init(void) {
 	{ // enable rx irq
 		unsigned int ier = get32(AUX_MU_IER_REG); 
         // flip the bits of ier that enable rx irq, and write back ier to the reg
-  		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE); //!REMOVE_LINE
+  		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE); //!STUDENT_DONOT_SEE
 	} // leave tx irq disabled
 
     put32(AUX_MU_LCR_REG, 3);    // Enable 8 bit mode
