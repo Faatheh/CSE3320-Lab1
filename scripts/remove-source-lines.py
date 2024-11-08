@@ -96,7 +96,6 @@ def process_file(file_path, mode):
         if match:
             original_text = match.group(1).strip()
             replacement_text = match.group(2).strip()
-            breakpoint()
             if mode == "comment":
                 new_lines.append(f"{replacement_text} /* TODO: replace this */ // !STUDENT_SHOULD_WRITE({original_text})\n")
             else:
