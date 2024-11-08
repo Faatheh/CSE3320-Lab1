@@ -1,0 +1,22 @@
+task-lab1-prmopt.txt
+
+
+increase the levels of all titles. "#" to "##", "##" to "###", etc.
+
+rename all "SideQuest" to "SideQuestN.k", where N is the number of the "Quest" that precedes
+this "SideQuest", and k is the sidequest number of starting from 1. 
+For each new "Quest", reset the sidequest number to 1. 
+keep other contents unchanged.
+keep all markdown comments
+
+add a "sparkle" emoji to the title of each SideQuest. 
+remove any existing emojis with the title of SideQuest. 
+keep the emoji consistent across all "SideQuest". 
+keep other contents unchanged.
+keep all markdown comments
+
+add a "map" emoji to the title of each QUEST. keep the emoji consistent across
+all "QUEST". keep other contents unchanged.
+
+if there are two emojis before "CHECKPOINT", just keep one, but use consistent
+emoji across all "CHECKPOINT"
