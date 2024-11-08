@@ -1,18 +1,30 @@
 # UVA-OS WORLD1 "Baremetal" 
 
-This is one part of the UVA-OS class. 
+This is one part of the UVA-OS class (CS4414/CS6456). 
 
+[OVERVIEW](https://github.com/fxlin/cs4414-main) |
 [WORLD1](https://github.com/fxlin/uva-os-world1) |
 [WORLD2](https://github.com/fxlin/uva-os-world2) |
 [WORLD3](https://github.com/fxlin/uva-os-world3) |
 [WORLD4](https://github.com/fxlin/uva-os-world4) |
 [WORLD5](https://github.com/fxlin/uva-os-world5) 
 
+Students: see [quests-lab1.md](quests-lab1.md)
+
+## WORLD1
 <img src="donut-pixel.gif" alt="description" width="200">
 <img src="image-1.png" alt="description" width="500">
 
+### Features
 
-For quests, see [docs/quests-lab1.md](docs/quests-lab1.md)
+✅ UART/printf 
+✅ Timers (&multiplexing)
+✅ Interrupts
+✅ Framebuffer & animation
+
+⛔ No multitasking 
+⛔ EL1 only
+
 
 ## Build for rpi3 QEMU
 
