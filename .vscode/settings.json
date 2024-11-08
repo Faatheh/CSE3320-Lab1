@@ -64,8 +64,8 @@
         "!STUDENT_": {
             // "icon": "circle-slash",
             "type": "text",
-            "foreground": "red",
-            "background": "yellow",
+            // "foreground": "red",
+            // "background": "yellow",
             // "iconColour": "blue"
         }
     }
