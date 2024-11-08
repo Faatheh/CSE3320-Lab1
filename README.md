@@ -1,5 +1,10 @@
 # UVA-OS WORLD1
 
+<img src="docs/donut-pixel.gif" alt="description" width="200">
+
+<img src="docs/image-1.png" alt="description" width="500">
+
+
 For quests, see [docs/quests-lab1.md](docs/quests-lab1.md)
 
 ## Build for rpi3 QEMU
