@@ -283,7 +283,7 @@ the instructions displayed on GDB to the assembly code in `boot.S`.
 
 Do the single step until you execute the instruction `eret`. Have you observed change in the EL displayed by GDB? 
 
-DELIVERABLE 📷: Take a photo of the GDB screen. 
+DELIVERABLE 📷: Take a photo of the GDB screen. Follow [requirements](./submission.md).
 
 ### Coding: complete boot.S
 
@@ -307,7 +307,7 @@ STEPS
 - set a breakpoint at the first printf() call in kernel_main(). run the kernel
 until the breakpoint is hit. 
 
-DELIVERABLE 📷: take a photo of the GDB screen. 
+DELIVERABLE 📷: take a photo of the GDB screen. Follow [requirements](./submission.md).
 
 ## Quest04: UART 
 
