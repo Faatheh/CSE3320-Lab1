@@ -314,6 +314,8 @@ DELIVERABLE 📷: take a photo of the GDB screen. Follow [requirements](./submis
 This quest is about bringing up the UART (which does poll only at this time). 
 UART is our primary I/O device for kernel debugging. 
 
+Grasp the high-level idea of `mini_uart` (mini_uart.c) and `printf()` (printf.c).
+
 In `mini_uart.c`, complete `uart_send()` (as instructed by the code comments). 
 
 In `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
@@ -426,7 +428,7 @@ OVERVIEW: bring up the pixel donut animation.
 
 - complete the function `sys_timer_irq_simple()` (donut.c).
 
-- in `handle_irq()` (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
+- in the system's irq handler (irq.c), place the call to `sys_timer_irq_simple()` (donut.c).
 
 - Place a call to `donut_simple()` in `kernel_main()`.
 
