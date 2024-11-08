@@ -62,7 +62,7 @@ el1_entry:
 	/* Below: clean up bss region. 
 	  bss_begin/end must be 8 bytes aligned, per the linker script */
 	// quest: boot
-	// !REMOVE_START
+	// !STUDENT_DONOT_BEGIN
 	ldr	x0, =bss_begin		
 	ldr	x1, =bss_end
 	sub	x1, x1, x0

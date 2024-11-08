@@ -1,39 +1,37 @@
+#!/usr/bin/env python3
+
 import os
 import argparse
 import re
 
-
 '''
-remove lines with keywords. examples: 
+    remove lines with keywords. examples: 
 
-(source...) // !STUDENT_DONOT_SEE   
-becomes
-/* TODO: your code here */
+    (source...) // !STUDENT_DONOT_SEE   
+    becomes
+    /* TODO: your code here */
 
-// !STUDENT_DONOT_BEGIN
-(source...) 
-// !STUDENT_DONOT_END
-becomes
-/* TODO: your code here */
+    // !STUDENT_DONOT_BEGIN
+    (source...) 
+    // !STUDENT_DONOT_END
+    becomes
+    /* TODO: your code here */
 
-ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
-becomes 
-ventry	irq_invalid_el1h /* TODO: replace this */
+    ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
+    becomes 
+    ventry	irq_invalid_el1h /* TODO: replace this */
 
+    when --mode=dryrun, do the current --dry-run logic
+    when --mode=remove, do the current logic for removing/replacing lines
+    when --mode=comment:
 
+    (source...) // !STUDENT_DONOT_SEE   
+    becomes
+    // (source...) // !STUDENT_DONOT_SEE   
 
-when --mode=dryrun, do the current --dry-run logic
-when --mode=remove, do the current logic for removing/replacing lines
-when --mode=comment:
-
-(source...) // !STUDENT_DONOT_SEE   
-becomes
-// (source...) // !STUDENT_DONOT_SEE   
-
-ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
-becomes 
-ventry	irq_invalid_el1h //!STUDENT_SHOULD_WRITE(ventry	el1_irq)
-
+    ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
+    becomes 
+    ventry	irq_invalid_el1h //!STUDENT_SHOULD_WRITE(ventry	el1_irq)
 '''
 
 # Define the directory containing the files
@@ -45,7 +43,7 @@ STUDENT_DONOT_BEGIN_KEYWORD = "!STUDENT_DONOT_BEGIN"
 STUDENT_DONOT_END_KEYWORD = "!STUDENT_DONOT_END"
 REPLACE_LINE_PATTERN = r"//!STUDENT_WILL_SEE_AS \((.*)\)"
 
-def process_file(file_path, dry_run):
+def process_file(file_path, mode):
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
@@ -62,6 +60,8 @@ def process_file(file_path, dry_run):
                 return False, 0
             in_remove_block = True
             lines_removed += 1
+            if mode == "comment":
+                new_lines.append(f"// {line}")
             continue
 
         # Check if we need to end removing a block
@@ -71,25 +71,35 @@ def process_file(file_path, dry_run):
                 return False, 0
             in_remove_block = False
             lines_removed += 1
-            new_lines.append("/* TODO: your code here */\n")
+            if mode == "comment":
+                new_lines.append(f"// {line}")
+            else:
+                new_lines.append("/* TODO: your code here */\n")
             continue
 
         # Skip lines in the remove block
         if in_remove_block:
             lines_removed += 1
+            if mode == "comment":
+                new_lines.append(f"// {line}")
             continue
 
         # Remove single line containing the STUDENT_DONOT_SEE_KEYWORD
         if STUDENT_DONOT_SEE_KEYWORD in line:
             lines_removed += 1
             consecutive_STUDENT_DONOT_SEE = True
+            if mode == "comment":
+                new_lines.append(f"// {line}")
             continue
 
         # Replace line with REPLACE_LINE_PATTERN
         match = re.search(REPLACE_LINE_PATTERN, line)
         if match:
             replacement_text = match.group(1)
-            new_lines.append(replacement_text + " /* TODO: replace this */ \n")
+            if mode == "comment":
+                new_lines.append(f"{replacement_text} //!STUDENT_SHOULD_WRITE({line.strip()})\n")
+            else:
+                new_lines.append(replacement_text + " /* TODO: replace this */ \n")
             lines_removed += 1
             continue
 
@@ -107,7 +117,7 @@ def process_file(file_path, dry_run):
         return False, 0
 
     # Write the modified content back to the file if changes were made and not in dry-run mode
-    if lines_removed > 0 and not dry_run:
+    if lines_removed > 0 and mode != "dry-run":
         with open(file_path, 'w') as file:
             file.writelines(new_lines)
     
@@ -115,7 +125,7 @@ def process_file(file_path, dry_run):
 
 # Command line argument parsing
 parser = argparse.ArgumentParser(description="Process C and asm files to remove specific lines or blocks.")
-parser.add_argument("--dry-run", action="store_true", help="Run the script without making any changes to the files")
+parser.add_argument("--mode", choices=["dry-run", "comment", "remove"], required=True, help="Specify the mode of operation: dry-run, comment, or remove")
 args = parser.parse_args()
 
 # Summary information
@@ -128,7 +138,7 @@ for root, _, files in os.walk(directory):
     for file_name in files:
         if file_name.endswith(('.c', '.h', '.S', 'Makefile', '.ld')):
             file_path = os.path.join(root, file_name)
-            success, lines_removed = process_file(file_path, args.dry_run)
+            success, lines_removed = process_file(file_path, args.mode)
             if not success:
                 print(f"Processing failed for {file_path}")
                 break
