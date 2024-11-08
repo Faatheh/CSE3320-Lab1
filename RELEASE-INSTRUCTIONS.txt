@@ -19,7 +19,7 @@ do all these on the main branch. (JUST DON'T COMMIT)
 
 
 # will push to the remote github br, delete any history 
-./prep-push.sh 
+./scripts/prep-push.sh 
 
 # reset local main br
 git reset --hard

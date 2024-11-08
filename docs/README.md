@@ -17,6 +17,9 @@ Students: see [quests-lab1.md](quests-lab1.md)
 
 ### Features
 
+A single CPU core can boot, print messages from UART, and display pixels. Interrupts work, enabling periodic rendering of a simple "donut" animation. Everything runs in privileged mode (EL1).
+
+
 ✅ UART/printf 
 ✅ Timers (&multiplexing)
 ✅ Interrupts
@@ -33,15 +36,13 @@ To clean up:
 ./cleanall.sh
 ```
 
-(Optional) To configure the kernel, change `kernel/param.h`.
-
 To build everything:
 ```sh
 export PLAT=rpi3qemu
 ./makeall.sh
 ```
 
-To run:
+To run on qemu:
 ```sh
 ./run-rpi3qemu.sh
 ```
@@ -55,7 +56,7 @@ To clean up:
 
 To build everything:
 ```sh
-export PLAT=rpi
+export PLAT=rpi3
 ./makeall.sh
 ```
 
