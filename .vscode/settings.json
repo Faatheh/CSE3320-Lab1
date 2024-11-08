@@ -1,15 +1,6 @@
 {
     "files.exclude": {
         // "docs/**": true,
-        "src/exp1/**": true,
-        "src/exp2/**": true,
-        "src/exp3/**": true,
-        "src/exp4?/**": true,
-        "src/exp5/**": true,
-        "src/exp6/**": true,
-        "src/exp7/**": true,
-        "src/exp8/**": true,
-        "src/exp9/**": true,
         "old/**": true,
         "src/current/usr/newlib": true,
         "src/experimental/**": true,
@@ -17,15 +8,6 @@
     }, 
     "search.exclude": {
         // "docs/**": true,
-        "src/exp1/**": true,
-        "src/exp2/**": true,
-        "src/exp3/**": true,
-        "src/exp4?/**": true,
-        "src/exp5/**": true,
-        "src/exp6/**": true,
-        "src/exp7/**": true,
-        "src/exp8/**": true,
-        "src/exp9/**": true,
         "old/**": true,
         "src/current/usr/newlib": true,
         "src/current/addon/usb/**": true,  // usb 
@@ -59,23 +41,32 @@
     },
     "todo-tree.general.tags": [
         "quest",
-        "!STUDENT_"
+        "!STUDENT_",
+        "TODO"
         // "xzl"
         ],
+    // https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree
     "todo-tree.highlights.customHighlight": {
         "quest": {
-            "icon": "question",
-            "type": "text",
+            "icon": "question",  // https://octicons.github.com/
+            "type": "line",     // highlights the entire line containing the tag
             "foreground": "red",
             "background": "yellow",
             "iconColour": "blue"
         },
+        "TODO": {
+            "icon": "checklist",
+            "type": "tag",     // highlights the entire line containing the tag
+            "foreground": "black",
+            "background": "lightblue",
+            "iconColour": "black"
+        },
         "!STUDENT_": {
-            "icon": "circle-slash",
+            // "icon": "circle-slash",
             "type": "text",
             "foreground": "red",
             "background": "yellow",
-            "iconColour": "blue"
+            // "iconColour": "blue"
         }
     }
 }
