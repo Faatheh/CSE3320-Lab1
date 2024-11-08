@@ -168,6 +168,9 @@ sync_invalid_el0_64:
 irq_invalid_el0_64:
 	handle_invalid_entry  IRQ_INVALID_EL0_64
 
+irq_invalid_el1h:
+	handle_invalid_entry  IRQ_INVALID_EL1h
+	
 fiq_invalid_el0_64:
 	handle_invalid_entry  FIQ_INVALID_EL0_64
 
