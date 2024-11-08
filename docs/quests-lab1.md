@@ -327,7 +327,7 @@ build time (kernel.c) ...
 
 ## Quest05: textual donut
 
-OVERVIEW: you will bring up sys_timer, needed for timed animation.
+OVERVIEW: you will bring up sys_timer, which provide delays for timed animation. But no interrupts enabled yet.
 
 - in `timer.c`, complete the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
@@ -410,6 +410,7 @@ OVERVIEW: you will bring up the sys_timer irq, needed for timed animation.
 
 - in entry.S, complete the assembly macro `kernel_entry`, with the help of GDB and AI.
 
+- in kernel_main(), enable the CPU irq. Look for an existing function in `util.S`.
 
 CHECKPOINT. with the help of GDB or debug print, verify that the timer irq is fired:
     i.e. `handle_irq()` (irq.c) is called. Understand why is `handle_irq()` called just one-shoot or periodically. 
