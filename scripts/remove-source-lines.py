@@ -41,7 +41,7 @@ directory = "."
 STUDENT_DONOT_SEE_KEYWORD = "!STUDENT_DONOT_SEE"
 STUDENT_DONOT_BEGIN_KEYWORD = "!STUDENT_DONOT_BEGIN"
 STUDENT_DONOT_END_KEYWORD = "!STUDENT_DONOT_END"
-REPLACE_LINE_PATTERN = r"(.*)//!STUDENT_WILL_SEE_AS \((.*)\)"
+REPLACE_LINE_PATTERN = r"(.*)\s*//!STUDENT_WILL_SEE_AS\s*\((.*)\)"
 
 def process_file(file_path, mode):
     with open(file_path, 'r') as file:
