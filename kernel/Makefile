@@ -59,7 +59,7 @@ COPS += -O2
 all : $(KERNEL)
 
 clean :
-	rm -rf $(BUILD_DIR) *.img 
+	rm -rf $(BUILD_DIR) *.img *.asm *.sym
 
 $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 	@echo  KERNEL CC $< "->" $@
