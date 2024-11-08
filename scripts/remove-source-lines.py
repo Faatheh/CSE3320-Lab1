@@ -29,9 +29,9 @@ import re
     becomes
     // (source...) // !STUDENT_DONOT_SEE   
 
-    ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
+    XXXX	  //!STUDENT_WILL_SEE_AS (YYY)
     becomes 
-    ventry	irq_invalid_el1h //!STUDENT_SHOULD_WRITE(ventry	el1_irq)
+    YYY /* TODO: replace this */ // !STUDENT_SHOULD_WRITE(XXXX)
 '''
 
 # Define the directory containing the files
@@ -41,7 +41,7 @@ directory = "."
 STUDENT_DONOT_SEE_KEYWORD = "!STUDENT_DONOT_SEE"
 STUDENT_DONOT_BEGIN_KEYWORD = "!STUDENT_DONOT_BEGIN"
 STUDENT_DONOT_END_KEYWORD = "!STUDENT_DONOT_END"
-REPLACE_LINE_PATTERN = r"//!STUDENT_WILL_SEE_AS \((.*)\)"
+REPLACE_LINE_PATTERN = r"(.*)//!STUDENT_WILL_SEE_AS \((.*)\)"
 
 def process_file(file_path, mode):
     with open(file_path, 'r') as file:
@@ -61,7 +61,7 @@ def process_file(file_path, mode):
             in_remove_block = True
             lines_removed += 1
             if mode == "comment":
-                new_lines.append(f"// {line}")
+                new_lines.append(f"// {line}")                
             continue
 
         # Check if we need to end removing a block
@@ -73,8 +73,7 @@ def process_file(file_path, mode):
             lines_removed += 1
             if mode == "comment":
                 new_lines.append(f"// {line}")
-            else:
-                new_lines.append("/* TODO: your code here */\n")
+            new_lines.append("/* TODO: your code here */\n")
             continue
 
         # Skip lines in the remove block
@@ -95,11 +94,13 @@ def process_file(file_path, mode):
         # Replace line with REPLACE_LINE_PATTERN
         match = re.search(REPLACE_LINE_PATTERN, line)
         if match:
-            replacement_text = match.group(1)
+            original_text = match.group(1).strip()
+            replacement_text = match.group(2).strip()
+            breakpoint()
             if mode == "comment":
-                new_lines.append(f"{replacement_text} //!STUDENT_SHOULD_WRITE({line.strip()})\n")
+                new_lines.append(f"{replacement_text} /* TODO: replace this */ // !STUDENT_SHOULD_WRITE({original_text})\n")
             else:
-                new_lines.append(replacement_text + " /* TODO: replace this */ \n")
+                new_lines.append(f"{replacement_text} /* TODO: replace this */\n")
             lines_removed += 1
             continue
 
