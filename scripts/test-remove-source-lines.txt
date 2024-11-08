@@ -13,4 +13,6 @@ ventry	el1_irq						//!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
 
 sys_timer_irq();         //!STUDENT_DONOT_SEE
 
+	sys_timer_irq();         //!STUDENT_DONOT_SEE
+
 // sys_timer_irq_simple();  //!STUDENT_DONOT_SEE
