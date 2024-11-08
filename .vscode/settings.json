@@ -31,7 +31,6 @@
         "src/current/addon/usb/**": true,  // usb 
         "src/experimental/**": true,        
         "*/*.asm": true,
-        ".*": true,
         "*.sym": true,
         "*.dis": true,
         "*.d": true, 
