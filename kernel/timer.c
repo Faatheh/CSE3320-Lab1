@@ -98,7 +98,7 @@ unsigned long current_counter() {
 	// quest: textual donut. 
 	// read from TIMER_CHI and TIMER_CLO and return a 64bit counter
 	// (assume these two are consistent, since the clock is only 1MHz)
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !STUDENT_DONOT_SEE
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  // !STUDENT_WILL_SEE_AS( return 0; )
 }
 
 ////////////  delay, timekeeping 
@@ -328,9 +328,9 @@ void sys_timer_irq(void)
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
 			// NB: exec the callback w/ timerlock held
-			ret = (*h)(t, timers[t].param, timers[t].context); //!STUDENT_DONOT_SEE
+			ret = (*h)(t, timers[t].param, timers[t].context); //!STUDENT_WILL_SEE_AS( ret = 0; )
 			if (ret==1) { // restart the ktimer in place
-				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!STUDENT_DONOT_SEE
+				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!STUDENT_WILL_SEE_AS( timers[t].elapseat = 0; )
 				adjust_sys_timer(); 
 			} else 
 				timers[t].handler = 0; 
