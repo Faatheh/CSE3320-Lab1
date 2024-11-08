@@ -1,6 +1,8 @@
 Nov 2024
 UPDATE: 
 
+# make sure on the main branch, make sure it's clean
+
 
 do all these on the main branch. (JUST DON'T COMMIT)
 
