@@ -11,14 +11,15 @@ This is one part of the UVA-OS class (CS4414/CS6456).
 
 Students: see [quests-lab1.md](quests-lab1.md)
 
-## WORLD1
-<img src="donut-pixel.gif" alt="description" width="200">
-<img src="image-1.png" alt="description" width="500">
+## GALLERY
+<img src="donut-text.gif" alt="description" height="200">
+<img src="donut-pixel.gif" alt="description" height="200">
 
-### Features
+## DESIGNS
 
 A single CPU core can boot, print messages from UART, and display pixels. Interrupts work, enabling periodic rendering of a simple "donut" animation. Everything runs in privileged mode (EL1).
 
+<img src="image-1.png" alt="description" width="500">
 
 ✅ UART/printf 
 ✅ Timers (&multiplexing)
