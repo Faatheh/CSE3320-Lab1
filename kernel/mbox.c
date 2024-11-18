@@ -117,10 +117,11 @@ struct fb_struct the_fb = {
     // these are just initial fb sizes; app will ask for diff
     // sizes based on their logic. so we keep them small for qemu
     // to avoid a big blank screen upon boot
-    .width = 320,
-    .height = 240, 
-    .vwidth = 320, 
-    .vheight = 240,
+    // Nov 2024: 320x240 seems to cause QEMU bug and segfault. cf staged/notes-qemu-fb-res.txt    
+    .width = 640,
+    .height = 480, 
+    .vwidth = 640, 
+    .vheight = 480,
 #else // rpi3 hw
     // =0 same as the detected scr dim, see below
     .width  = 0, // 1024,  

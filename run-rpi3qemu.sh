@@ -6,7 +6,7 @@
 # https://www.qemu.org/docs/master/system/arm/raspi.html
 
 # qemu v5.2, used by cs4414 Sp24 --- too old
-QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64
+# QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64
 
 # qemu6, default installed on Ubuntu 2204
 # seems good
@@ -18,7 +18,10 @@ QEMU6=qemu-system-aarch64
 # incomplete build under wsl? no graphics?? to fix (Apr 2024)
 #QEMU8=~/qemu-8.2-apr2024/build/qemu-system-aarch64   
 
+QEMU9="/home/student/qemu-9.1.1/build/qemu-system-aarch64"
+
 QEMU=${QEMU6}
+# QEMU=${QEMU9}  # for debugging qemu's own problem. build from source & debugging info
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 
