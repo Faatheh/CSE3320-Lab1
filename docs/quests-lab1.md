@@ -438,7 +438,7 @@ Reference below. Note: yours must meet the [requirements](submission.md).
 
 ![donut-pixel](donut-pixel.gif)
 
-NOTE: on both WSL2 and VM, I found qemu crash occasionally (likely due to qemu's own bug). 
+NOTE: on both WSL2 and VM, I found qemu crash occasionally with a segmentation fault (likely due to qemu's own bug). 
 The frequency on VM seems higher. 
 If it happens, just start a new qemu instance. (Confirmed: this even happened for newest QEMU9)
 
