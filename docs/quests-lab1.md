@@ -438,11 +438,18 @@ Reference below. Note: yours must meet the [requirements](submission.md).
 
 ![donut-pixel](donut-pixel.gif)
 
-NOTE: on both WSL2 and VM, I found qemu crash occasionally with a segmentation fault (likely due to qemu's own bug). 
-The frequency on VM seems higher. 
-If it happens, just start a new qemu instance. (Confirmed: this even happened for newest QEMU9)
+NOTE: you may see qemu crash occasionally with a segmentation fault (segfault) like this. 
+After that, the terminal becomes unusable, not echoing any key inputs. 
 
 ![qemu-crash](qemu-crash.jpg)
+
+It's a QEMU bug. My analysis is in this [doc](fb-bug/notes-qemu-fb-bug.md); 
+VM users should be fine: I already applied my fix to the QEMU9 shipped with the VM image. 
+For WSL2 users, you just kill the faulty QEMU and start a new one
+(the segfault won't happen every time); 
+if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
+
+
 
 
 ## Quest13 (side): change the donut's color tone to your like 
