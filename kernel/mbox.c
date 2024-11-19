@@ -6,6 +6,11 @@
     use mailbox "property" interface
     cf: https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
 
+    qemu code (buggy, see docs/notes-qemu-fb.md)
+    hw/display/bcm2835_fb.c
+    https://github.com/Xilinx/qemu/blob/master/hw/display/bcm2835_fb.c
+
+
     CREDITS, more ref: see the end of this file
 */
 
@@ -118,10 +123,14 @@ struct fb_struct the_fb = {
     // sizes based on their logic. so we keep them small for qemu
     // to avoid a big blank screen upon boot
     // Nov 2024: 320x240 seems to cause QEMU bug and segfault. cf staged/notes-qemu-fb-res.txt    
-    .width = 640,
-    .height = 480, 
-    .vwidth = 640, 
-    .vheight = 480,
+    // .width = 640,
+    // .height = 480, 
+    // .vwidth = 640, 
+    // .vheight = 480,
+    .width = 320,
+    .height = 240, 
+    .vwidth = 320, 
+    .vheight = 240,
 #else // rpi3 hw
     // =0 same as the detected scr dim, see below
     .width  = 0, // 1024,  

@@ -5,6 +5,10 @@
 # hw devices implemented
 # https://www.qemu.org/docs/master/system/arm/raspi.html
 
+# must do this 
+# https://github.com/ros2/ros2/issues/1406
+unset GTK_PATH
+
 # qemu v5.2, used by cs4414 Sp24 --- too old
 # QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64
 
@@ -20,8 +24,8 @@ QEMU6=qemu-system-aarch64
 
 QEMU9="/home/student/qemu-9.1.1/build/qemu-system-aarch64"
 
-QEMU=${QEMU6}
-# QEMU=${QEMU9}  # for debugging qemu's own problem. build from source & debugging info
+#QEMU=${QEMU6}
+QEMU=${QEMU9}  # for debugging qemu's own problem. build from source & debugging info
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 

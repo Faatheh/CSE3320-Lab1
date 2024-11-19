@@ -5,9 +5,16 @@ unset GTK_PATH
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 
-gdb -nx --args \
+# gdb -nx --args \
+# /home/student/qemu-9.1.1/build/qemu-system-aarch64 \
+# -M raspi3b \
+#     -kernel ${KERNEL} -serial null -serial mon:stdio \
+#     -d int -D qemu.log 
+
+
+gdb -nx \
+--args \
 /home/student/qemu-9.1.1/build/qemu-system-aarch64 \
 -M raspi3b \
     -kernel ${KERNEL} -serial null -serial mon:stdio \
     -d int -D qemu.log 
-
