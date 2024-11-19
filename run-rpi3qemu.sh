@@ -1,11 +1,6 @@
-# cf for rpi3 qemu: 
-#  https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/qemu-64.sh
-#  -sd sd.bin
+# Notes: see EOF
 
-# hw devices implemented
-# https://www.qemu.org/docs/master/system/arm/raspi.html
-
-# must do this 
+# must do this for Linux + VSCode
 # https://github.com/ros2/ros2/issues/1406
 unset GTK_PATH
 
@@ -13,19 +8,21 @@ unset GTK_PATH
 # QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64
 
 # qemu6, default installed on Ubuntu 2204
-# seems good
 QEMU6=qemu-system-aarch64
 
-# qemu8, apr 2024
-# good
-#QEMU8=/u/xl6yq/teaching/p1-kernel-workspace/qemu-8.2-apr2024/build/qemu-system-aarch64 
-# incomplete build under wsl? no graphics?? to fix (Apr 2024)
+# qemu8, apr 2024 (incomplete build under wsl? no graphics?? to fix (Apr 2024)
 #QEMU8=~/qemu-8.2-apr2024/build/qemu-system-aarch64   
 
+# sp25, containing our own fix
 QEMU9="/home/student/qemu-9.1.1/build/qemu-system-aarch64"
 
-#QEMU=${QEMU6}
-QEMU=${QEMU9}  # for debugging qemu's own problem. build from source & debugging info
+if [ -x "${QEMU9}" ]; then
+    QEMU=${QEMU9}
+else
+    QEMU=${QEMU6}   # default 
+fi
+
+#########################################
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 
@@ -91,4 +88,10 @@ else    # default ...
     qemu_full
 fi
 
-    
+#############################
+
+# cf for rpi3 qemu: 
+#  https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/qemu-64.sh
+
+# hw devices implemented
+# https://www.qemu.org/docs/master/system/arm/raspi.html

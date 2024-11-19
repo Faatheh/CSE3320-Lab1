@@ -122,7 +122,7 @@ sudo apt install -y gdb-multiarch
 
 Install the "dashboard" enhancement
 ````
-wget -P ~ https://raw.githubusercontent.com/fxlin/gdb-dashboard-aarch64/master/.gdbinit
+wget -P ~ https://raw.githubusercontent.com/fxlin/uva-os-main/main/.gdbinit
 ````
 
 ### install qemu 
@@ -446,7 +446,7 @@ After that, the terminal becomes unusable, not echoing any key inputs.
 It's a QEMU bug. My analysis is in this [doc](fb-bug/notes-qemu-fb-bug.md); 
 VM users should be fine: I already applied my fix to the QEMU9 shipped with the VM image. 
 For WSL2 users, you just kill the faulty QEMU and start a new one
-(the segfault won't happen every time); 
+(the segfault won't happen every time, and it seems less frequent than on VM/Linux); 
 if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 

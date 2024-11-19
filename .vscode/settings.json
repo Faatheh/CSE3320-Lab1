@@ -9,6 +9,7 @@
     "search.exclude": {
         // "docs/**": true,
         "old/**": true,
+        "staged/**": true,
         "src/current/usr/newlib": true,
         "src/current/addon/usb/**": true,  // usb 
         "src/experimental/**": true,        

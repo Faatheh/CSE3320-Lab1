@@ -15,22 +15,35 @@ echo "  Example gdb commands -- "
 echo "      (gdb) file kernel/build/kernel8.elf"
 echo "      (gdb) target remote :${MYGDBPORT}"
 echo "      (gdb) layout asm"
-echo "  You may want to have a custom ~/.gdbinit "
+echo "  To avoid typing every time, have a custom ~/.gdbinit "
 echo "	Details: https://fxlin.github.io/p1-kernel/gdb/"
 echo " ------------------------------------------------"
 
-# /cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64 -M raspi3 \
-# -kernel ./kernel8-rpi3qemu.img -serial null -serial mon:stdio -nographic -gdb tcp::${MYGDBPORT} -S
+# must do this for Linux + VSCode
+# https://github.com/ros2/ros2/issues/1406
+unset GTK_PATH
 
-# qemu v5.2, currently used by 4414
-QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64 \
+# qemu v5.2, used by cs4414 Sp24 --- too old
+# QEMU5=/cs4414-shared/qemu/aarch64-softmmu/qemu-system-aarch64
 
+# qemu6, default installed on Ubuntu 2204
 QEMU6=qemu-system-aarch64
 
-# qemu8, apr 2024
-QEMU8=/u/xl6yq/teaching/p1-kernel-workspace/qemu-8.2-apr2024/build/qemu-system-aarch64
+# qemu8, apr 2024 (incomplete build under wsl? no graphics?? to fix (Apr 2024)
+#QEMU8=~/qemu-8.2-apr2024/build/qemu-system-aarch64   
 
-QEMU=${QEMU6}
+# sp25, containing our own fix
+QEMU9="/home/student/qemu-9.1.1/build/qemu-system-aarch64"
+
+if [ -x "${QEMU9}" ]; then
+    QEMU=${QEMU9}
+else
+    QEMU=${QEMU6}   # default 
+fi
+
+echo "Using QEMU: ${QEMU}"
+
+#########################################
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 
