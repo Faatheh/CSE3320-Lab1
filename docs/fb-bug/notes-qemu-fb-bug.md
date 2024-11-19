@@ -1,39 +1,47 @@
-notes-qemu-fb-res.txt
+
+# Notes on a QEMU rpi framebuffer bug
 
 nov 2024
 
+## Symptom
+QEMU occasionally segfaults when the guest kernel changes the framebuffer resolution via mailbox (mbox).
 
-qemu (up to 9) have the following race condition between the two functions in 
-hw/display/bcm2835_fb.c
+## Analysis
+QEMU (up to version 9) has a race condition between two functions in `hw/display/bcm2835_fb.c`:
 
-fb_update_display()
-bcm2835_fb_reconfigure() 
+- `fb_update_display()`
+- `bcm2835_fb_reconfigure()`
 
-when gthe guest (kernel) tries to chang the framebuffer resolution, the display updateer (via framebuffer_update_display <- ... timers(), see call stakc below) could stil be using stale framebuffer (?) and resolution, even after the funciton bcm2835_fb_reconfigure() 
-resizse the framebuffer (via qemu_console_resize()) and potentially invalidates the previously framebuffer and resolution. therefore framebuffer_update_display() will operate on invalidate buffer --> segfault. 
+When the guest kernel changes the framebuffer resolution, the display updater (`framebuffer_update_display()`, called via timers — see call stack below) may still operate on stale framebuffer data and resolution settings. This happens even after `bcm2835_fb_reconfigure()` resizes the framebuffer using `qemu_console_resize()` and potentially invalidates the previous framebuffer and resolution. Consequently, `framebuffer_update_display()` may access an invalid buffer, leading to a segfault.
 
+The existing code uses a simple flag (`BCM2835FBState::lock`), which is a regular variable—not even atomic and without memory barriers. This approach is ineffective. It's unclear what assumptions were made when the code was initially written—possibly, the assumption that `bcm2835_fb_reconfigure()` and `framebuffer_update_display()` would be called from the same thread. However, that assumption is incorrect, resulting in the observed race condition.
 
-existing code has uses a simple flags: BCM2835FBState::lock (it's a comon var, not even atomic, no memory barrier). that apparently won't work. I dont know what assumption was made when the code was written in the first palce -- e.g. do they assume ramebuffer_update_display() anmd framebuffer_update_display() 
-will be called from the same thread? 
+## Solution
+Simply adding a lock (e.g., for `BCM2835FBConfig::xres` and `yres`) results in occasional deadlocks. This happens because `fb_update_display()` calls `framebuffer_update_display()`, which tries to acquire a "QEMU CPU" lock, while that lock is already held by the thread executing `bcm2835_fb_reconfigure()`. Specifically:
 
-anyway, that is apparently not the case. hence the race condition. 
+- **Thread A (`fb_update_display()`)**: Holds `new_lock`, then tries to acquire the CPU lock.
+- **Thread B (`bcm2835_fb_reconfigure()`)**: Holds the CPU lock, then tries to acquire `new_lock`.
 
-somiply add a lock (e.g. for BCM2835FBConfig::xres, yres) will result in deadlock (occaionsally). this is because fb_update_display() will call framebuffer_update_display(), which will try to grab a "qemu cpu" lock (which I dont fully understand, see sgtack trace below); 
-and that locks seems already held by the thread calling bcm2835_fb_reconfigure(). 
-thread A, fb_update_display(): held new_lock, try to get "cpu lock"
-threwad B, bcm2835_fb_reconfigure(): held "cpu lock", try to get new_lock 
+The solution that works is to move `qemu_console_resize()` out of `bcm2835_fb_reconfigure()`. It seems that `qemu_console_resize()` manipulates the framebuffer directly. Instead, `bcm2835_fb_reconfigure()` now only updates the configuration values and uses a flag to indicate that the resolution has changed. Upon seeing this flag, `fb_update_display()` calls `qemu_console_resize()`. Importantly, the current update cycle should be skipped, as accessing potentially stale information during the resize still causes a segfault. Skipping to the next update cycle allows the system to stabilize.
 
-the solution that I find works, is to remove qemu_console_resize() out of bcm2835_fb_reconfigure(). without looking into details, i assume qemu_console_resize() will actually aminpulate the fgramebuffer. 
-bcm2835_fb_reconfigure() simpley change the config value, using a flag signaling res has been changed; 
-seeing the flag, fb_update_display() calls qemu_console_resize() -- and it's important that it should skpi the current "update" cycle (otherwise segfault still occurs). this coudl be because there's still some stale information not changed with qemu_console_resize() -- until the next update cycle. 
+There are still some caveats (noted in the code), but this solution seems to work reliably as of now.
 
-there's still some cavaet (see code), but it seems to work as of now. 
 
 ## code 
 
-from qemu-9.1.1 
+(based on qemu-9.1.1)
 
-docs/bcm2835_fb.{c|h}
+docs/fb-bug/bcm2835_fb.{c|h}
+
+test scripts
+
+```
+# for debug qemu
+scripts/debug-qemu-itself.sh     
+
+# for stress test
+scripts/stress-qemu.sh.sh     
+```
 
 ## segfault call stack 
 
@@ -46,7 +54,7 @@ docs/bcm2835_fb.{c|h}
     (ds=<optimized out>, mem_section=<optimized out>, cols=640, rows=480, src_width=1280, dest_row_pitch=2560, dest_col_pitch=0, invalidate=1, fn=0x5555559ce250 <draw_line_src16>, opaque=0x7ffff3013970, first_row=0x7fffffffdd20, last_row=0x7fffffffdd24)
     at ../hw/display/framebuffer.c:107
 #3  0x00005555559ce044 in fb_update_display (opaque=0x7ffff3013970) at ../hw/display/bcm2835_fb.c:203
-
+```
 
 ## deadlock
 
@@ -54,6 +62,7 @@ obtained via "scripts/debug-qemu-itself.sh"; once deadlock, do `killall -SIGSTOP
 
 ### thread 1 
 
+```
 #0  __futex_abstimed_wait_common64
     (private=0, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0x555557421e88 <qemu_work_cond+40>)
     at ./nptl/futex-internal.c:57
@@ -94,7 +103,7 @@ obtained via "scripts/debug-qemu-itself.sh"; once deadlock, do `killall -SIGSTOP
 #22 0x00007ffff5a29e40 in __libc_start_main_impl
      (main=0x5555558f8270 <main>, argc=13, argv=0x7fffffffe058, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimi--Type <RET> for more, q to quit, c to continue without paging--q
 Quit
-
+```
 
 ### thread 2
 ```
