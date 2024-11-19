@@ -20,6 +20,10 @@ fi
 # Set the repository URL
 GIT_REPO_URL="https://github.com/fxlin/p1-kernel-${LAB}.git"
 
+if [ "$LAB" == "main" ]; then
+    GIT_REPO_URL="https://github.com/fxlin/uva-os-main"
+fi
+
 # Create a temporary directory
 TEMP_DIR=$(mktemp -d)
 
@@ -43,7 +47,8 @@ cd "$TEMP_DIR"
 git add "$FILE"
 
 # Commit the changes
-COMMIT_MSG="Add or update file $FILE"
+REPO_NAME=$(basename -s .git `git config --get remote.origin.url`)
+COMMIT_MSG="Got cherry-pushed $FILE from $REPO_NAME"
 git commit -m "$COMMIT_MSG"
 
 # Push the changes to the remote repository
