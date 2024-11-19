@@ -100,6 +100,8 @@ BIN_OBJS += $(BUILD_DIR)/font_psf.o
 DEP_FILES = $(C_OBJS:%.o=%.d)
 -include $(DEP_FILES)
 
+BOOTFS_DIR=/media/$(USER)/bootfs
+
 $(KERNEL): $(LINKSCR) $(C_OBJS) $(ASM_OBJS) $(BIN_OBJS)
 	$(VB) echo "KERNEL LD"
 	$(VB) $(ARMGNU)-ld -T $(LINKSCR) -o $(BUILD_DIR)/kernel8.elf $(C_OBJS) $(ASM_OBJS) $(BIN_OBJS)
@@ -107,8 +109,21 @@ $(KERNEL): $(LINKSCR) $(C_OBJS) $(ASM_OBJS) $(BIN_OBJS)
 	$(VB) $(ARMGNU)-objdump -dS $(BUILD_DIR)/kernel8.elf > kernel8.asm
 	$(VB) nm --numeric-sort $(BUILD_DIR)/kernel8.elf > kernel8.sym
 	$(VB) echo KERNEL INSTALL
-
-# easier to copy the kernel img to the sd card 
-ifeq ($(PLAT),rpi3) 	
-	cp $(KERNEL) /mnt/d/tmp/$(KERNEL)
-endif	
+	# WSL2: copy the kernel img to local dir, if exists
+	$(VB) if [ -d /mnt/d/tmp ]; then \
+		cp $(KERNEL) /mnt/d/tmp/$(KERNEL); \
+	fi
+	# VM/Linux: copy to dir like "/media/student/bootfs/"
+	$(VB) if [ -d $(BOOTFS_DIR) ]; then \
+		if [ ! -f $(BOOTFS_DIR)/$(KERNEL) ]; then \
+			echo "Warning: Kernel $(KERNEL) does not exist in $(BOOTFS_DIR). Do you want to copy it there? (y/n)"; \
+			read CONFIRMATION; \
+			if [ "$$CONFIRMATION" = "y" ]; then \
+				cp $(KERNEL) $(BOOTFS_DIR)/$(KERNEL); \
+			else \
+				echo "Skipping kernel copy to $(BOOTFS_DIR)."; \
+			fi; \
+		else \
+			cp $(KERNEL) $(BOOTFS_DIR)/$(KERNEL); \
+		fi; \
+	fi
