@@ -12,12 +12,14 @@ GIT_COMMIT=$(git rev-parse --short HEAD)
 
 # Check if the --no-code argument is passed
 if [[ "$*" == *--no-code* ]]; then
-    EXCLUDES="--exclude='kernel' --exclude='usr' --exclude='scripts'"
+    EXCLUDES="--exclude=kernel --exclude=usr --exclude=scripts"
     # Insert a new line after the 1st line in docs/README.md
     sed -i '1a ## To UVA students: the code will become available in Sp25' docs/README.md
 else
     EXCLUDES=""
 fi
+
+rm -rf $DEST_DIR
 
 # Mirror the current directory to /tmp/prep-push with exclusions
 rsync -av --delete \
@@ -38,8 +40,9 @@ rsync -av --delete \
     --exclude='.github' \
     --exclude='docs/archived' \
     --exclude='.gdb_history' \
-    ${EXCLUDES} \
+    $EXCLUDES \
     "$SRC_DIR/" "$DEST_DIR/"
+
     # --exclude='.vscode' \
 
 

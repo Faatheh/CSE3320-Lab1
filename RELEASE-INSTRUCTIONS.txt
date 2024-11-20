@@ -19,7 +19,10 @@ do all these on the main branch. (JUST DON'T COMMIT)
 
 
 # will push to the remote github br, delete any history 
+# default: relsae the code 
 ./scripts/prep-push.sh 
+# or, only release doc, webpage, excluding the code (for pre release)
+./scripts/prep-push.sh --no-code
 
 # reset local main br
 git reset --hard
