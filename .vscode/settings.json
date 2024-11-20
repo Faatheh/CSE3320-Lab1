@@ -44,7 +44,7 @@
     "todo-tree.general.tags": [
         "quest",
         "!STUDENT_",
-        "TODO"
+        "STUDENT_TODO"
         // "xzl"
         ],
     // https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree
