@@ -12,31 +12,31 @@ import sys
 
         (source...) // !STUDENT_DONOT_SEE   
         becomes
-        /* TODO: your code here */
+        /* STUDENT_TODO: your code here */
 
         // !STUDENT_DONOT_BEGIN
         (source...) 
         // !STUDENT_DONOT_END
         becomes
-        /* TODO: your code here */
+        /* STUDENT_TODO: your code here */
 
         ventry	el1_irq	  //!STUDENT_WILL_SEE_AS (ventry	irq_invalid_el1h)
         becomes 
-        ventry	irq_invalid_el1h /* TODO: replace this */
+        ventry	irq_invalid_el1h /* STUDENT_TODO: replace this */
         
         in Makefile, the syntax is: 
         (source ...) # !STUDENT_DONOT_SEE
         becomes 
-        # TODO: your code here
+        # STUDENT_TODO: your code here
 
         XXXX # !STUDENT_WILL_SEE_AS (YYYY)
         becomes 
-        YYYY # TODO: replace this
+        YYYY # STUDENT_TODO: replace this
 
         
         #!STUDENT_WILL_SEE_AS(YYYY)
         becomes 
-        YYYY # TODO: replace this
+        YYYY # STUDENT_TODO: replace this
 
     when --mode=comment:
 
@@ -46,16 +46,16 @@ import sys
 
         XXXX	  //!STUDENT_WILL_SEE_AS (YYY)
         becomes 
-        YYY /* TODO: replace this */ // !STUDENT_SHOULD_WRITE(XXXX)
+        YYY /* STUDENT_TODO: replace this */ // !STUDENT_SHOULD_WRITE(XXXX)
 
         in Makefile, the syntax is: 
         (source ...) # !STUDENT_DONOT_SEE
         becomes 
-        # TODO: your code here
+        # STUDENT_TODO: your code here
 
         XXXX # !STUDENT_WILL_SEE_AS (YYYY)
         becomes 
-        YYYY # TODO: replace this !STUDENT_SHOULD_WRITE(XXXX)
+        YYYY # STUDENT_TODO: replace this !STUDENT_SHOULD_WRITE(XXXX)
 
     when --mode=dryrun, do the current --dry-run logic
 
@@ -88,7 +88,7 @@ def process_file(file_path, mode, write_to_stdout=False):
             if re.search(MAKEFILE_DONOT_SEE_PATTERN, line):
                 lines_removed += 1
                 if mode == "comment" or mode == "remove":
-                    new_lines.append(f"# TODO: your code here\n")
+                    new_lines.append(f"# STUDENT_TODO: your code here\n")
                 continue
 
             # Replace or comment lines with MAKEFILE_REPLACE_PATTERN
@@ -97,9 +97,9 @@ def process_file(file_path, mode, write_to_stdout=False):
                 original_text = match.group(1).strip()
                 replacement_text = match.group(2).strip()
                 if mode == "comment":
-                    new_lines.append(f"{replacement_text} # TODO: replace this !STUDENT_SHOULD_WRITE({original_text})\n")
+                    new_lines.append(f"{replacement_text} # STUDENT_TODO: replace this !STUDENT_SHOULD_WRITE({original_text})\n")
                 else:
-                    new_lines.append(f"{replacement_text} # TODO: replace this\n")
+                    new_lines.append(f"{replacement_text} # STUDENT_TODO: replace this\n")
                 lines_removed += 1
                 continue
 
@@ -125,7 +125,7 @@ def process_file(file_path, mode, write_to_stdout=False):
             lines_removed += 1
             if mode == "comment":
                 new_lines.append(f"// {line}")
-            new_lines.append(f"{last_indent}/* TODO: your code here */\n")
+            new_lines.append(f"{last_indent}/* STUDENT_TODO: your code here */\n")
             continue
 
         # Skip lines in the remove block
@@ -152,15 +152,15 @@ def process_file(file_path, mode, write_to_stdout=False):
             replacement_text = match.group(2).strip()
             last_indent = re.match(r"\s*", line).group(0)
             if mode == "comment":
-                new_lines.append(f"{replacement_text} /* TODO: replace this */ // !STUDENT_SHOULD_WRITE({original_text})\n")
+                new_lines.append(f"{replacement_text} /* STUDENT_TODO: replace this */ // !STUDENT_SHOULD_WRITE({original_text})\n")
             else:
-                new_lines.append(f"{replacement_text} /* TODO: replace this */\n")
+                new_lines.append(f"{replacement_text} /* STUDENT_TODO: replace this */\n")
             lines_removed += 1
             continue
 
         # Add TODO comment if consecutive lines with STUDENT_DONOT_SEE_KEYWORD were removed
         if consecutive_STUDENT_DONOT_SEE:
-            new_lines.append(f"{last_indent}/* TODO: your code here */\n")
+            new_lines.append(f"{last_indent}/* STUDENT_TODO: your code here */\n")
             consecutive_STUDENT_DONOT_SEE = False
 
         # Otherwise, keep the line
