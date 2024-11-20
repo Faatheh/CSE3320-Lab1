@@ -22,6 +22,8 @@ else
     QEMU=${QEMU6}   # default 
 fi
 
+echo "Using QEMU: ${QEMU}"
+
 #########################################
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
