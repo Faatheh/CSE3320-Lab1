@@ -10,6 +10,15 @@ DATE=$(date +%b%d-%Y)
 # Get the latest git commit hash
 GIT_COMMIT=$(git rev-parse --short HEAD)
 
+# Check if the --no-code argument is passed
+if [[ "$*" == *--no-code* ]]; then
+    EXCLUDES="--exclude='kernel' --exclude='usr' --exclude='scripts'"
+    # Insert a new line after the 1st line in docs/README.md
+    sed -i '1a ## To UVA students: the code will become available in Sp25' docs/README.md
+else
+    EXCLUDES=""
+fi
+
 # Mirror the current directory to /tmp/prep-push with exclusions
 rsync -av --delete \
     --exclude='*.zip' \
@@ -26,11 +35,13 @@ rsync -av --delete \
     --exclude='*.log' \
     --exclude='*.list' \
     --exclude='*.a' \
-    --exclude='.vscode' \
     --exclude='.github' \
     --exclude='docs/archived' \
     --exclude='.gdb_history' \
+    ${EXCLUDES} \
     "$SRC_DIR/" "$DEST_DIR/"
+    # --exclude='.vscode' \
+
 
 # Change to the destination directory
 cd "$DEST_DIR" || exit
