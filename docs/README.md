@@ -9,7 +9,7 @@ This is one part of the UVA-OS class (CS4414/CS6456).
 [WORLD4](https://github.com/fxlin/uva-os-world4) |
 [WORLD5](https://github.com/fxlin/uva-os-world5) 
 
-Students: see [quests-lab1.md](quests-lab1.md)
+### Students: see [quests-lab1.md](quests-lab1.md)
 
 ## GALLERY
 <img src="donut-text.gif" alt="description" height="200">
@@ -61,15 +61,7 @@ export PLAT=rpi3
 ./makeall.sh
 ```
 
-To copy the kernel image to `d:/trampframe`:
-```sh
-cp kernel8-rpi3.img /mnt/d/tmp/kernel8-rpi3.img
-```
+(One time): get a blank SD card, burn the provided image with Win32DiskImager, 
+balenaEtcher, or Raspberry Pi Imager. 
 
-Insert SD card, copy to SD card:
-```sh
-copy "d:\tmp\kernel8-rpi3.img" f:\kernel8-rpi3.img
-```
-
-Faster way:
-Copy `9999-download.bat` and `delay-exit.bat` to Windows desktop, then double-click `9999-download.bat`.
+Copy the kenrel image `kernel8.img` to the partition named `bootfs` and boot. 

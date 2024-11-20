@@ -9,7 +9,9 @@ layout: "post"
 
 Total estimated time: XXX hours
 
-![alt text](image-1.png)
+<!-- convert image-1.png -resize 500x image-1-resized.png -->
+
+![alt text](image-1-resized.png)
 
 | Quest Name | Description | Credits |
 |------------|-------------|---------|
