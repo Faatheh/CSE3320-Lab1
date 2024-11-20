@@ -11,7 +11,30 @@ Total estimated time: XXX hours
 
 ![alt text](image-1.png)
 
-## About this document
+| Quest Name | Description | Credits |
+|------------|-------------|---------|
+| [Quest01: setup](#quest01-setup) | Install necessary tools and set up the environment | 0 |
+| [Quest02: kernel image](#quest02-kernel-image) | Build and inspect the kernel image | 5 |
+| [Quest03: boot](#quest03-boot) | Complete boot.S to boot the kernel | 15 |
+| [Quest04: UART](#quest04-uart) | Bring up UART for kernel debugging | 15 |
+| [Quest05: textual donut](#quest05-textual-donut) | Implement system timer for timed animation | 10 |
+| [Quest06: OS logo](#quest06-os-logo) | Display OS logo and name on the screen | 10 |
+| [Quest07 (side): debug level](#quest07-side-debug-level) | Control debug messages using macros | 5 |
+| [Quest08 (side): framebuffer offsets](#quest08-side-framebuffer-offsets) | Explore framebuffer virtual offsets | 5 |
+| [Quest09: sys_timer irq](#quest09-sys_timer-irq) | Enable system timer interrupt | 15 |
+| [Quest10: pixel donut](#quest10-pixel-donut) | Implement pixel donut animation | 15 |
+| [Quest11 (side): virtual timers](#quest11-side-virtual-timers) | Implement virtual timers for animations | 15 |
+| [Quest12 (side): UART rx irq](#quest12-side-uart-rx-irq) | Enable UART receive interrupts | 10 |
+| [Quest13 (side): rpi3](#quest13-side-rpi3) | Reproduce checkpoints on a real Rpi3 | 30 |
+
+#### Total credits: 150 (main 85; side 65)
+Credits exceeding 100 will be considered as bonus.
+
+![quests](quests.png)
+
+## Preface
+
+### About this document
 
 A document like this (quest description): 
 - provides a high-level overview of the quests;
@@ -24,9 +47,6 @@ This document does NOT:
 The detailed instructions are always as comments in the source
 code. Search for "quest:" in the source code, or highlight them using vscode's
 TODO Tree plugin.
-
-
-## Preface
 
 ### What's the lab structure?
 The whole semester has five labs, each based on a specific OS codebase (1--5). Each lab comprises a sequence of "quests." 
@@ -61,18 +81,31 @@ Not all quests have DELIVERABLES. For instance, a quest without DELIVERABLE can 
 See [here](submission.md) for a detailed description of the submission format.
 
 
-## Quest00: setup 
+## Quest01: setup 
 
-| Your local machine: | Install...    |
+### How to choose?  
+- All: try VMWare first; 
+- We will provide download links for VMWare Workstation 17 Player
+- If VMWare does not work for you (e.g. your machine becomes to slow):
+  - Windows users: try WSL2
+  - Mac users: get a loaner Windows laptop from CS IT; try WSL2
+  - Linux users: try native. 
+
+| Your local machine: | Can run ...    |
 | ------------------------ | ---------------------- |
-| Windows                  | WSL2 (WSL won't work), or  VMware Player Workstation (only if you cannot get WSL2 to work)     |
-| Mac                      | VMware Player Workstation |
+| Windows                  | VMware or WSL2 (WSL won't work) |
+| Mac                      | VMware Workstation |
 | Linux                    | Ubuntu 22.04 native or VMware Player Workstation              |
 
 
+### Instructions for VM users
+
+* [instructions](vmware.md): How to install VMware Workstation Player on Windows or Mac. 
+
+### Instructions for non-VM users
+
 * [instructions](wsl2.md): How to install WSL2 on Windows
 
-* [instructions](vmware.md): How to install VMware Player Workstation on Windows or Mac. 
 
 Note: 
 * We only support Ubuntu 22.04. 
@@ -83,13 +116,13 @@ Note:
 
 * CS undergraduates are eligible for a PC laptop loaner from the CS IT 
 
-### install toolchain
+### install toolchain (already done for VM users)
 
 VM users: skip the "apt" commands. Toolchains are already installed. 
 
 ````bash
 sudo apt update
-sudo apt install -y gcc-9-aarch64-linux-gnu
+sudo apt install -y gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
 sudo apt install -y gdb-multiarch
 # other useful goodies
 sudo apt install -y tmux build-essential git
@@ -114,7 +147,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ````
 
-### install gdb
+### install gdb (already done for VM users)
 VM users: skip the "apt" command. 
 ````
 sudo apt install -y gdb-multiarch
@@ -125,7 +158,7 @@ Install the "dashboard" enhancement
 wget -P ~ https://raw.githubusercontent.com/fxlin/uva-os-main/main/.gdbinit
 ````
 
-### install qemu 
+### install qemu (already done for VM users)
 VM users: skip the "apt" command
 ````
 sudo apt install -y qemu-system-aarch64
@@ -140,7 +173,7 @@ QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.18)
 Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 ````
 
-### test toolchain & qemu 
+### test toolchain & qemu (already done for VM users)
 
 The command below tests your QEMU installation with Rpi3 emulation (NOTE: this repo is for validating your
 toolchain & QEMU build; it is NOT our course project)
@@ -164,9 +197,7 @@ My serial number is: 0000000000000000
 >  Note: the test program runs an infinite loop which will cause high CPU usage
 >  on your host machine. Use ctrl-c to kill QEMU. 
 
-This quest has no DELIVERABLES.
-
-## Quest01 (side): vscode
+## vscode (already done for VM users; non-VM users: optional but recommended)
 
 > This is a side quest. VM users: skip this quest; you already have vscode and plugins installed.
 
@@ -208,11 +239,13 @@ useful hotkeys:
 - ctrl+b toggle left panel
 - ctrl+alt+click open the function in the other split view
 
+😀 DELIVERABLE: This quest has no deliverables.
+
 ## Quest02: kernel image
 
 OVERVIEW: you will build the kernel image (kernel8.img) and inspect it.
 
-clone this git repo. Assume the path to be under your home path,
+Clone this git repo. Assume the path to be under your home path, e.g. 
 `~/uva-os-world1/`. 
 
 ````
@@ -230,7 +263,7 @@ ChatGPT.
 
 Make sure you understand the difference between .elf and .img files
 
-DELIVERABLE 📝. In 1-2 sentences, answer the questions below: 
+😀 DELIVERABLE. In 1-2 sentences, answer the questions below: 
 
 - What are these sections in the elf file?
 
@@ -249,6 +282,8 @@ DELIVERABLE 📝. In 1-2 sentences, answer the questions below:
 
 OVERVIEW: complete boot.S so that the kernel boots to kernel_main() in kernel.c.
 This quest also shows how to use GDB (important). 
+
+> The credits for this quest are evenly split among multiple deliverables.
 
 ### Launch GDB
 
@@ -273,17 +308,19 @@ gdb-multiarch mypath/kernel8.elf
 
 <img src="gdb-launch.gif" alt="description" width="300">
 
-More info on GDB (common commands, etc): refer to our short [writeup](gdb.md) or
+More info on GDB (common commands, etc): 
+we will cover in lectures;
+refer to our short [writeup](gdb.md); 
 ask ChatGPT. 
 
-### Try to debug the kernel: single step
+### Debug the kernel: single step
 
 With GDB, start from the kernel `_start`, single step (per instruction). Compare
 the instructions displayed on GDB to the assembly code in `boot.S`.  
 
 Do the single step until you execute the instruction `eret`. Have you observed change in the EL displayed by GDB? 
 
-DELIVERABLE 📷: Take a photo of the GDB screen. Follow [requirements](./submission.md).
+😀 DELIVERABLE: Take a photo of the GDB screen. Follow [requirements](./submission.md).
 
 ### Coding: complete boot.S
 
@@ -307,7 +344,7 @@ STEPS
 - set a breakpoint at the first printf() call in kernel_main(). run the kernel
 until the breakpoint is hit. 
 
-DELIVERABLE 📷: take a photo of the GDB screen. Follow [requirements](./submission.md).
+😀 DELIVERABLE: take a photo of the GDB screen. Follow [requirements](./submission.md).
 
 ## Quest04: UART 
 
@@ -321,7 +358,7 @@ In `mini_uart.c`, complete `uart_send()` (as instructed by the code comments).
 In `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
 `init_printf()`, as instructed by the code comments. 
 
-DELIVERABLE 📷: take a photo of kernel printing the following messages: 
+😀 DELIVERABLE: take a photo of kernel printing the following messages: 
 ````
 ------ kernel boot ----- core 0
 build time (kernel.c) ...
@@ -342,21 +379,19 @@ returns the current value of the system timer.
 - in `kernel_main()`, call `donut_text()` see the timed animation on uart
     output. 
 
-DELIVERABLE 📷: 
-shoot a short video of the donut animation. 
-Reference (Note: yours must meet the [requirements](submission.md)): 
-
 ![donut-text](donut-text.gif)
 
-## Quest06 (side): change luminance of Donut 
-> This is a side quest.
+### Change luminance of Donut (optional)
 
 - in `donut_text()`, change the luminance of the donut by modifying how it fills
     buffer b with different characters. 
 
-DELIVERABLE 📷: take a photo of the donuts with different luminance.
+😀 DELIVERABLE: 
+shoot a short video of the donut animation. 
+Reference (Note: your submission must meet the [requirements](submission.md)): 
 
-## Quest07: OS logo
+
+## Quest06: OS logo
 
 OVERVIEW: you will bring up the framebuffer, needed for graphical display.
 
@@ -366,10 +401,12 @@ OVERVIEW: you will bring up the framebuffer, needed for graphical display.
 
 - complete the function that displays the OS logo and name: `fb_showpicture()`.
 
-DELIVERABLE 📷: take a photo of the OS logo and name displayed on the
+### change the OS logo and name (optional)
+
+😀 DELIVERABLE: take a photo of the OS logo and name displayed on the
 screen.
 
-## Quest08 (side): change kernel debug level
+## Quest07 (side): debug level
 > This is a side quest.
 
 - in mbox.c, switch the KERNEL DEBUG_XXX macro to show different sets of debug
@@ -381,14 +418,12 @@ screen.
 - Read the comments in Makefile and debug.h, understand how these two work together to control the
     debug messages.
 
-## Quest09 (side): change the OS logo and name
+
+
+## Quest08 (side): framebuffer offsets
 > This is a side quest.
 
-DELIVERABLE 📷: take a screenshot of the new OS logo and name displayed on the
-screen.
-
-## Quest10 (side): explore the framebuffer virtual offsets
-> This is a side quest.
+Explore the framebuffer virtual offsets.
 
 - try out `test_fb_voffset()` in (unittest.c). Read the code and understand what
     it does.
@@ -400,11 +435,11 @@ screen.
 
 - find a fix (without modifying QEMU) so that the test works as expected.
 
-DELIVERABLE 📷: shoot a short video (5-10sec)
+😀 DELIVERABLE: shoot a short video. 
 
-## Quest11: sys_timer irq
+## Quest09: sys_timer irq
 
-OVERVIEW: you will bring up the sys_timer irq, needed for timed animation.
+OVERVIEW: bring up the sys_timer irq, needed for timed animation.
 
 - understand the table of exception vectors (`vectors:` in `entry.S`).
 
@@ -419,7 +454,7 @@ CHECKPOINT. with the help of GDB or debug print, verify that the timer irq is fi
 
 There is no DELIVERABLE for this quest. Continue below to enable animation. 
 
-## Quest12: Pixel donut
+## Quest10: pixel donut
 
 OVERVIEW: bring up the pixel donut animation.
 
@@ -432,9 +467,14 @@ OVERVIEW: bring up the pixel donut animation.
 
 - Place a call to `donut_simple()` in `kernel_main()`.
 
-DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
+### change the donut's color tone to your like (optional)
 
-Reference below. Note: yours must meet the [requirements](submission.md).
+- by modifying `draw_frame()` (donut.c), change the color tone of the donut.
+
+
+😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation.
+
+Reference below. Note: your submission must meet the [requirements](submission.md).
 
 ![donut-pixel](donut-pixel.gif)
 
@@ -443,23 +483,14 @@ After that, the terminal becomes unusable, not echoing any key inputs.
 
 ![qemu-crash](qemu-crash.jpg)
 
-It's a QEMU bug. My analysis is in this [doc](fb-bug/notes-qemu-fb-bug.md); 
+It's a QEMU bug. Interested readers can see my analysis in this [doc](fb-bug/notes-qemu-fb-bug.md); 
 VM users should be fine: I already applied my fix to the QEMU9 shipped with the VM image. 
 For WSL2 users, you just kill the faulty QEMU and start a new one
 (the segfault won't happen every time, and it seems less frequent than on VM/Linux); 
 if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 
-
-
-## Quest13 (side): change the donut's color tone to your like 
-> This is a side quest.
-
-- by modifying `draw_frame()` (donut.c), change the color tone of the donut.
-
-DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
-
-## Quest14 (side): bringup of virtual timers
+## Quest11 (side): virtual timers
 > This is a side quest.
 
 - complete `sys_timer_irq()` and `adjust_sys_timer()` (timer.c).
@@ -474,9 +505,9 @@ DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
 
 - see the donut animation with the virtual timers.
 
-DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
+😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation.
 
-## Quest15 (side): bringup UART receive interrupt (rx irq)
+## Quest12 (side): UART rx irq (receive interrupts)
 > This is a side quest.
 
 - understand what `test_ktimer2()` (unittest.c) does.
@@ -489,10 +520,13 @@ DELIVERABLE 📷: shoot a short video (5-10sec) of the donut animation.
 
 - Try: use terminal keystroke to start/kill periodic kernel messages as driven by virtual timers.
 
-DELIVERABLE 📷: shoot a short video (5-10sec)
+😀 DELIVERABLE: shoot a short video (5-10sec)
 
-## Quest16 (side): reproduce all above CHECKPOINTS on a real Rpi3
+## Quest13 (side): rpi3 
+
+Reproduce all above CHECKPOINTS on a real Rpi3
+
 > This is a side quest.
 
-DELIVERABLE 📷: shoot multiple short videos (5-10sec each) of the real Rpi3 output. 
+😀 DELIVERABLE: shoot multiple short videos (5-10sec each) of the real Rpi3 output. 
 

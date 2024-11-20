@@ -1,7 +1,6 @@
 /* 
     Kernel configuration 
     included by: both the kernel (c and asm) and mkfs
-    lab: baremetal     
 */
 
 #define NCPU	        1   // # of cpu cores

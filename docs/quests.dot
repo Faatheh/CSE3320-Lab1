@@ -1,0 +1,54 @@
+// dot -Tpng quests.dot -o quests.png
+
+// | Quest Name | Description | Credits |
+// |------------|-------------|---------|
+// | Quest01: setup | Install necessary tools and set up the environment | 5 |
+// | Quest02: kernel image | Build and inspect the kernel image | 5 |
+// | Quest03: boot | Complete boot.S to boot the kernel | 15 |
+// | Quest04: UART | Bring up UART for kernel debugging | 15 |
+// | Quest05: textual donut | Implement system timer for timed animation | 10 |
+// | Quest06: OS logo | Display OS logo and name on the screen | 10 |
+// | Quest07 (side): debug level | Control debug messages using macros | 5 |
+// | Quest08 (side): framebuffer offsets | Explore framebuffer virtual offsets | 5 |
+// | Quest09: sys_timer irq | Enable system timer interrupt | 15 |
+// | Quest10: pixel donut | Implement pixel donut animation | 15 |
+// | Quest11 (side): virtual timers | Implement virtual timers for animations | 15 |
+// | Quest12 (side): UART rx irq | Enable UART receive interrupts | 10 |
+// | Quest13 (side): rpi3 | Reproduce checkpoints on a real Rpi3 | 30 |
+
+digraph QuestDependencies {
+    // Define node styles
+    node [shape=box, style=filled, color=lightblue];
+
+    // Define the edges based on the relations
+    quest01 -> quest02;
+    quest02 -> quest03;
+    quest03 -> quest04;
+    quest04 -> quest05;
+    quest05 -> quest06;
+    quest06 -> quest07;
+    quest06 -> quest08;
+    quest06 -> quest09;
+    quest09 -> quest10;
+    quest10 -> quest11;
+    quest10 -> quest12;
+    quest10 -> quest13;
+    
+    // Define nodes with updated labels based on comments
+    quest01 [label="Quest01: Setup\nInstall necessary tools and set up the environment\nCredits: 0", fontsize=10];
+    quest02 [label="Quest02: Kernel Image\nBuild and inspect the kernel image\nCredits: 5", fontsize=10];
+    quest03 [label="Quest03: Boot\nComplete boot.S to boot the kernel\nCredits: 15", fontsize=10];
+    quest04 [label="Quest04: UART\nBring up UART for kernel debugging\nCredits: 15", fontsize=10];
+    quest05 [label="Quest05: Textual Donut\nImplement system timer for timed animation\nCredits: 10", fontsize=10];
+    quest06 [label="Quest06: OS Logo\nDisplay OS logo and name on the screen\nCredits: 10", fontsize=10];
+    quest07 [label="Quest07 (Side): Debug Level\nControl debug messages using macros\nCredits: 5", fontsize=10];
+    quest08 [label="Quest08 (Side): Framebuffer Offsets\nExplore framebuffer virtual offsets\nCredits: 5", fontsize=10];
+    quest09 [label="Quest09: Sys Timer IRQ\nEnable system timer interrupt\nCredits: 15", fontsize=10];
+    quest10 [label="Quest10: Pixel Donut\nImplement pixel donut animation\nCredits: 15", fontsize=10];
+    quest11 [label="Quest11 (Side): Virtual Timers\nImplement virtual timers for animations\nCredits: 15", fontsize=10];
+    quest12 [label="Quest12 (Side): UART RX IRQ\nEnable UART receive interrupts\nCredits: 10", fontsize=10];
+    quest13 [label="Quest13 (Side): Rpi3\nReproduce checkpoints on a real Rpi3\nCredits: 30", fontsize=10];
+
+    // Set graph layout
+    // rankdir=LR; // Left to Right layout
+}

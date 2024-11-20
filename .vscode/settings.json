@@ -56,11 +56,11 @@
             "background": "yellow",
             "iconColour": "blue"
         },
-        "TODO": {
+        "STUDENT_TODO": {
             "icon": "checklist",
-            "type": "tag",     // highlights the entire line containing the tag
-            "foreground": "orange",
-            "background": "black",
+            "type": "line",     // highlights the entire line containing the tag
+            "foreground": "black",
+            "background": "yellow",
             "iconColour": "black"
         },
         "!STUDENT_": {
