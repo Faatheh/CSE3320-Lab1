@@ -59,3 +59,48 @@
 
 7. **Shut Down the VM:**
    - Choose **Shut Down** from VMware Fusion’s **Virtual Machine** menu or shut down the OS inside the VM.
+
+---
+
+## Developing with the Rpi3 hardware
+
+### Pass through the SD card reader
+
+From the top-right corner of VMWare player:
+
+![alt text](<sd card reader.jpg>)
+
+### Pass through the USB-serial adapter
+
+In the same way: 
+
+![alt text](<vmplayer usb icon.jpg>)
+
+And confirm it: 
+
+![alt text](<vm usb choice.jpg>)
+
+After that, do `sudo dmesg` from the VM. Reference output below: 
+
+![alt text](<usb serial dmsg.jpg>)
+
+#### Launch minicom:
+
+```
+sudo minicom -b 115200 -o -D /dev/ttyUSB0 -C /tmp/minicom.log
+```
+
+Warning: your OS may give different names to the USB-serial dongle, e.g. /dev/ttyUSB1. Find it out by looking at `dmesg` output. 
+
+![alt text](<minicom cmdline.jpg>)
+
+#### Minicom serial port settings
+
+![alt text](<minicom settings.jpg>)
+
+
+#### Minicom terminal settings
+
+(Note: T - Add carriage return : Yes) 
+
+![alt text](<minicom cr line.jpg>)
