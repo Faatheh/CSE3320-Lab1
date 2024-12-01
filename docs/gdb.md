@@ -1,6 +1,6 @@
 # Using GDB to debug kernel 
 
-https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md
+https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md](https://github.com/fxlin/p1-kernel-lab1/edit/main/docs/gdb.md
 
 **NOTE**: 
 
