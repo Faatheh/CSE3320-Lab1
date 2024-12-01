@@ -109,6 +109,11 @@ x/s _start
 x/s $x0
 ```
 
+Use absolute address, e.g. dump memory at 0x9b8c
+```
+x/4i 0x9b8c
+```
+
 ### Print out variables/structures
 
 ```
