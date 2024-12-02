@@ -115,7 +115,6 @@ The command above will disassemble the entire function that contains the given a
 
 
 ### Function/source lookup
-### Symbol Information
 
 | Action                          | Command                    |
 |---------------------------------|----------------------------|
