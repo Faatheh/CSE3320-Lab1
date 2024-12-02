@@ -1,55 +1,22 @@
-# Using GDB to debug kernel 
+# GDB debugging for UVA OS
 
 https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md](https://github.com/fxlin/p1-kernel-lab1/edit/main/docs/gdb.md
 
-**NOTE**: 
 
-1. Read the whole document before you try. 
-2. *WSL users who want to develop on local machines instead of the server*: gdbserver may not play well with WSL. See "troubleshooting"  below. You are fine if you develop on the server. 
-
-## GDB Installation (not needed if you use course servers)
-
-We've done this on the server already. Do this if developing on local machines (Linux or WSL). 
+## 1. Setup
 
 ```
 sudo apt install gdb-multiarch gcc-aarch64-linux-gnu build-essential 
 ```
-Note: the gdb for aarch64 is NOT called aarch64-XXXX-gdb.
 
-## The workflow
+### Launch QEMU + GDB
 
-### 1. Launch QEMU + the kernel and wait for the debugger
-
-1/24/2024: the below can be done with one command "p1-run-debug" (after "source env-qemu.sh")
+Example commands:
 
 ```
 # will wait for gdb to connect at local tcp 1234
 qemu-system-aarch64 -M raspi3 -kernel ./kernel8.img -serial null -serial stdio -s -S
-
-# OR, will wait for gdb to connect at local tcp 5678
-qemu-system-aarch64 -M raspi3 -kernel ./kernel8.img -serial null -serial stdio -gdb tcp::5678 -S
 ```
-
-Explanation: -S not starting the guest until you tell it to from gdb.  -s listening for an incoming connection from gdb on TCP port 1234
-
-**WARNING** If multiple students run the first command on the server machine, they all attempt to listen on tcp port 1234. Only one will succeed. If you see such a failure, use the second form to specify a **different** TCP port number (not necessarily 5678 which may be in use as well). 
-
-```
-xzl@granger1[~]$ netstat -tulpn|grep 5678
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-tcp        0      0 0.0.0.0:5678            0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::5678                 :::*                    LISTEN      -
-xzl@granger1[~]$ netstat -tulpn|grep 1234
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-tcp        2      0 0.0.0.0:1234            0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:12345         0.0.0.0:*               LISTEN      -
-tcp        0      0 127.0.0.1:12346         0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::1234                 :::*                    LISTEN      -
-```
-
-### Launch GDB
 
 From another terminal
 
@@ -61,108 +28,219 @@ gdb-multiarch build/kernel8.elf
 
 The port number (e.g. 1234) must match what you specified for QEMU.
 
-Single step 
 
-```
-(gdb) si 
-```
+## 2. Useful commands
 
-![gdb-si](images/gdb-si.png)
+### Breakpoints 
 
-### Dump register contents
+set breakpoints 
+`b *0xffff0000`
+or `b my_function`
 
-```
-(gdb) info reg 
-```
+Show breakpoints 
+`info b`
 
-![gdb-reg](images/gdb-reg.png)
+Delete a breakpoint
+`delete 1` or `d 1`
 
+Disable a breakpoint 
+`disable 1`
 
-show reg information at each step. This example shows 
-```
-(gdb) display/10i $sp
-```
+### Single step
 
-![gdb-si-display](images/gdb-si-display.gif)
+step an instruction `si`
 
-### Dump memory
+step a statement `n`
 
-You can specify a symbol or a raw addr 
+### Stack frame 
 
-... as instructions
+Show stack frame: `bt`
 
-```
-x/20i _start
-```
-... as hex (bytes)
-```
-x/20xb _start
-```
+Select a frame: `frame 1`, where 1 is the frame number.
 
-... as hex (words)
-```
-x/20xw _start
-```
-... as a textual string
-```
-x/s _start
-x/s $x0
-```
+### Register
 
-Use absolute address, e.g. dump memory at 0x9b8c
-```
-x/4i 0x9b8c
-```
+Dump register contents 
+`info reg`
+
+show reg information at each step, e.g. `display/10i $sp`. See [example](images/gdb-si-display.gif). 
+
+### Memory dump
+
+Dump memory at a given symbol: 
+
+... as instructions: `x/20i _start`
+
+... as hex (bytes): `x/20xb _start`
+
+... as hex (words): `x/20xw _start`
+
+... as a textual string `x/s _start`
+
+Dump memory, with register as base addr, e.g. dump memory at x0: `x/s $x0`
+
+Dump memory at a given addr: `x/4i 0x9b8c`
 
 ### Print out variables/structures
 
-```
-print *mem_map
-```
+* print the value of pointed by mem_map, a pointer:
+`print *mem_map`
 
-print the first 10 elements of mem_map, a pointer of type short*
+* print the first 10 elements of mem_map, a pointer of type short*:
+`print (short[10])*mem_map`
 
-```
-print (short[10])*mem_map
-```
+### Disassemble instructions
 
-### Set a breakpoint at addr
+* at a given addr: `disas 0xffff0000`
+* at a given function: `disas kernel_main`
 
-```
-b *0xffff0000
-```
-### Disassemble at given addr
+### One liner - disassemble at given addr (from shell)
 
 ```
-disas 0xffff0000
+gdb -nx -batch -ex "disassemble 0x<address>" ./a.out
 ```
+`-nx` prevents GDB from loading `~/.gdbinit`, `-batch` prevents GDB from entering interactive mode, and `-ex` executes the command in quotes.
+
+The command above will disassemble the entire function that contains the given address.
+
+
 ### Function/source lookup
 
-Look up type of a given symbol 
-```
-ptype mem_map
-```
+* Look up type of a given symbol 
+`ptype mem_map`
 
-Find out function name at a given addr
-```
-info line *0x10000000
-```
 
-List source at a given addr
-```
-list *0x10000000
-list *fn 
-```
-### Watchpoint 
-Will break if the given memory addr is altered 
+* Find out function name at a given addr
+`info line *0x10000000`
+
+* List source at a given addr
+`list *0x10000000` or at a pointer `list *fn`
+
+* What's the source code of the current instruction? 
+`info source`
+
+### Watchpoint (Powerful! 🚀)
+Will break if the given memory addr is changed
 ```
 watch *0xffff0000
 ```
-## The GDB "dashboard" enhancement
+### Multicores (useful for debugging deadlock)
+
+Show all cores `info threads` (start from 1)
+
+Switch to a core `thread 1`. Now on core 1, then you can do `bt` (to show stack trace) or `info regs`, etc. 
+
+## 3. Kernel debugging 
+
+Mostly straightforward
+
+### virtual vs. physical addr
+
+In GDB, when we set up a breakpoint using function names or source lines (e.g., `b start_kernel`), GDB uses the linking information in the ELF file to set up the breakpoint.
+
+- If the kernel completely runs on physical addresses, link addresses are equal to runtime addresses (PA). So there is no ambiguity.
+
+- If the kernel links to virtual addresses, typically it boots running on physical addresses, then switches to virtual addresses.
+
+    - Before the switch, GDB cannot associate the memory address (PA) with debugging info (which is based on VA). Therefore, it cannot list source code or set breakpoints based on source code or function names. We can still set breakpoints based on physical addresses (e.g., `b *0x80000`).
+
+    - After the switch, link addresses are equal to runtime addresses (VA). So we can set breakpoints based on source code or function names.
+
+### Kernel crash with an exception message "Unhandled exception..." 
+
+To debug, we have to find the instruction (and the surrounding code) that caused the exception. 
+
+From the messages, check the following: 
+
+- ELR (Most useful): likely the instruction that causes the problem); 
+- ESR (sometimes useful): contains the causes of the exception (e.g bad instruction). Use online decoder
+- FAR (sometimes useful): faulty address
+
+Can set a breakpoint directly at the exception handler, and do `bt` to see the call stack.
+If there's a meanginful one, we are good and hunt it down; 
+if there's no one (e.g. showing repeated stack frames), the stack may be corrupted or we are in repeated exceptions. 
+
+Can find a most recent source location that the kernel is known to be running 
+(e.g. based on kernel messages), add more debug messages, and re-run. 
+Eventually we can narrow down to one instruction. 
+
+Then understand why it causes the exception. This could be an easy case, e.g., a
+program error that results in a bad pointer. Often the fixes are
+straightforward.
+
+The problem can be more complex, e.g., some variables have strange values
+(corrupted) or instructions in memory are corrupted. These can be identified via
+GDB commands. In this case, set a breakpoint at places that precede the crash
+site and check if the memory contents are correct. If the memory contents are
+still bad, set the breakpoint to a location that was executed earlier. Continue
+this process until you find a location where the memory contents are correct.
+
+From there, set a *watchpoint* to the memory location that is corrupted and run
+the program. This will break the program when the memory is written. Then you
+can find out where the memory is being corrupted.
+
+### Kernel hangs, no error messages
+
+Try to add printf statements and narrow down to the function that hangs.
+
+
+
+### Multicore 
+
+Use 'info threads'
+
+## 4. User program debugging 
+
+### elf with debug info
+
+We need a user program with symbols and debugging info. 
+- All programs included in ramdisk are stripped of such things to be small, e.g. "nplayer"
+- Their versions with debug info is named as, e.g. "nplayer.debug"
+
+To verify: do `file nplayer.debug` and look for "with debug_info".
+```
+$ file nplayer
+nplayer: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, BuildID[sha1]=3dafe6adf5ef14ad3b1bccd42c9f88f029a9c83b, not stripped
+```
+wheras
+```
+$ file nplayer.debug 
+nplayer.debug: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, BuildID[sha1]=3dafe6adf5ef14ad3b1bccd42c9f88f029a9c83b, with debug_info, not stripped
+```
+
+### Offline: check instruction given an addr
+This can be useful for for "Unhandled exception at EL0". 
+We often take the reported ELR and check where is it in the user code. 
+
+Say we know the current running program is "buzz" and ELR=0x1000, then open "buzz.asm" and search for "1000".
+
+### addr2line: find source line given an addr: ``addr2line -e nplayer.debug 0x1000``
+The program must have debugging info.
+
+### Offline: disassemble a function given an addr 
+
+(See the gdb "disass" command above) 
+
+### Set breakpoint in a user process
+
+Although the CPU switches between EL0 (user) and EL1, GDB breakpoints are only concerned with addresses.
+
+First, launch the kernel with GDB, then continue ("c") and let the kernel boot into VA.
+
+Once the OS reaches the shell (or even starts running the target app), interrupt GDB (by pressing "Ctrl+C").
+
+Then we can set the breakpoint with user VA if we know the VA in question (by looking at their *.asm or *.sym files).
+
+We can set the breakpoint at source location or function names if we do the following: replace the kernel ELF file with the app's ELF file, e.g., `file nplayer.debug` then confirm. See [screenshot](image-9.png)
+
+Watchpoints also work in this way.
+
+
+## Appendix: the GDB "dashboard" enhancement
 
 The basic GDB UI is too primitive to beginners. We provide you an enhancement called GDB-dashboard. The upstream source is [here](https://github.com/fxlin/gdb-dashboard-aarch64). I adapted it for aarch64. Screenshot: 
 
-![Screenshot](https://raw.githubusercontent.com/fxlin/gdb-dashboard-aarch64/master/gdb-dash-aarch64.png)
+See [screenshot](https://raw.githubusercontent.com/fxlin/gdb-dashboard-aarch64/master/gdb-dash-aarch64.png)
 
 ### Installation
 
@@ -228,7 +306,6 @@ GEF (https://github.com/hugsy/gef) is also viable. Both GEF and GDB-dashboard:
 GEF screenshot (note the CPU flags it recognized)
 
 ![image-20210127220750060](exp3/images/gef.png)
-
 
 
 ## Troubleshooting
