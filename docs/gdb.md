@@ -1,9 +1,21 @@
-# GDB debugging for UVA OS
-
-https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md](https://github.com/fxlin/p1-kernel-lab1/edit/main/docs/gdb.md
+# How to debug the UVA OS
 
 
-## 1. Setup
+Original, dated: https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md](https://github.com/fxlin/p1-kernel-lab1/edit/main/docs/gdb.md
+
+## Table of Contents
+
+- [1. Quick setup](#1-quick-setup)
+- [2. Commands cheatsheet](#2-commands-cheatsheet)
+- [3. Kernel debugging](#3-kernel-debugging)
+- [4. User program debugging](#4-user-program-debugging)
+- [5. Debugging with real hardware](#5-debugging-with-real-hardware)
+- [Appendix: the GDB "dashboard" enhancement](#appendix-the-gdb-dashboard-enhancement)
+- [Other enhancement (FYI)](#other-enhancement-fyi)
+- [Troubleshooting](#troubleshooting)
+- [Reference](#reference)
+
+## 1. Quick setup
 
 ```
 sudo apt install gdb-multiarch gcc-aarch64-linux-gnu build-essential 
@@ -14,7 +26,6 @@ sudo apt install gdb-multiarch gcc-aarch64-linux-gnu build-essential
 Example commands:
 
 ```
-# will wait for gdb to connect at local tcp 1234
 qemu-system-aarch64 -M raspi3 -kernel ./kernel8.img -serial null -serial stdio -s -S
 ```
 
@@ -28,113 +39,119 @@ gdb-multiarch build/kernel8.elf
 
 The port number (e.g. 1234) must match what you specified for QEMU.
 
+### To automate the above
+append the following to ~/.gdbinit:
 
-## 2. Useful commands
+```
+file kernel/build-rpi3qemu/kernel8.elf
+target remote :1234
+```
+
+## 2. Commands cheatsheet
 
 ### Breakpoints 
 
-set breakpoints 
-`b *0xffff0000`
-or `b my_function`
-
-Show breakpoints 
-`info b`
-
-Delete a breakpoint
-`delete 1` or `d 1`
-
-Disable a breakpoint 
-`disable 1`
+| Action                  | Command                        |
+|-------------------------|--------------------------------|
+| Set breakpoints         | `b *0xffff0000` or `b my_function` |
+| Show breakpoints        | `info b`                       |
+| Delete a breakpoint     | `delete 1` or `d 1`            |
+| Disable a breakpoint    | `disable 1`                    |
 
 ### Single step
 
-step an instruction `si`
+| Action                | Command |
+|-----------------------|---------|
+| Step an instruction   | `si`    |
+| Step a statement      | `n`     |
 
-step a statement `n`
+### Stack frame
 
-### Stack frame 
-
-Show stack frame: `bt`
-
-Select a frame: `frame 1`, where 1 is the frame number.
+| Action                | Command       |
+|-----------------------|---------------|
+| Show stack frame      | `bt`          |
+| Select a frame        | `frame 1`     |
 
 ### Register
 
-Dump register contents 
-`info reg`
-
-show reg information at each step, e.g. `display/10i $sp`. See [example](images/gdb-si-display.gif). 
+| Action                | Command                          |
+|-----------------------|----------------------------------|
+| Dump register contents| `info reg`                       |
+| Show reg information  | `display/10i $sp`                |
 
 ### Memory dump
 
-Dump memory at a given symbol: 
-
-... as instructions: `x/20i _start`
-
-... as hex (bytes): `x/20xb _start`
-
-... as hex (words): `x/20xw _start`
-
-... as a textual string `x/s _start`
-
-Dump memory, with register as base addr, e.g. dump memory at x0: `x/s $x0`
-
-Dump memory at a given addr: `x/4i 0x9b8c`
-
+| Action                                    | Command                |
+|-------------------------------------------|------------------------|
+| Dump memory at a given symbol as instructions | `x/20i _start`         |
+| Dump memory at a given symbol as hex (bytes) | `x/20xb _start`        |
+| Dump memory at a given symbol as hex (words) | `x/20xw _start`        |
+| Dump memory at a given symbol as a textual string | `x/s _start`         |
+| Dump memory with register as base addr    | `x/s $x0`              |
+| Dump memory at a given addr               | `x/4i 0x9b8c`          |
 ### Print out variables/structures
 
-* print the value of pointed by mem_map, a pointer:
-`print *mem_map`
-
-* print the first 10 elements of mem_map, a pointer of type short*:
-`print (short[10])*mem_map`
+| Action                                      | Command                        |
+|---------------------------------------------|--------------------------------|
+| Print the value pointed by `mem_map`        | `print *mem_map`               |
+| Print the first 10 elements of `mem_map`    | `print (short[10])*mem_map`    |
 
 ### Disassemble instructions
 
-* at a given addr: `disas 0xffff0000`
-* at a given function: `disas kernel_main`
+| Action                                      | Command                        |
+|---------------------------------------------|--------------------------------|
+| Disassemble at a given address              | `disas 0xffff0000`             |
+| Disassemble at a given function             | `disas kernel_main`            |
 
 ### One liner - disassemble at given addr (from shell)
 
-```
-gdb -nx -batch -ex "disassemble 0x<address>" ./a.out
-```
+| Action                                      | Command                        |
+|---------------------------------------------|--------------------------------|
+| Disassemble at a given address from shell   | `gdb -nx -batch -ex "disassemble 0x<address>" ./a.out` |
+
 `-nx` prevents GDB from loading `~/.gdbinit`, `-batch` prevents GDB from entering interactive mode, and `-ex` executes the command in quotes.
 
 The command above will disassemble the entire function that contains the given address.
 
 
 ### Function/source lookup
+### Symbol Information
 
-* Look up type of a given symbol 
-`ptype mem_map`
+| Action                          | Command                    |
+|---------------------------------|----------------------------|
+| Look up type of a given symbol  | `ptype mem_map`            |
+| Find out function name at a given addr | `info line *0x10000000` |
+| List source at a given addr     | `list *0x10000000`         |
+| List source at a pointer        | `list *fn`                 |
+| Source code of the current instruction | `info source`         |
 
+### Watchpoint (SUPER POWER 🚀)
 
-* Find out function name at a given addr
-`info line *0x10000000`
+| Action                          | Command                    |
+|---------------------------------|----------------------------|
+| Break if the given memory addr is changed | `watch *0xffff0000` |
 
-* List source at a given addr
-`list *0x10000000` or at a pointer `list *fn`
-
-* What's the source code of the current instruction? 
-`info source`
-
-### Watchpoint (Powerful! 🚀)
-Will break if the given memory addr is changed
-```
-watch *0xffff0000
-```
 ### Multicores (useful for debugging deadlock)
 
-Show all cores `info threads` (start from 1)
+| Action                          | Command                    |
+|---------------------------------|----------------------------|
+| Show all cores                  | `info threads`             |
+| Switch to a core                | `thread 1`                 |
+| Show stack trace on core        | `bt`                       |
+| Show registers on core          | `info regs`                |
 
-Switch to a core `thread 1`. Now on core 1, then you can do `bt` (to show stack trace) or `info regs`, etc. 
+### Important commandline tools (not GDB)
+
+| Action                          | Command                    |
+|---------------------------------|----------------------------|
+| Find source location given an address                   | `addr2line -e kernel8.elf 0x1000`             |
+| Find a instruction, given an address           | Search in `kernel8.asm` with the address                  |
 
 ## 3. Kernel debugging 
 
-Mostly straightforward
+Basic tools: printf(); GDB: breakpoint, single step, backtrace (`bt`). 
 
-### virtual vs. physical addr
+### Prelim: virtual vs. physical addr
 
 In GDB, when we set up a breakpoint using function names or source lines (e.g., `b start_kernel`), GDB uses the linking information in the ELF file to set up the breakpoint.
 
@@ -181,17 +198,20 @@ can find out where the memory is being corrupted.
 
 ### Kernel hangs, no error messages
 
-Try to add printf statements and narrow down to the function that hangs.
+Try to add printf statements and narrow down to the function/code/instruction that hangs.
 
+### Multicore issues?
 
-
-### Multicore 
-
-Use 'info threads'
+Mostly race condition and deadlock. 
+- Ensure it's a multicore issue by recompiling the kernel with a single core and checking if the problem persists.
+- To debug a multicore issue, recompile the kernel with two cores and diagnose.
+- Use `info threads` to list all cores and `bt` to show the stack trace for each core.
 
 ## 4. User program debugging 
 
-### elf with debug info
+We debug user program with GDB. Our OS has no debugger as a native user program. 
+
+### Make sure your elf have debug info
 
 We need a user program with symbols and debugging info. 
 - All programs included in ramdisk are stripped of such things to be small, e.g. "nplayer"
@@ -234,6 +254,38 @@ Then we can set the breakpoint with user VA if we know the VA in question (by lo
 We can set the breakpoint at source location or function names if we do the following: replace the kernel ELF file with the app's ELF file, e.g., `file nplayer.debug` then confirm. See [screenshot](image-9.png)
 
 Watchpoints also work in this way.
+
+## 5. Debugging with real hardware
+
+Primary means: printf(); find out faulty addresses and look up with offline tools (addr2line, disassembly, etc).
+
+No GDB. No JTAG. 
+
+Try the following things in order: 
+- Reproduce the bug in QEMU. Even if the symptoms differ (e.g., hangs vs. crashes), the root cause is often related. Debugging in QEMU can help identify the issue.
+- Reduce the core count to 1 (change `param.h`) and re-run. If the problem persists, it is easier to debug; if the problem is resolved, it is likely a race condition.
+- Enable additional debugging information for the source that is likely problematic.
+
+### What if things work on QEMU, but break on real hardware? 
+
+A list of factors that could contribute to this discrepancy:
+
+- The non-determinism of multicore. Real multicores are not as deterministic as QEMU. Reduce the core count to 1 and re-run.
+- QEMU's emulation of CPU behaviors is simplistic, especially:
+    - Cache coherency
+    - Cache flush (e.g., not flushing cache is OK with QEMU, not with real hardware)
+- Uninitialized memory on QEMU will be filled as 0 (mostly); on real hardware, it's a random mess.
+- QEMU's emulation on IO devices is different, e.g., the framebuffer physical addresses are different.
+
+Think if your bug may be related to these factors.
+
+Compare the debug messages between a "good run" and a "bad run". Start from the discrepancy.
+
+### What if things work on real hardware, but break on QEMU?
+
+QEMU's emulation of the framebuffer, especially virtual offsets, is incomplete (as of version 9, unlikely to improve).
+
+Beyond that, I wouldn't worry too much -- the real hardware is the gold benchmark.
 
 
 ## Appendix: the GDB "dashboard" enhancement
