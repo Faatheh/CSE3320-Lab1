@@ -5,9 +5,9 @@ date: "Oct 2024"
 layout: "post"
 ---
 
-# Quest Description for World 1:"Baremetal"
+# Quest Description for Lab1:"Baremetal"
 
-Total estimated time: XXX hours
+Total estimated time: ??? hours
 
 <!-- convert image-1.png -resize 500x image-1-resized.png -->
 

@@ -1,13 +1,14 @@
-# UVA-OS WORLD1 "Baremetal" 
+# UVA-OS Lab1 "Baremetal" 
 
 This is one part of the UVA-OS class (CS4414/CS6456). 
 
 [OVERVIEW](https://github.com/fxlin/cs4414-main) |
-[WORLD1](https://github.com/fxlin/uva-os-world1) |
-[WORLD2](https://github.com/fxlin/uva-os-world2) |
-[WORLD3](https://github.com/fxlin/uva-os-world3) |
-[WORLD4](https://github.com/fxlin/uva-os-world4) |
-[WORLD5](https://github.com/fxlin/uva-os-world5) 
+[PROTO1](https://github.com/fxlin/uva-os-world1) |
+[PROTO2](https://github.com/fxlin/uva-os-world2) |
+[PROTO3](https://github.com/fxlin/uva-os-world3) |
+[PROTO4](https://github.com/fxlin/uva-os-world4) |
+[PROTO5](https://github.com/fxlin/uva-os-world5) 
+
 
 ### Students: see [quests-lab1.md](quests-lab1.md)
 
@@ -64,4 +65,4 @@ export PLAT=rpi3
 (One time): get a blank SD card, burn the provided image with Win32DiskImager, 
 balenaEtcher, or Raspberry Pi Imager. 
 
-Copy the kenrel image `kernel8.img` to the partition named `bootfs` and boot. 
+Copy the kernel image `kernel8.img` to the partition named `bootfs` and boot. 

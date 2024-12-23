@@ -7,7 +7,7 @@ Only for the first time
 sudo apt install -y imagemagick ffmpeg
 ```
 
-Prepare a tarball for submission
+Prepare a tarball for submission (assuming your code is under `~/os-lab1` and your computing ID is `xl6yq`):
 
 ```shell
 cd ~/os-lab1
