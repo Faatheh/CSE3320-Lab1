@@ -1,7 +1,6 @@
 # How to debug the UVA OS
 
-
-Original, dated: https://github.com/fxlin/p1-kernel/blob/master/docs/gdb.md](https://github.com/fxlin/p1-kernel-lab1/edit/main/docs/gdb.md
+https://github.com/fxlin/p1-kernel-lab1/blob/main/docs/gdb.md
 
 ## Table of Contents
 
