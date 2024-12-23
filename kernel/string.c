@@ -33,7 +33,7 @@ memcmp(const void *v1, const void *v2, uint n)
   return 0;
 }
 
-// xzl: handles overlap well 
+// fxl: handles overlap well 
 // TBD replace it with an aarch64 opt version? it's at the core of surfaceflinger
 // etc. 
 void*

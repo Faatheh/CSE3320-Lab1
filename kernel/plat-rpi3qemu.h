@@ -197,7 +197,7 @@ int mbox_call(unsigned char ch);
 #define ARM_CM_BASE		(ARM_IO_BASE + 0x101000)
 
 #define ARM_CM_GP0CTL		(ARM_CM_BASE + 0x70)
-    // GP1CTL +0x78     GP2CTL +0x80    (xzl: 8 bytes apart, interleaved with regs below
+    // GP1CTL +0x78     GP2CTL +0x80    (fxl: 8 bytes apart, interleaved with regs below
 #define ARM_CM_GP0DIV		(ARM_CM_BASE + 0x74)
     // see above. 
 #define ARM_CM_PASSWD 		(0x5A << 24)
