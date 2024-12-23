@@ -55,7 +55,7 @@ git branch -D student 2>/dev/null
 # Initialize a new orphan branch and commit the files
 git checkout --orphan student
 git add .
-git commit -m "init - Date: $DATE, Commit: $GIT_COMMIT"
+git commit -m "pushed on: $DATE, from commit: $GIT_COMMIT"
 
 # Calculate total file sizes excluding .git and ask for confirmation
 TOTAL_SIZE=$(du -sh --exclude=.git . | cut -f1)

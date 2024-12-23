@@ -1,6 +1,6 @@
 /*
     Draw a rotating donut on framebuffer or over uart. 
-    use delay() for timing. inefficient. works
+    use delay() for timing. inefficient. but works
 
     dependency:
         delay
