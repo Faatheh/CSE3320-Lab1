@@ -53,6 +53,7 @@ target remote :1234
 | Action                  | Command                        |
 |-------------------------|--------------------------------|
 | Set breakpoints         | `b *0xffff0000` or `b my_function` |
+| Conditional breakpoints | `b main.c:42 if x == 5` |
 | Show breakpoints        | `info b`                       |
 | Delete a breakpoint     | `delete 1` or `d 1`            |
 | Disable a breakpoint    | `disable 1`                    |
