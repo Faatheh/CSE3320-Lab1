@@ -41,7 +41,7 @@ _start:
 	eret	// switch to EL1
 
 el3: 		// Current EL: EL3
-	// 	With rpi3 firmware (armstub) or qemu, kernel always starts in EL2; 
+	// 	With the rpi3 firmware (armstub) or qemu, kernel always starts in EL2; 
 	//  We leave EL3 code here for completeness
   	ldr x0, =HCR_VALUE
   	msr hcr_el2, x0

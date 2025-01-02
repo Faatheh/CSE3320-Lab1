@@ -20,7 +20,6 @@
 #define KERNEL_START    0x00080000              // qemu will load ker to this addr and boot
 #define PHYS_SIZE       0x3f000000    
 
-
 // from circle include/circle/bcm2835.h
 #if RASPPI == 1
 #define ARM_IO_BASE		0x20000000
@@ -49,11 +48,8 @@
 // Convert ARM address to GPU bus address (does also work for aliases)
 #define BUS_ADDRESS(addr)	(((addr) & ~0xC0000000) | GPU_MEM_BASE)
 
-//
-// General Purpose I/O
-//
+// General Purpose I/O (GPIO)
 #define ARM_GPIO_BASE		(ARM_IO_BASE + 0x200000)
-
 #define ARM_GPIO_GPFSEL0	(ARM_GPIO_BASE + 0x00)
 #define ARM_GPIO_GPFSEL1	(ARM_GPIO_BASE + 0x04)
 #define ARM_GPIO_GPFSEL4	(ARM_GPIO_BASE + 0x10)
@@ -159,14 +155,10 @@ int mbox_call(unsigned char ch);
 // --------------- mini uart ------------------------------- //
 #define UART_PHYS 0x3F000000    // cf mini_uart.c
 
-//
 // Platform DMA Controller
-//
 #define ARM_DMA_BASE		(ARM_IO_BASE + 0x7000)
 
-//
-// Pulse Width Modulator
-//
+// Pulse Width Modulator (PWM)
 #define ARM_PWM_BASE		(ARM_IO_BASE + 0x20C000)
 
 #define ARM_PWM_CTL		(ARM_PWM_BASE + 0x00)
@@ -178,31 +170,12 @@ int mbox_call(unsigned char ch);
 #define ARM_PWM_RNG2		(ARM_PWM_BASE + 0x20)
 #define ARM_PWM_DAT2		(ARM_PWM_BASE + 0x24)
 
-#if RASPPI >= 4
-#define ARM_PWM1_BASE		(ARM_IO_BASE + 0x20C800)
-
-#define ARM_PWM1_CTL		(ARM_PWM1_BASE + 0x00)
-#define ARM_PWM1_STA		(ARM_PWM1_BASE + 0x04)
-#define ARM_PWM1_DMAC		(ARM_PWM1_BASE + 0x08)
-#define ARM_PWM1_RNG1		(ARM_PWM1_BASE + 0x10)
-#define ARM_PWM1_DAT1		(ARM_PWM1_BASE + 0x14)
-#define ARM_PWM1_FIF1		(ARM_PWM1_BASE + 0x18)
-#define ARM_PWM1_RNG2		(ARM_PWM1_BASE + 0x20)
-#define ARM_PWM1_DAT2		(ARM_PWM1_BASE + 0x24)
-#endif
-
-//
 // Clock Manager			
-// Soc manual: "Clock Manager General Purpose Clocks Control"
+// cf: SoC manual: "Clock Manager General Purpose Clocks Control"
 #define ARM_CM_BASE		(ARM_IO_BASE + 0x101000)
-
 #define ARM_CM_GP0CTL		(ARM_CM_BASE + 0x70)
     // GP1CTL +0x78     GP2CTL +0x80    (fxl: 8 bytes apart, interleaved with regs below
 #define ARM_CM_GP0DIV		(ARM_CM_BASE + 0x74)
     // see above. 
 #define ARM_CM_PASSWD 		(0x5A << 24)
-
-
-
-
 #endif

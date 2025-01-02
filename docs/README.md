@@ -4,11 +4,11 @@
 This is one part of the UVA-OS class (CS4414/CS6456). 
 
 [OVERVIEW](https://github.com/fxlin/cs4414-main) |
-[PROTO1](https://github.com/fxlin/uva-os-world1) |
-[PROTO2](https://github.com/fxlin/uva-os-world2) |
-[PROTO3](https://github.com/fxlin/uva-os-world3) |
-[PROTO4](https://github.com/fxlin/uva-os-world4) |
-[PROTO5](https://github.com/fxlin/uva-os-world5) 
+[LAB1](https://github.com/fxlin/uva-os-world1) |
+[LAB2](https://github.com/fxlin/uva-os-world2) |
+[LAB3](https://github.com/fxlin/uva-os-world3) |
+[LAB4](https://github.com/fxlin/uva-os-world4) |
+[LAB5](https://github.com/fxlin/uva-os-world5) 
 
 
 ### Students: see [quests-lab1.md](quests-lab1.md)
@@ -32,7 +32,13 @@ A single CPU core can boot, print messages from UART, and display pixels. Interr
 ⛔ EL1 only
 
 
-## Build for rpi3 QEMU
+## QUICKSTART
+
+### For rpi3 (QEMU)
+
+```
+export PLAT=rpi3qemu
+```
 
 To clean up:
 ```sh
@@ -41,7 +47,6 @@ To clean up:
 
 To build everything:
 ```sh
-export PLAT=rpi3qemu
 ./makeall.sh
 ```
 
@@ -50,7 +55,10 @@ To run on qemu:
 ./run-rpi3qemu.sh
 ```
 
-## Build for rpi3 (hardware)
+### For rpi3 (hardware)
+```
+export PLAT=rpi3
+```
 
 To clean up:
 ```sh
@@ -59,7 +67,6 @@ To clean up:
 
 To build everything:
 ```sh
-export PLAT=rpi3
 ./makeall.sh
 ```
 

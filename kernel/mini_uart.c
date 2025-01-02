@@ -4,20 +4,21 @@
 #include "plat.h"
 #include "utils.h"
 
-// cf: https://github.com/bztsrc/raspi3-tutorial/blob/master/03_uart1/uart.c
-// cf: https://github.com/futurehomeno/RPI_mini_UART/tree/master
-// ---------------- gpio ------------------------------------ //
-// cf BCM2837 manual, chap 6, "General Purpose I/O (GPIO)"
+/* ---------------- gpio ------------------------------------ 
+    cf BCM2837 manual, chap 6, "General Purpose I/O (GPIO)"
+*/
 #define GPFSEL1         (PBASE+0x00200004)    // "GPIO Function Select"
 #define GPSET0          (PBASE+0x0020001C)    // "GPIO Pin Output Set"
 #define GPCLR0          (PBASE+0x00200028)    // "GPIO Pin Output Clear"
 #define GPPUD           (PBASE+0x00200094)    // "GPIO Pin Pull-up/down Enable"
 #define GPPUDCLK0       (PBASE+0x00200098)    // "GPIO Pin Pull-up/down Enable Clock"
 
-// ---------------- mini uart ------------------------------------ //
-// "The Device has three Auxiliary peripherals: One mini UART and two SPI masters. These
-// three peripheral are grouped together as they share the same area in the peripheral register
-// map and they share a common interrupt."
+/* 
+ * ---------------- mini uart ------------------------------------ 
+ * "The Device has three Auxiliary peripherals: One mini UART and two SPI masters. These
+ * three peripherals are grouped together as they share the same area in the peripheral register
+ * map and they share a common interrupt."
+ */
 #define AUXIRQ          (PBASE+0x00215000)    // bit0: "If set the mini UART has an interrupt pending"
 #define AUX_ENABLES     (PBASE+0x00215004)    // "AUXENB" in datasheet
 #define AUX_MU_IO_REG   (PBASE+0x00215040)
@@ -42,9 +43,7 @@
 
 #define AUX_MU_SCRATCH  (PBASE+0x0021505C)
 #define AUX_MU_CNTL_REG (PBASE+0x00215060)
-
 #define AUX_MU_STAT_REG (PBASE+0x00215064) // rx fifo stat
-
 #define AUX_MU_BAUD_REG (PBASE+0x00215068)
 
 // busy wait
@@ -90,9 +89,11 @@ void putc(void* p, char c) {
 
 void test_ktimer2(int c); // unittest.c
 
-/* handle a uart interrupt, raised because input has
-	arrived. only handle rx irq for simplicity
-	called from handle_irq() */	
+/*
+ * Handle a UART interrupt, raised because input has
+ * arrived. Only handle RX IRQ for simplicity.
+ * Called from handle_irq().
+ */
 void uart_irq(void) {
     //  check AUX_MU_IIR_REG bit0 for pending irq
     //    and bit 2:1 for irq causes
@@ -156,3 +157,6 @@ void uart_init(void) {
 
     put32(AUX_MU_CNTL_REG, 3); // Finally, enable transmitter and receiver
 }
+
+// cf: https://github.com/bztsrc/raspi3-tutorial/blob/master/03_uart1/uart.c
+// cf: https://github.com/futurehomeno/RPI_mini_UART/tree/master

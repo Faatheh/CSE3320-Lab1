@@ -1,72 +1,69 @@
 // #define K2_DEBUG_WARN
 #define K2_DEBUG_INFO
 
-/* 
-    the mailbox driver (&framebuffer, display) for rpi3.
-    use mailbox "property" interface
-    cf: https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
-
-    qemu code (buggy, see docs/notes-qemu-fb.md)
-    hw/display/bcm2835_fb.c
-    https://github.com/Xilinx/qemu/blob/master/hw/display/bcm2835_fb.c
-
-
-    CREDITS, more ref: see the end of this file
-*/
+/*
+ * The mailbox driver (& framebuffer, display) for rpi3.
+ * Uses mailbox "property" interface.
+ * Reference: https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+ *
+ * QEMU code (buggy, see docs/notes-qemu-fb.md):
+ * hw/display/bcm2835_fb.c
+ * https://github.com/Xilinx/qemu/blob/master/hw/display/bcm2835_fb.c
+ *
+ * CREDITS, more references: see the end of this file.
+ */
 
 #include "plat.h"
 #include "utils.h"
 #include "spinlock.h"
 
-struct spinlock mboxlock = {.locked=0, .cpu=0, .name="mbox_lock"};
+struct spinlock mboxlock = {.locked = 0, .cpu = 0, .name = "mbox_lock"};
 
 /* mailbox message buffer */
-volatile unsigned int  __attribute__((aligned(16))) mbox[36];
+volatile unsigned int __attribute__((aligned(16))) mbox[36];
 
 #define MMIO_BASE       0x3F000000UL
-#define VIDEOCORE_MBOX  (MMIO_BASE+0x0000B880)
-#define MBOX_READ       ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x0))
-#define MBOX_POLL       ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x10))
-#define MBOX_SENDER     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x14))
-#define MBOX_STATUS     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x18))
-#define MBOX_CONFIG     ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x1C))
-#define MBOX_WRITE      ((volatile unsigned int*)((VIDEOCORE_MBOX)+0x20))
+#define VIDEOCORE_MBOX  (MMIO_BASE + 0x0000B880)
+#define MBOX_READ       ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x0))
+#define MBOX_POLL       ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x10))
+#define MBOX_SENDER     ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x14))
+#define MBOX_STATUS     ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x18))
+#define MBOX_CONFIG     ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x1C))
+#define MBOX_WRITE      ((volatile unsigned int*)((VIDEOCORE_MBOX) + 0x20))
 #define MBOX_RESPONSE   0x80000000
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
 
 /**
  * Make a mailbox call. Use the "mbox" buffer for both request and response.
- * response overwrites request
- * Spin wait for mailbox hw.  
- * Returns 0 on failure, non-zero on success
- * 
- * caller must hold mboxlock
+ * Response overwrites request.
+ * Spin wait for mailbox hardware.
+ * Returns 0 on failure, non-zero on success.
+ *
+ * Caller must hold mboxlock.
  */
-int mbox_call(unsigned char ch)
-{
+int mbox_call(unsigned char ch) {
     // the buf addr (pa) w/ ch (chan id) in LSB 
-    unsigned int r = (((unsigned int)((unsigned long)&mbox)&~0xF) | (ch&0xF));
+    unsigned int r = (((unsigned int)((unsigned long)&mbox) & ~0xF) | (ch & 0xF));
     r = BUS_ADDRESS(r); 
     /* wait until we can write to the mailbox */
-    do{asm volatile("nop");}while(*MBOX_STATUS & MBOX_FULL);
+    do { asm volatile("nop"); } while (*MBOX_STATUS & MBOX_FULL);
     __asm__ volatile ("dmb sy" ::: "memory");    // mem barrier, ensuring msg in mem
 
     /* write the address of our message to the mailbox with channel identifier */
     *MBOX_WRITE = r; 
     /* now wait for the response */
-    while(1) {
+    while (1) {
         /* is there a response? */
-        do{asm volatile("nop");}while(*MBOX_STATUS & MBOX_EMPTY);
+        do { asm volatile("nop"); } while (*MBOX_STATUS & MBOX_EMPTY);
         /* is it a response to our message? */
-        if(r == *MBOX_READ) {
+        if (r == *MBOX_READ) {
             V("r is 0x%x", r); 
-            // __asm_invalidate_dcache_range((void *)mbox, (char *)mbox + sizeof(mbox)); 
             /* is it a valid successful response? (strange it's benign) */
-            if (mbox[1]!=MBOX_RESPONSE) I("mbox[1] is %08x", mbox[1]);            
-            return mbox[1]==MBOX_RESPONSE;
+            if (mbox[1] != MBOX_RESPONSE) I("mbox[1] is %08x", mbox[1]);            
+            return mbox[1] == MBOX_RESPONSE;
         } else {
-            W("got an irrelvant msg. bug?"); 
+            W("got an irrelevant msg. bug?"); 
         }
     }
     return 0;
@@ -75,9 +72,9 @@ int mbox_call(unsigned char ch)
 ///////////////////////////////////////////////////
 // property interfaces via mbox
 #define MBOX_REQUEST    0
-#define CODE_RESPONSE_SUCCESS	0x80000000
-#define CODE_RESPONSE_FAILURE	0x80000001
-	
+#define CODE_RESPONSE_SUCCESS    0x80000000
+#define CODE_RESPONSE_FAILURE    0x80000001
+
 /* channels */
 #define MBOX_CH_POWER   0
 #define MBOX_CH_FB      1
@@ -88,10 +85,8 @@ int mbox_call(unsigned char ch)
 #define MBOX_CH_TOUCH   6
 #define MBOX_CH_COUNT   7
 #define MBOX_CH_PROP    8
-
 /* tags */
 #define MBOX_TAG_LAST           0
-
 // in a successful resp, b31 is set; b30-0 is "value length in bytes"
 #define VALUE_LENGTH_RESPONSE	(1 << 31)
 
@@ -119,10 +114,9 @@ extern volatile unsigned char _binary_font_psf_start;
 struct fb_struct the_fb = {
     .fb = 0,
 #ifdef PLAT_RPI3QEMU
-    // these are just initial fb sizes; app will ask for diff
-    // sizes based on their logic. so we keep them small for qemu
-    // to avoid a big blank screen upon boot
-    // Nov 2024: 320x240 seems to cause QEMU bug and segfault. cf staged/notes-qemu-fb-res.txt    
+    /* these are just initial fb sizes; app will ask for diff
+    sizes based on their logic. so we keep them small for qemu
+    to avoid a big blank screen upon boot */
     // .width = 640,
     // .height = 480, 
     // .vwidth = 640, 
@@ -150,14 +144,14 @@ struct fb_struct the_fb = {
 test) rpi3 hw will return "0" even if we asks for "1" qemu will do whatever we
 ask ("0" or "1"); if "1", channel order is bgr */
 
-/* 
-    detect phys display optimal x/y, if unconfigured
-    caller must hold mboxlock
-    return: 0 on success 
-
-    FL's 720p monitor: 1360 768
-    qemu 640 480 (initial? subject to reconfig for larger fb)
-*/
+/*
+ * Detect physical display optimal x/y, if unconfigured.
+ * Caller must hold mboxlock.
+ * Return: 0 on success.
+ *
+ * FXL's 720p monitor: 1360x768
+ * QEMU: 640x480 (initial; subject to reconfig for larger fb)
+ */
 int fb_detect_scr_dim(uint *w, uint *h) {
     mbox[0] = 8*4;     // size of the whole buf that follows
     mbox[1] = MBOX_REQUEST; // cpu->gpu request
@@ -177,9 +171,11 @@ int fb_detect_scr_dim(uint *w, uint *h) {
     return 0; 
 }
 
-/* Set virt offset
-    caller must hold mboxlock
-    Return 0 on success */
+/* 
+ * Set virt offset
+ * Caller must hold mboxlock
+ * Return 0 on success 
+ */
 int fb_set_voffsets(int offsetx, int offsety) {
 
     mbox[0] = 8*4;
@@ -207,72 +203,72 @@ int fb_set_voffsets(int offsetx, int offsety) {
      return 0; 
 }
 
-/* 
-    init the actual fb hw, by invoking the mbox interface
-    return 0 if succeeds. 
+/*
+ * Initialize the actual framebuffer hardware by invoking the mailbox interface.
+ * Return 0 if successful.
  */
-static int do_fb_init(struct fb_struct *fbs)
-{    
-    if (!fbs) return -1; 
+static int do_fb_init(struct fb_struct *fbs) {
+    if (!fbs)
+        return -1;
 
-    acquire(&mboxlock); 
+    acquire(&mboxlock);
 
 #ifdef PLAT_RPI3
     // if (v)width/(v)height is 0, set them = the scr size
-    if (fb_detect_scr_dim(&fbs->scr_width,&fbs->scr_height)==0) {
-        fbs->vwidth = fbs->vwidth ? fbs->vwidth:fbs->scr_width;
-        fbs->vheight = fbs->vheight ? fbs->vheight:fbs->scr_height;
-        fbs->width  = fbs->width ? fbs->width:fbs->scr_width;
-        fbs->height  = fbs->height ? fbs->height:fbs->scr_height;        
+    if (fb_detect_scr_dim(&fbs->scr_width, &fbs->scr_height) == 0) {
+        fbs->vwidth = fbs->vwidth ? fbs->vwidth : fbs->scr_width;
+        fbs->vheight = fbs->vheight ? fbs->vheight : fbs->scr_height;
+        fbs->width = fbs->width ? fbs->width : fbs->scr_width;
+        fbs->height = fbs->height ? fbs->height : fbs->scr_height;
     }
 #endif
 
-    mbox[0] = 35*4;     // size of the whole buf that follows
+    mbox[0] = 35 * 4;       // size of the whole buf that follows
     mbox[1] = MBOX_REQUEST; // cpu->gpu request
 
     /* a sequence of tags below  */
-    mbox[2] = 0x48003;  //set phy width & height
-    mbox[3] = 8;        // total buf size of this tag
-    mbox[4] = 8;        // req val size (needed?), to be overwritten as resp val size
-    mbox[5] = fbs->width;           //(val) FrameBufferInfo.width
-    mbox[6] = fbs->height;          //(val) FrameBufferInfo.height
+    mbox[2] = 0x48003;     // set phy width & height
+    mbox[3] = 8;           // total buf size of this tag
+    mbox[4] = 8;           // req val size (needed?), to be overwritten as resp val size
+    mbox[5] = fbs->width;  //(val) FrameBufferInfo.width
+    mbox[6] = fbs->height; //(val) FrameBufferInfo.height
 
-    mbox[7] = 0x48004;  //set virt width & height
+    mbox[7] = 0x48004; // set virt width & height
     mbox[8] = 8;
     mbox[9] = 8;
-    mbox[10] = fbs->vwidth;        //FrameBufferInfo.virtual_width
-    mbox[11] = fbs->vheight;         //FrameBufferInfo.virtual_height
+    mbox[10] = fbs->vwidth;  // FrameBufferInfo.virtual_width
+    mbox[11] = fbs->vheight; // FrameBufferInfo.virtual_height
 
-    mbox[12] = 0x48009; //set virt offset
+    mbox[12] = 0x48009; // set virt offset
     mbox[13] = 8;
     mbox[14] = 8;
-    mbox[15] = fbs->offsetx;           
-    mbox[16] = fbs->offsety;           
+    mbox[15] = fbs->offsetx;
+    mbox[16] = fbs->offsety;
 
-    mbox[17] = 0x48005; //set depth
+    mbox[17] = 0x48005; // set depth
     mbox[18] = 4;
     mbox[19] = 4;
-    mbox[20] = fbs->depth;       
+    mbox[20] = fbs->depth;
 
-    mbox[21] = 0x48006;     // set pixel order
+    mbox[21] = 0x48006; // set pixel order
     mbox[22] = 4;
     mbox[23] = 4;
-    mbox[24] = fbs->isrgb;           // RGB, not BGR preferably
+    mbox[24] = fbs->isrgb; // RGB, not BGR preferably
 
-    mbox[25] = 0x40001;     // get framebuffer, gets alignment on request
+    mbox[25] = 0x40001; // get framebuffer, gets alignment on request
     mbox[26] = 8;
-    mbox[27] = 8;           // should be 4?? (req para size)
-    mbox[28] = 4096;        // req: alignment; resp: FrameBufferInfo.pointer
-    mbox[29] = 0;           // resp: FrameBufferInfo.size
+    mbox[27] = 8;    // should be 4?? (req para size)
+    mbox[28] = 4096; // req: alignment; resp: FrameBufferInfo.pointer
+    mbox[29] = 0;    // resp: FrameBufferInfo.size
 
-    mbox[30] = 0x40008;     //get pitch
+    mbox[30] = 0x40008; // get pitch
     mbox[31] = 4;
     mbox[32] = 4;
-    mbox[33] = 0;           //FrameBufferInfo.pitch
+    mbox[33] = 0; // FrameBufferInfo.pitch
 
-    mbox[34] = MBOX_TAG_LAST;   // the end of tag seq
+    mbox[34] = MBOX_TAG_LAST; // the end of tag seq
 
-    /* make call, then check some response vals that may fail */
+    /* Make the mailbox call and check response values for potential failures */
     if(mbox_call(MBOX_CH_PROP) 
         && mbox[20]==fbs->depth /*depth*/ 
         && mbox[28]!=0 /*framebuf*/) {
@@ -301,14 +297,13 @@ static int do_fb_init(struct fb_struct *fbs)
         return -2; 
     }
     release(&mboxlock); 
-    return 0; 
+    return 0;
 }
 
 void fb_showpicture();
 
-/* init the fb, show a picture (OS logo) 
-    return 0 on success (display will go black)
-*/
+/* Initialize the framebuffer and display a picture (OS logo).
+    Return 0 on success (display will go black). */
 int fb_init(void) {
     static int once = 1; 
     int ret = do_fb_init(&the_fb); 
@@ -317,95 +312,94 @@ int fb_init(void) {
     return ret; 
 }
 
-/* finalize the fb, clean up. 
-    return 0 on success (display will go blank)
-*/
+/* Finalize the framebuffer and clean up.
+    Return 0 on success (display will go blank). */
 int fb_fini(void) {
-    int ret = 0; 
+    int ret = 0;
 
-    acquire(&mboxlock); 
+    acquire(&mboxlock);
     if (!the_fb.fb || !the_fb.size) {
-        ret = -1; 
-        goto out; 
+        ret = -1;
+        goto out;
     }
 
-#ifdef PLAT_RPI3QEMU    // avoid artifacts: qemu does not clear old fb
-    memset(the_fb.fb, 0, the_fb.size);     
+#ifdef PLAT_RPI3QEMU // avoid artifacts: qemu does not clear old fb
+    memset(the_fb.fb, 0, the_fb.size);
 #endif
 
-    mbox[0] = 6*4;     // size of the whole buf that follows
+    mbox[0] = 6 * 4;        // size of the whole buf that follows
     mbox[1] = MBOX_REQUEST; // cpu->gpu request
 
-    mbox[2] = 0x48001;     // rls framebuffer
-    mbox[3] = 0;           // total buf size
-    mbox[4] = 0;           // req para size
-        
+    mbox[2] = 0x48001; // rls framebuffer
+    mbox[3] = 0;       // total buf size
+    mbox[4] = 0;       // req para size
+
     mbox[5] = MBOX_TAG_LAST;
 
-    if(!mbox_call(MBOX_CH_PROP))
-        I("failed to rls fb with GPU."); 
-        // response code always 0x80000001 (failure). couldn't figure out why
+    if (!mbox_call(MBOX_CH_PROP))
+        I("failed to rls fb with GPU.");
+    // response code always 0x80000001 (failure). couldn't figure out why
 
     // wont need this until flavor simple/rich user
     // if (free_phys_region(VA2PA(the_fb.fb), the_fb.size)) {
-    //     E("failed to free fb memory. bug?"); 
-    //     ret = -2; 
+    //     E("failed to free fb memory. bug?");
+    //     ret = -2;
     // }
-    the_fb.fb = 0; 
+    the_fb.fb = 0;
 out:
-    release(&mboxlock);          
-    return ret; 
+    release(&mboxlock);
+    return ret;
 }
 
 ///////////////////////////////////////////////////
 //  draw: picture/text on the fb display 
 
-/* 
-    Display a string using fixed size PSF update x,y screen coordinates
-    x/y (IN|OUT): the postion before/after the screen output 
-    NB these are pixel coordinates (not character locations)
-*/
-void fb_print(int *x, int *y, char *s)
-{
-    unsigned pitch = the_fb.pitch; 
-    unsigned char *fb = the_fb.fb; 
+/*
+ * Display a string using fixed size PSF update x,y screen coordinates
+ * x/y (IN|OUT): the position before/after the screen output
+ * NB these are pixel coordinates (not character locations)
+ */
+void fb_print(int *x, int *y, char *s) {
+    unsigned pitch = the_fb.pitch;
+    unsigned char *fb = the_fb.fb;
 
     // get our font
-    psf_t *font = (psf_t*)&_binary_font_psf_start;
+    psf_t *font = (psf_t *)&_binary_font_psf_start;
     // draw next character if it's not zero
-    while(*s) {
+    while (*s) {
         /* get offset of the glyph. Need to adjust this to support unicode table */
-        unsigned char *glyph = (unsigned char*)&_binary_font_psf_start +
-         font->headersize + (*((unsigned char*)s)<font->numglyph?*s:0)*font->bytesperglyph;
+        unsigned char *glyph = (unsigned char *)&_binary_font_psf_start +
+                               font->headersize + (*((unsigned char *)s) < font->numglyph ? *s : 0) * font->bytesperglyph;
         // calculate the offset on screen
         int offs = (*y * pitch) + (*x * 4);
         // variables
-        int i,j, line,mask, bytesperline=(font->width+7)/8;
+        int i, j, line, mask, bytesperline = (font->width + 7) / 8;
         // handle carrige return
-        if(*s == '\r') {
+        if (*s == '\r') {
             *x = 0;
         } else
-        // new line
-        if(*s == '\n') {
-            *x = 0; *y += font->height;
-        } else {
-            // display a character
-            for(j=0;j<font->height;j++){
-                // display one row
-                line=offs;
-                mask=1<<(font->width-1);
-                for(i=0;i<font->width;i++){
-                    // if bit set, we use white color, otherwise black
-                    *((unsigned int*)(fb + line))=((int)*glyph) & mask?0xFFFFFF:0;
-                    mask>>=1;
-                    line+=4;
+            // new line
+            if (*s == '\n') {
+                *x = 0;
+                *y += font->height;
+            } else {
+                // display a character
+                for (j = 0; j < font->height; j++) {
+                    // display one row
+                    line = offs;
+                    mask = 1 << (font->width - 1);
+                    for (i = 0; i < font->width; i++) {
+                        // if bit set, we use white color, otherwise black
+                        *((unsigned int *)(fb + line)) = ((int)*glyph) & mask ? 0xFFFFFF : 0;
+                        mask >>= 1;
+                        line += 4;
+                    }
+                    // adjust to next line
+                    glyph += bytesperline;
+                    offs += pitch;
                 }
-                // adjust to next line
-                glyph+=bytesperline;
-                offs+=pitch;
+                *x += (font->width + 1);
             }
-            *x += (font->width+1);
-        }
         // next character
         s++;
     }
@@ -456,7 +450,6 @@ void fb_showpicture()
     fb_print(&x, &y, "UVA OS");    
     sprintf(res, " %dx%d", the_fb.width, the_fb.height); // debug info 
     fb_print(&x, &y, res);
-    // __asm_flush_dcache_range(the_fb.fb, the_fb.fb + the_fb.size); 
 }
 
 /*
@@ -485,21 +478,26 @@ void fb_showpicture()
  */
 
 
-/*  Ref: 
+/*
+    References:
+    1. Raspberry Pi Mailboxes: 
     https://github.com/raspberrypi/firmware/wiki/Mailboxes
-    ref: https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c 
-    ref: https://www.valvers.com/open-software/raspberry-pi/bare-metal-programming-in-c-part-5/#part-5armc-016
-    ref: uboot arch/arm/mach-bcm283x/msg.c  
-    
-    for do_fb_init():
+    2. RT-Thread driver for Raspberry Pi:
+    https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c
+    3. Bare-metal programming for Raspberry Pi:
+    https://www.valvers.com/open-software/raspberry-pi/bare-metal-programming-in-c-part-5/#part-5armc-016
+    4. U-Boot mailbox implementation:
+    uboot arch/arm/mach-bcm283x/msg.c
 
-     * more undocumented cf: 
-    * https://github.com/raspberrypi/firmware/issues/719
-    * 
-    * below uses mbox "property channel". another way is to use the "fb" channel 
-    * directly. cf: https://github.com/rsta2/circle/blob/master/lib/bcmframebuffer.cpp
-    * 
-    * code ex: 
-    * https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c
-    *     
+    For `do_fb_init()`:
+
+    - Additional undocumented details:
+    https://github.com/raspberrypi/firmware/issues/719
+
+    - This implementation uses the mailbox "property channel." 
+    Alternatively, the "fb" channel can be used directly:
+    https://github.com/rsta2/circle/blob/master/lib/bcmframebuffer.cpp
+
+    - Example code:
+    https://github.com/RT-Thread/rt-thread/blob/master/bsp/raspberry-pi/raspi3-64/driver/mbox.c
 */
