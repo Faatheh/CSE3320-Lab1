@@ -83,8 +83,8 @@ Clean any pre-installed qemu and install necessary tools:
 ```
 sudo apt remove qemu-system-arm
 sudo apt install gdb-multiarch build-essential pkg-config
-sudo apt install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev
-```    
+sudo apt install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libgtk-3-dev
+```
 
 Grab the QEMU source.  Our QEMU is based on upstream v4.2 **with custom aarch64 debugging support.** 
 

@@ -8,23 +8,11 @@
 #include "utils.h"
 #include "sched.h"
 
-// unittests.c
-extern void test_ktimer(); 
-extern void test_sys_sleep();
-extern void test_malloc(); 
-extern void test_mbox(); 
-extern void test_usb_kb(); 
-extern void test_usb_storage(); 
-extern void test_fb_voffset(); 
-extern void test_sound(); 
-extern void test_sd(); 
-extern void test_kernel_tasks();
-extern void test_spinlock();
-extern void test_sem();
-extern void test_sf();
-extern void donut(); 	//donut.c
-extern void donut_simple(); 	//donut.c
-extern void donut_text(); 	//donut.c
+extern void test_ktimer();     // unittests.c
+extern void test_fb_voffset(); // unittests.c
+extern void donut();           // donut.c
+extern void donut_simple();    // donut.c
+extern void donut_text();      // donut.c
 
 void uart_send_string(char* str);
 
@@ -52,7 +40,7 @@ void kernel_main() {
 	donut();		// !STUDENT_DONOT_SEE    uses virtual timer for animation
 
 	// quest: pixel donut. call donut_simple()
-	// to enable it,  irq handler must be modified to call sys_timer_irq_simple()
+	/* to enable it,  irq handler must be modified to call sys_timer_irq_simple() */
 	// donut_simple();		// !STUDENT_DONOT_SEE		directly uses hw timer irq for animation
 	
 	// quest: textual donut. call donut_text()

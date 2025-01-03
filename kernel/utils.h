@@ -7,43 +7,27 @@
 #include <stdint.h>
 
 #include "param.h"
-
 #include "printf.h"
-
-#ifdef PLAT_VIRT
-#include "plat-virt.h"
-#endif
-
-#define __REG32(x)      (*((volatile uint32_t *)(x)))
 
 struct spinlock; 
 struct fb_struct; 
 
 // ------------------- utils.S ----------------------------- //
-// extern void put32(unsigned int *addr, unsigned int v); // TBD: change to C 
-// static inline void put32(volatile void *addr, unsigned int v) {
-//     *(volatile unsigned int *)addr = v; 
-// }
 #define put32(addr, v) \
     do \
     {*(volatile unsigned int *)(addr) = v;}    \
     while (0)
 
-// extern unsigned int get32 (unsigned int *addr); // TBD: change to C 
-// static inline unsigned int get32 (volatile void *addr) {
-//     return *(volatile unsigned int *)addr; 
-// }
 #define get32(addr)  (*(volatile unsigned int *)(addr))
 
 extern int get_el ( void );
-
 void panic(char *s);
 
 // ------------------- uart ----------------------------- //
 void uart_init (void);
 char uart_recv ( void );
 void putc ( void* p, char c );
-// new apis, from xv6
+// APIs from xv6
 void            uartintr(void);
 void            uartputc(int);
 void            uartputc_sync(int);
@@ -54,16 +38,16 @@ int             uartgetc(void);
 void sys_timer_init ( void );
 void sys_timer_irq ( void );
 
-// busy spinning
+/* busy spinning */
 void ms_delay(unsigned ms); 
 void us_delay(unsigned us);
 void delay (unsigned long cycles);
 
 void current_time(unsigned *sec, unsigned *msec);
 
-// kernel timers w/ callbacks, atop sys timer
+/* kernel timers w/ callbacks, atop "sys timers" */
 typedef unsigned long TKernelTimerHandle;	// =idx in kernel table for timers 
-// return: 1 if requested to restart the timer
+/* return: 1 if requested to restart the timer */
 typedef int TKernelTimerHandler (TKernelTimerHandle hTimer, void *pParam, void *pContext);
 
 int ktimer_start(unsigned delayms, TKernelTimerHandler *handler, 
@@ -73,7 +57,6 @@ int ktimer_cancel(int timerid);
 /* below are for Arm generic timers */
 void generic_timer_init ( void );
 void handle_generic_timer_irq ( void );
-
 extern unsigned int ticks; 
 
 // ------------------- spinlock ---------------------------- //
@@ -87,7 +70,7 @@ void            pop_off(void);
 // ------------------- irq ---------------------------- //
 void enable_interrupt_controller(int coreid); // irq.c 
 
-// utils.S
+// ------------------- utils.S ---------------------------- //
 void irq_vector_init( void );    
 void enable_irq( void ); 
 void disable_irq( void );
@@ -95,15 +78,15 @@ int is_irq_masked(void);
 /*return 1 if irq enabled, 0 otherwise*/
 static inline int intr_get(void) {return 1-is_irq_masked();}; 
 int cpuid(void);  // util.S must be called with irq disabled
+// cache ops
+void __asm_invalidate_dcache_range(void* start_addr, void* end_addr);
+void __asm_flush_dcache_range(void* start_addr, void* end_addr);
 
 // ----------------  mm.c ---------------------- //
 //src/n must be 8 bytes aligned   util.S
 void memzero_aligned(void *src, unsigned long n);  
 //dst/src/n must be 8 bytes aligned    util.S
 void* memcpy_aligned(void* dst, const void* src, unsigned int n);
-
-// #define put32va(x,v)    put32(PA2VA(x), v)
-// #define get32va(x)      get32(PA2VA(x))
 
 // string.c
 int             memcmp(const void*, const void*, uint);
@@ -131,7 +114,7 @@ int fb_init(void);
 int fb_fini(void); 
 int fb_set_voffsets(int offsetx, int offsety);
 
-/*      useful macros       */
+// ----------------  useful macros ---------------------- //
 // linux
 #define likely(exp)     __builtin_expect (!!(exp), 1)
 #define unlikely(exp)   __builtin_expect (!!(exp), 0)
@@ -149,7 +132,6 @@ static inline void warn_failed (const char *pExpr, const char *pFile, unsigned n
                             : assertion_failed (#expr, __FILE__, __LINE__))
 #define BUG_ON(exp)	assert (!(exp))
 #define BUG()		assert (0)
-
 #define WARN_ON(expr)    (likely (!(expr))        \
                             ? ((void) 0)           \
                             : warn_failed (#expr, __FILE__, __LINE__))
@@ -158,15 +140,10 @@ static inline void warn_failed (const char *pExpr, const char *pFile, unsigned n
 #define MIN(a,b) ((a) < (b) ? a : b)
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-// debug.h
 #include "debug.h"
 
 // from mmu.h 
 #define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
 #define PGROUNDDOWN(a) (((a)) & ~(PAGE_SIZE-1))
-
-// cache ops, util.S
-void __asm_invalidate_dcache_range(void* start_addr, void* end_addr);
-void __asm_flush_dcache_range(void* start_addr, void* end_addr);
 
 #endif  /*_UTILS_H */

@@ -39,7 +39,6 @@
 #define _k2clr_brown_bold  		"\033[1;33m"
 #define _k2clr_brown_underline  "\033[4;33m"
 
-
 #define _k2clr_cyan  "\033[1;36m"        /* 1 -> bold ;  36 -> cyan */
 #define _k2clr_green "\033[0;32m"        /* 4 -> underline ;  32 -> green */
 #define _k2clr_blue  "\033[1;34m"        /* 9 -> strike ;  34 -> blue */
@@ -94,14 +93,13 @@
 #endif
 
 /*
+	Full format, including source path, which sometimes is long.
+	Plus, there seems no reliable way to trim the path.
 
-   Full format, including source path, which sometimes is long.
-   Plus, there seems no reliable way to trim the path.
+	#define k2_print(fmt, arg...) \
+	 print_to_tracebuffer(K2_PRINT_TAG "%s %d %s: " fmt, __FILE__, __LINE__, __func__, ## arg)
 
-   #define k2_print(fmt, arg...) \
-    print_to_tracebuffer(K2_PRINT_TAG "%s %d %s: " fmt, __FILE__, __LINE__, __func__, ## arg)
-
-    Note: numbers should be consistent with arm/common/KConfig
+	Note: numbers should be consistent with arm/common/KConfig
 */
 
 #if K2_ACTUAL_DEBUG_LEVEL <= 10

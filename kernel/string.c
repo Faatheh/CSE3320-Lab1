@@ -1,132 +1,122 @@
-// from xv6
-
 #include "utils.h"
 
-// c: the fill value (byte); n: size, in bytes
-void* memset(void *dst, int c, uint n)
-{
-  char *cdst = (char *) dst;
-  int i;
-  for(i = 0; i < n; i++){
-    cdst[i] = c;
-  }
-  return dst;
+/*
+  string & memcpy functions. simple and slow.
+*/
+
+/* c: the fill value (byte); n: size, in bytes */
+void *memset(void *dst, int c, uint n) {
+    char *cdst = (char *)dst;
+    int i;
+    for (i = 0; i < n; i++) {
+        cdst[i] = c;
+    }
+    return dst;
 }
 
 void memzero(void *dst, uint n) {
-  memset(dst, 0, n); 
+    memset(dst, 0, n);
 }
 
-int
-memcmp(const void *v1, const void *v2, uint n)
-{
-  const uchar *s1, *s2;
+int memcmp(const void *v1, const void *v2, uint n) {
+    const uchar *s1, *s2;
 
-  s1 = v1;
-  s2 = v2;
-  while(n-- > 0){
-    if(*s1 != *s2)
-      return *s1 - *s2;
-    s1++, s2++;
-  }
+    s1 = v1;
+    s2 = v2;
+    while (n-- > 0) {
+        if (*s1 != *s2)
+            return *s1 - *s2;
+        s1++, s2++;
+    }
 
-  return 0;
-}
-
-// well handles dst/src overlap
-void*
-memmove(void *dst, const void *src, uint n)
-{
-  const char *s;
-  char *d;
-
-  if(n == 0)
-    return dst;
-  
-  s = src;
-  d = dst;
-  if(s < d && s + n > d){
-    s += n;
-    d += n;
-    while(n-- > 0)
-      *--d = *--s;
-  } else
-    while(n-- > 0)
-      *d++ = *s++;
-
-  return dst;
-}
-
-// memcpy exists to placate GCC.  Use memmove.
-// NB: gcc will gen code to invoke memcpy for struct assignment. so the 
-// func below must be right (e.g. cannot assume any alignment)
-void*
-memcpy(void *dst, const void *src, uint n)
-{
-  return memmove(dst, src, n);
-}
-
-int
-strncmp(const char *p, const char *q, uint n)
-{
-  while(n > 0 && *p && *p == *q)
-    n--, p++, q++;
-  if(n == 0)
     return 0;
-  return (uchar)*p - (uchar)*q;
 }
 
-char*
-strncpy(char *s, const char *t, int n)
-{
-  char *os;
+/* well handles dst/src overlap */
+void *memmove(void *dst, const void *src, uint n) {
+    const char *s;
+    char *d;
 
-  os = s;
-  while(n-- > 0 && (*s++ = *t++) != 0)
-    ;
-  while(n-- > 0)
-    *s++ = 0;
-  return os;
+    if (n == 0)
+        return dst;
+
+    s = src;
+    d = dst;
+    if (s < d && s + n > d) {
+        s += n;
+        d += n;
+        while (n-- > 0)
+            *--d = *--s;
+    } else
+        while (n-- > 0)
+            *d++ = *s++;
+
+    return dst;
 }
 
-// Like strncpy but guaranteed to NUL-terminate.
-char*
-safestrcpy(char *s, const char *t, int n)
-{
-  char *os;
+/*
+ * memcpy exists to satisfy GCC. Use memmove instead.
+ * Note: GCC may generate code to invoke memcpy for struct assignment,
+ * so the function below must handle all cases correctly (e.g., cannot assume any alignment).
+ */
+void *memcpy(void *dst, const void *src, uint n) {
+    return memmove(dst, src, n);
+}
 
-  os = s;
-  if(n <= 0)
+int strncmp(const char *p, const char *q, uint n) {
+    while (n > 0 && *p && *p == *q)
+        n--, p++, q++;
+    if (n == 0)
+        return 0;
+    return (uchar)*p - (uchar)*q;
+}
+
+char *strncpy(char *s, const char *t, int n) {
+    char *os;
+
+    os = s;
+    while (n-- > 0 && (*s++ = *t++) != 0)
+        ;
+    while (n-- > 0)
+        *s++ = 0;
     return os;
-  while(--n > 0 && (*s++ = *t++) != 0)
-    ;
-  *s = 0;
-  return os;
 }
 
-int
-strlen(const char *s)
-{
-  int n;
+/* Like strncpy but guaranteed to NUL-terminate. */
+char *safestrcpy(char *s, const char *t, int n) {
+    char *os;
 
-  for(n = 0; s[n]; n++)
-    ;
-  return n;
+    os = s;
+    if (n <= 0)
+        return os;
+    while (--n > 0 && (*s++ = *t++) != 0)
+        ;
+    *s = 0;
+    return os;
+}
+
+int strlen(const char *s) {
+    int n;
+
+    for (n = 0; s[n]; n++)
+        ;
+    return n;
 }
 
 int atoi(const char *s) {
-  int n;
-  n = 0;
-  while('0' <= *s && *s <= '9')
-    n = n*10 + *s++ - '0';
-  return n;
+    int n;
+    n = 0;
+    while ('0' <= *s && *s <= '9')
+        n = n * 10 + *s++ - '0';
+    return n;
 }
 
-//ff.c wants it
-char* strchr(const char *s, char c)
-{
-  for(; *s; s++)
-    if(*s == c)
-      return (char*)s;
-  return 0;
+/* ff.c needs this */
+char *strchr(const char *s, char c) {
+    for (; *s; s++)
+        if (*s == c)
+            return (char *)s;
+    return 0;
 }
+
+/* the file is derived from xv6 */

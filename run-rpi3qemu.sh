@@ -14,7 +14,7 @@ QEMU6=qemu-system-aarch64
 #QEMU8=~/qemu-8.2-apr2024/build/qemu-system-aarch64   
 
 # sp25, containing our own fix
-QEMU9="/home/student/qemu-9.1.1/build/qemu-system-aarch64"
+QEMU9=${HOME}"/qemu-9.1.1/build/qemu-system-aarch64"
 
 if [ -x "${QEMU9}" ]; then
     QEMU=${QEMU9}

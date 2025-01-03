@@ -33,6 +33,24 @@ There are still some caveats (noted in the code), but this solution seems to wor
 
 docs/fb-bug/bcm2835_fb.{c|h}
 
+
+to configure and build qemu:
+```
+sudo apt remove qemu-system-arm
+sudo apt install gdb-multiarch build-essential pkg-config
+sudo apt install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libgtk-3-dev
+pip install tomli
+```
+libgtk-3-dev is needed; otherwise qemu build will fall back to SDL which seems to result in a UI with blank screen.
+
+```
+mkdir build
+cd build
+# ../configure --target-list=aarch64-softmmu --enable-debug-info
+../configure --target-list=aarch64-softmmu 
+make -j6
+```
+
 test scripts
 
 ```

@@ -6,8 +6,6 @@
 #error "unimpl"
 #endif
 
-// from mmu.h 
-
 // -------------------------- page size constants  ------------------------------ //
 #define PAGE_MASK			    0xfffffffffffff000
 #define PAGE_SHIFT	 	        12
