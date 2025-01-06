@@ -3,7 +3,6 @@
 // #define K2_DEBUG_WARN
 
 #include "plat.h"
-// #include "mmu.h"
 #include "utils.h"
 #include "printf.h"
 #include "spinlock.h"

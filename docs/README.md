@@ -40,35 +40,22 @@ A single CPU core can boot, print messages from UART, and display pixels. Interr
 export PLAT=rpi3qemu
 ```
 
-To clean up:
-```sh
-./cleanall.sh
-```
-
-To build everything:
-```sh
-./makeall.sh
-```
-
-To run on qemu:
-```sh
-./run-rpi3qemu.sh
-```
+| Action                      | Command                   |
+|-----------------------------|---------------------------|
+| To clean up                 | `./cleanall.sh`           |
+| To build everything         | `./makeall.sh`            |
+| To run on qemu              | `./run-rpi3qemu.sh`       |
+| Launch qemu for debugging   | `./dbg-rpi3qemu.sh`       |
 
 ### For rpi3 (hardware)
 ```
 export PLAT=rpi3
 ```
 
-To clean up:
-```sh
-./cleanall.sh
-```
-
-To build everything:
-```sh
-./makeall.sh
-```
+| Action              | Command             |
+|---------------------|---------------------|
+| To clean up         | `./cleanall.sh`     |
+| To build everything | `./makeall.sh`      |
 
 (One time): get a blank SD card, burn the provided image with Win32DiskImager, 
 balenaEtcher, or Raspberry Pi Imager. 
