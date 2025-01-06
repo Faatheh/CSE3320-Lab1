@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# UPDATE: consider using "cherry-push.sh" and "cehrry-pick.sh" instead
+
 # pull common files from the "main" repo
 
 # Prompt the user to enter a number between 1 and 5

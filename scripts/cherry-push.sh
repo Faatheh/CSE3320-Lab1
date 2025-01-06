@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Pull common files from the "main" repo
+# Push common files to a different "lab" repo
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do

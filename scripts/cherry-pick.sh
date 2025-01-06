@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pull common files from the "main" repo
+# Pull common files from a different "lab" repo
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
