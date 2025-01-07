@@ -18,7 +18,7 @@ Tarball created at
 Now double check the content of /tmp/Lab1-xl6yq.tar.gz, and submit it to Canvas.
 ```
 
-## What should a submission look like?
+## How does a submission look like?
 
 A lab submission will typically include the following: 
 
@@ -48,7 +48,12 @@ Put DELIVERABLES under `~/os-lab1/DELIVERABLE/` which already contains the direc
         ... 
 ```
 
-To prepare the submission, run the following command:
+For any writeup that is about the entire lab (not a specific quest), 
+put it directly under `~/os-lab1/DELIVERABLE`.
+
+## Prepare the submission
+
+Run the following command:
 
 ```
 cd ~/os-lab1
@@ -96,7 +101,7 @@ Photos and videos:
 
 ![Sample](video-sample.gif)
 
-## Deliverables: Writeup
+## Writeup
 
 - Must be in PDF or TXT format.
 - Shall not exceed one page, unless otherwise specified.
