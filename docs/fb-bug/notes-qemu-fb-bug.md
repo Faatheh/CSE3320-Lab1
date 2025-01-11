@@ -1,7 +1,47 @@
 
 # Notes on a QEMU rpi framebuffer bug
+nov 2024, jan 2025
 
-nov 2024
+## Fixes - build our source code 
+
+to install prerequisite 
+```
+sudo apt remove qemu-system-arm
+sudo apt install gdb-multiarch build-essential pkg-config
+sudo apt install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libgtk-3-dev
+pip install tomli
+```
+libgtk-3-dev is needed; otherwise qemu build will fall back to SDL which seems to result in a UI with blank screen.
+
+
+clone the code with our fixes
+```
+cd $HOME
+git clone --branch uva-os-2025-01-10 --depth 1 git@github.com:fxlin/qemu-9.1.1.git
+```
+
+to configure and build qemu.
+```
+cd ~/qemu-9.1.1/
+mkdir build
+cd build
+# ../configure --target-list=aarch64-softmmu --enable-debug-info
+../configure --target-list=aarch64-softmmu 
+make -j$(nproc)
+```
+
+Simply run our script `run-rpi3qemu.sh` as usual, 
+which already contains the logic for locating the new qemu binary. cf:
+
+```bash
+# sp25, containing our own fix
+QEMU9=${HOME}"/qemu-9.1.1/build/qemu-system-aarch64"
+if [ -x "${QEMU9}" ]; then
+    QEMU=${QEMU9}
+else
+    QEMU=${QEMU6}   # default 
+fi
+```
 
 ## Symptom
 QEMU occasionally segfaults when the guest kernel changes the framebuffer resolution via mailbox (mbox).
