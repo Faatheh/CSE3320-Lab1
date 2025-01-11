@@ -34,6 +34,7 @@ Simply run our script `run-rpi3qemu.sh` as usual,
 which already contains the logic for locating the new qemu binary. cf:
 
 ```bash
+# (run-rpi3qemu.sh)
 # sp25, containing our own fix
 QEMU9=${HOME}"/qemu-9.1.1/build/qemu-system-aarch64"
 if [ -x "${QEMU9}" ]; then
@@ -42,6 +43,13 @@ else
     QEMU=${QEMU6}   # default 
 fi
 ```
+
+To test if the fixes work, run:
+```
+scripts/stress-qemu.sh
+```
+QEMU should survive the test without segfaults.
+
 
 ## Symptom
 QEMU occasionally segfaults when the guest kernel changes the framebuffer resolution via mailbox (mbox).
@@ -98,7 +106,7 @@ test scripts
 scripts/debug-qemu-itself.sh     
 
 # for stress test
-scripts/stress-qemu.sh.sh     
+scripts/stress-qemu.sh
 ```
 
 ## segfault call stack 
