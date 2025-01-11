@@ -2,7 +2,7 @@
 # Notes on a QEMU rpi framebuffer bug
 nov 2024, jan 2025
 
-## Fixes - build our source code 
+## Solution - build from source with our fixes
 
 to install prerequisite 
 ```
