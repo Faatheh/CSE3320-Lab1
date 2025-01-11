@@ -88,15 +88,15 @@ See [here](submission.md) for a detailed description of the submission format.
 ### How to choose?  
 - All: try VMWare first; 
 - We will provide download links for VMWare Workstation 17 Player
-- If VMWare does not work for you (e.g. your machine becomes to slow):
+- If VMWare does not work for you (e.g. your machine is slow):
   - Windows users: try WSL2
-  - Mac users: get a loaner Windows laptop from CS IT; try WSL2
+  - Mac users: get a loaner Windows laptop from CS IT
   - Linux users: try native. 
 
 | Your local machine: | Can run ...    |
 | ------------------------ | ---------------------- |
 | Windows                  | VMware or WSL2 (WSL won't work) |
-| Mac                      | VMware Workstation |
+| Mac                      | VMware Fusion |
 | Linux                    | Ubuntu 22.04 native or VMware Player Workstation              |
 
 
@@ -108,17 +108,13 @@ See [here](submission.md) for a detailed description of the submission format.
 
 * [instructions](wsl2.md): How to install WSL2 on Windows
 
-
-Note: 
-* We only support Ubuntu 22.04. 
+* WSL2 must run Ubuntu 22.04. 
 
 * Other OS/compiler versions are possible but unsupported. 
 
 * In writing below, we will refer to users using VMware Player as "VM users". 
 
-* CS undergraduates are eligible for a PC laptop loaner from the CS IT 
-
-### install toolchain (already done for VM users)
+#### install toolchain (already done for VM users)
 
 VM users: skip the "apt" commands. Toolchains are already installed. 
 
@@ -149,7 +145,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ````
 
-### install gdb (already done for VM users)
+#### install gdb (already done for VM users)
 VM users: skip the "apt" command. 
 ````
 sudo apt install -y gdb-multiarch
@@ -160,12 +156,11 @@ Install the "dashboard" enhancement
 wget -P ~ https://raw.githubusercontent.com/fxlin/uva-os-main/main/.gdbinit
 ````
 
-### install qemu (already done for VM users)
+#### install qemu (already done for VM users)
 VM users: skip the "apt" command
 ````
 sudo apt install -y qemu-system-aarch64
 ````
-
 
 Verify: 
 ````
@@ -175,7 +170,11 @@ QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.18)
 Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 ````
 
-### test toolchain & qemu (already done for VM users)
+**Bug fix.**
+In addition, you may want to build qemu from source with our fixes. 
+cf quest "pixel donut" below. 
+
+#### test toolchain & qemu (already done for VM users)
 
 The command below tests your QEMU installation with Rpi3 emulation (NOTE: this repo is for validating your
 toolchain & QEMU build; it is NOT our course project)
@@ -199,7 +198,7 @@ My serial number is: 0000000000000000
 >  Note: the test program runs an infinite loop which will cause high CPU usage
 >  on your host machine. Use ctrl-c to kill QEMU. 
 
-## vscode (already done for VM users; non-VM users: optional but recommended)
+#### vscode (already done for VM users; non-VM users: optional but recommended)
 
 > This is a side quest. VM users: skip this quest; you already have vscode and plugins installed.
 
