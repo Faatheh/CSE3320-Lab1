@@ -1,5 +1,12 @@
 p1-gen-hash-ports() {
-    export MYGDBPORT=`echo -n ${USER} | md5sum | cut -c1-8 | printf "%d\n" 0x$(cat -) | awk '{printf "%.0f\n", 50000 + (($1 / 0xffffffff) * 10000)}'`
+    if [ "${USER}" = "student" ]; then
+        export MYGDBPORT=53089  # special rule, for ease deployment of the VM image
+    else
+        export MYGDBPORT=$(echo -n ${USER} | md5sum | cut -c1-8 | while read hex; do
+            decimal=$((0x$hex & 0xffffffff))  # Convert to decimal and ensure 32-bit
+            echo $((50000 + (decimal % (65536 - 50000 + 1))))  # Map to range [50000, 65536]
+        done)
+    fi
     echo "set gdb port: ${MYGDBPORT}"
 }
 
