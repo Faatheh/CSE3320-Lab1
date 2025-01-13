@@ -87,20 +87,25 @@ See [here](submission.md) for a detailed description of the submission format.
 
 ### How to choose?  
 - All: try VMWare first; 
-- We will provide download links for VMWare Workstation 17 Player
 - If VMWare does not work for you (e.g. your machine is slow):
   - Windows users: try WSL2
   - Mac users: get a loaner Windows laptop from CS IT
   - Linux users: try native. 
 
+In writing below, we will refer to users using VMware Player/Fusion as "VM users". 
+
 | Your local machine: | Can run ...    |
 | ------------------------ | ---------------------- |
-| Windows                  | VMware or WSL2 (WSL won't work) |
+| Windows                  | VMware Player or WSL2 (WSL won't work) |
 | Mac                      | VMware Fusion |
-| Linux                    | Ubuntu 22.04 native or VMware Player Workstation              |
+| Linux                    | Ubuntu 22.04 native or VMware Player               |
 
 
 ### Instructions for VM users
+
+* Download VM images and installation packages.
+https://virginia.box.com/s/drrnvm7o7h6e7lvhh6jaq1ogwqrk3nx1
+
 
 * [instructions](vmware.md): How to install VMware Workstation Player on Windows or Mac. 
 
@@ -112,7 +117,6 @@ See [here](submission.md) for a detailed description of the submission format.
 
 * Other OS/compiler versions are possible but unsupported. 
 
-* In writing below, we will refer to users using VMware Player as "VM users". 
 
 #### install toolchain (already done for VM users)
 
