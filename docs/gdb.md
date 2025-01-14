@@ -5,7 +5,7 @@ https://github.com/fxlin/uva-os-world1/blob/student/docs/gdb.md
 
 ## Table of Contents
 
-- [1. Quick setup](#1-quick-setup)
+- [1. Setup](#1-quick-setup)
 - [2. Commands cheatsheet](#2-commands-cheatsheet)
 - [3. Kernel debugging](#3-kernel-debugging)
 - [4. User program debugging](#4-user-program-debugging)
@@ -15,13 +15,25 @@ https://github.com/fxlin/uva-os-world1/blob/student/docs/gdb.md
 - [Troubleshooting](#troubleshooting)
 - [Reference](#reference)
 
-## 1. Quick setup
+## 1. Setup
 
+### Quick start for UVA-OS VM users:
+In one terminal: 
+```
+./dbg-rpi3qemu.sh
+```
+In another terminal: 
+```
+gdb-multiarch
+```
+
+### Detailed commands
+#### Installation
 ```
 sudo apt install gdb-multiarch gcc-aarch64-linux-gnu build-essential 
 ```
 
-### Launch QEMU + GDB
+#### Launch QEMU + GDB
 
 Example commands:
 
@@ -39,7 +51,7 @@ gdb-multiarch build/kernel8.elf
 
 The port number (e.g. 1234) must match what you specified for QEMU.
 
-### To automate the above
+#### To automate the above
 append the following to ~/.gdbinit:
 
 ```
