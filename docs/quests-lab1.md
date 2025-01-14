@@ -1,13 +1,6 @@
----
-title: "Quest Description for Lab1"
-author: "Felix Lin"
-date: "Oct 2024"
-layout: "post"
----
-
 # Quest Description for Lab1:"Baremetal"
 
-Total estimated time: ??? hours
+Total SLoC changed: <100; estimated time: ??? hours
 
 <!-- convert image-1.png -resize 500x image-1-resized.png -->
 
@@ -245,6 +238,10 @@ useful hotkeys:
 - ctrl+alt+click open the function in the other split view
 
 😀 DELIVERABLE: This quest has no deliverables.
+
+### rpi3 hardware setup (optional for lab1)
+
+Read this [rpi-setup.md](rpi-setup.md)
 
 ## Quest02: kernel image
 

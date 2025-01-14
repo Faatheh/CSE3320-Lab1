@@ -5,7 +5,7 @@
 
 
 
-### Student provide:** An Rpi3 board (Model B or B+) [link](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
+### Student provide: An Rpi3 board (Model B or B+) [link](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
 
 ![](rpi3_resized.jpg)
 
@@ -22,11 +22,13 @@
 
 - A SD card reader
 
+- A portable display (inc. HDMI cable and USB-C power supply)
+
+- USB keyboard
+
 - Power supply for Rpi3
 
-- (optional) A portable display (inc. HDMI cable and USB-C power supply)
-
-- (optional) Waveshare GAME HAT (inc. battery; HDMI cable; 40pin header extender; speaker) 
+- Waveshare GAME HAT (inc. battery; HDMI cable; 40pin header extender; speaker) 
 
 
 ## Plug in the serial cable
@@ -63,6 +65,7 @@ Use the provided power supply. You may be attempted to connect Rpi3's power port
 
 ### An example setup
 
+![alt text](setup.png)
 
 ## GAMEHAT setup
 
