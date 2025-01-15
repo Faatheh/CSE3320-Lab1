@@ -86,8 +86,6 @@ C_OBJS += $(BUILD_DIR)/spinlock_c.o
 C_OBJS += $(BUILD_DIR)/timer_c.o
 C_OBJS += $(BUILD_DIR)/mbox_c.o
 C_OBJS += $(BUILD_DIR)/donut_c.o
-# works, but use delay()
-# C_OBJS += $(BUILD_DIR)/donut-delay_c.o
 C_OBJS += $(BUILD_DIR)/unittests_c.o
 C_OBJS += $(BUILD_DIR)/mini_uart_c.o
 # (asm)
