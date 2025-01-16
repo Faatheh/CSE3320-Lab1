@@ -1,0 +1,70 @@
+xzl@FelixLin-XPS15 (main)[kernel]$ wc *.c *.h
+   263   1467   8822 donut.c
+   122    457   4499 irq.c
+    50    185   1637 kernel.c
+   503   2245  17380 mbox.c
+   162    782   6020 mini_uart.c
+   582   1858  14184 printf.c
+   110    475   3256 spinlock.c
+   113    391   2125 string.c
+   340   1454  10378 timer.c
+   193    670   5832 unittests.c
+   191    711   5260 debug.h
+    33     96    896 entry.h
+    18     61    483 fb.h
+    17     62    422 param.h
+   180    750   6614 plat-rpi3qemu.h
+    16     57    569 plat.h
+   186    952   6461 printf.h
+    20     85    602 sched.h
+    10     42    253 spinlock.h
+    75    429   3378 sysregs.h
+   149    564   4898 utils.h
+   874    965  60530 uvalogo.h
+  4207  14758 164499 total
+
+
+  xzl@FelixLin-XPS15 (main)[kernel]$ wc *.c *.h
+
+# app  
+   263   1467   8822 donut.c
+
+# kernel core
+122    457   4499 irq.c
+ 50    185   1637 kernel.c
+110    475   3256 spinlock.c
+191    711   5260 debug.h
+ 33     96    896 entry.h
+ 17     62    422 param.h
+180    750   6614 plat-rpi3qemu.h
+ 16     57    569 plat.h
+ 20     85    602 sched.h
+ 10     42    253 spinlock.h
+ 75    429   3378 sysregs.h
+149    564   4898 utils.h
+
+  82  300 1871 boot.S
+ 201  970 6734 entry.S
+  71  183 1340 utils.S
+
+TOTAL 1327
+
+
+
+# driver 
+162    782   6020 mini_uart.c
+340   1454  10378 timer.c
+503   2245  17380 mbox.c
+ 18     61    483 fb.h
+TOTAL 1023
+
+
+# utils (kernel lib)
+    582   1858  14184 printf.c
+    113    391   2125 string.c
+    186    952   6461 printf.h
+TOTAL 881
+      
+# not counted
+   193    670   5832 unittests.c
+   874    965  60530 uvalogo.h

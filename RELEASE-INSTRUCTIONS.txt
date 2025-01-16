@@ -34,7 +34,7 @@ step 3 (for instructors testing). strip away the code; but instead of deleting t
 them into comments - so that instructors can "replay" what the students would do, 
 by uncommenting the stripped code incrementally 
 
-./scripts/remove-source-lines.py --mode=comment
+./scripts/remove-source-lines.py --mode=comment -d .
 
 can check which files are changed via `git status`.
 
