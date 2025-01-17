@@ -50,10 +50,12 @@ step 5 (push to remote).
 if step 4 is successful, 
 push the stripped code to the remote github repo, delete any history 
 # default: release the code 
+
 ./scripts/prep-push.sh 
 
 step 6 (reverse code stripping on the local copy) 
 # reset local main br
+
 git reset --hard
 
 
