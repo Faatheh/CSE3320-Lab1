@@ -8,9 +8,9 @@
 // | Quest04: UART | Bring up UART for kernel debugging | 15 |
 // | Quest05: textual donut | Implement system timer for timed animation | 10 |
 // | Quest06: OS logo | Display OS logo and name on the screen | 10 |
-// | Quest07 (side): debug level | Control debug messages using macros | 5 |
+// | Quest07 (side): debug level | Control debug messages using macros | 0 |
 // | Quest08 (side): framebuffer offsets | Explore framebuffer virtual offsets | 5 |
-// | Quest09: sys_timer irq | Enable system timer interrupt | 15 |
+// | Quest09: sys_timer irq | Enable system timer interrupt | 0 |
 // | Quest10: pixel donut | Implement pixel donut animation | 15 |
 // | Quest11 (side): virtual timers | Implement virtual timers for animations | 15 |
 // | Quest12 (side): UART rx irq | Enable UART receive interrupts | 10 |
@@ -41,9 +41,9 @@ digraph QuestDependencies {
     quest04 [label="Quest04: UART\nBring up UART for kernel debugging\nCredits: 15", fontsize=10];
     quest05 [label="Quest05: Textual Donut\nImplement system timer for timed animation\nCredits: 10", fontsize=10];
     quest06 [label="Quest06: OS Logo\nDisplay OS logo and name on the screen\nCredits: 10", fontsize=10];
-    quest07 [label="Quest07 (Side): Debug Level\nControl debug messages using macros\nCredits: 5", fontsize=10];
+    quest07 [label="Quest07 (Side): Debug Level\nControl debug messages using macros\nCredits: 0", fontsize=10];
     quest08 [label="Quest08 (Side): Framebuffer Offsets\nExplore framebuffer virtual offsets\nCredits: 5", fontsize=10];
-    quest09 [label="Quest09: Sys Timer IRQ\nEnable system timer interrupt\nCredits: 15", fontsize=10];
+    quest09 [label="Quest09: Sys Timer IRQ\nEnable system timer interrupt\nCredits: 0", fontsize=10];
     quest10 [label="Quest10: Pixel Donut\nImplement pixel donut animation\nCredits: 15", fontsize=10];
     quest11 [label="Quest11 (Side): Virtual Timers\nImplement virtual timers for animations\nCredits: 15", fontsize=10];
     quest12 [label="Quest12 (Side): UART RX IRQ\nEnable UART receive interrupts\nCredits: 10", fontsize=10];

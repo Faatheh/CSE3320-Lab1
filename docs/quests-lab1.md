@@ -14,15 +14,15 @@ Total SLoC changed: <100; estimated time: ??? hours
 | [Quest04: UART](#quest04-uart) | Bring up UART for kernel debugging | 15 |
 | [Quest05: textual donut](#quest05-textual-donut) | Implement system timer for timed animation | 10 |
 | [Quest06: OS logo](#quest06-os-logo) | Display OS logo and name on the screen | 10 |
-| [Quest07 (side): debug level](#quest07-side-debug-level) | Control debug messages using macros | 5 |
+| [Quest07 (side): debug level](#quest07-side-debug-level) | Control debug messages using macros | 0 |
 | [Quest08 (side): framebuffer offsets](#quest08-side-framebuffer-offsets) | Explore framebuffer virtual offsets | 5 |
-| [Quest09: sys_timer irq](#quest09-sys_timer-irq) | Enable system timer interrupt | 15 |
+| [Quest09: sys_timer irq](#quest09-sys_timer-irq) | Enable system timer interrupt | 0 |
 | [Quest10: pixel donut](#quest10-pixel-donut) | Implement pixel donut animation | 15 |
 | [Quest11 (side): virtual timers](#quest11-side-virtual-timers) | Implement virtual timers for animations | 15 |
 | [Quest12 (side): UART rx irq](#quest12-side-uart-rx-irq) | Enable UART receive interrupts | 10 |
 | [Quest13 (side): rpi3](#quest13-side-rpi3) | Reproduce checkpoints on a real Rpi3 | 30 |
 
-#### Total credits: 150 (main 85; side 65)
+#### Total credits: 130 (main 70; side 60)
 Credits exceeding 100 will be considered as bonus.
 
 ![quests](quests.png)
@@ -420,6 +420,7 @@ screen.
 - Read the comments in Makefile and debug.h, understand how these two work together to control the
     debug messages.
 
+There is no DELIVERABLE for this quest. 
 
 
 ## Quest08 (side): framebuffer offsets
