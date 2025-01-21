@@ -3,7 +3,23 @@
 
 ## Check list
 
+| Item                                | Provided By | Notes                                                                 |
+|-------------------------------------|-------------|-----------------------------------------------------------------------|
+| Rpi3 board (Model B or B+)          | Student     | [link](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)  |
+| USB-serial cable                    | Loaner  | SH-V09C5                                                              |
+| 32GB micro SD card                  | Loaner  | Preloaded with firmware                                               |
+| SD card reader                      | Loaner  |                                                                       |
+| Portable display                    | Loaner  | Includes HDMI cable and USB-C power supply                            |
+| USB keyboard                        | Loaner  |                                                                       |
+| Power supply for Rpi3 (with inline switch) | Loaner  |                                                             |
+| Waveshare GAME HAT                         | Loaner  |                                                             |
+| - Battery  (18650 lithium)                      | Loaner  |                                                             |
+| - HDMI cable                               | Loaner  |                                                             |
+| - 40pin header extender, angled                    | Loaner  |                                                             |
+| - Speaker                                  | Loaner  |                                                             |
 
+
+## Detailed descriptions
 
 ### Student provide: An Rpi3 board (Model B or B+) [link](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
 
