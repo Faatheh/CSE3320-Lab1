@@ -1,4 +1,4 @@
-## Running a Provided VM Image on Windows and macOS
+## Running a Provided VM Image on Windows or macOS
 
 ### For **Windows** Users:
 
@@ -64,7 +64,7 @@
 
 ---
 
-## Developing with the Rpi3 hardware
+## Developing on VM, for the Rpi3 hardware
 
 ### Pass through the SD card reader
 

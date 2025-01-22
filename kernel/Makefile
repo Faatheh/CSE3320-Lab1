@@ -108,8 +108,8 @@ $(KERNEL): $(LINKSCR) $(C_OBJS) $(ASM_OBJS) $(BIN_OBJS)
 	$(VB) nm --numeric-sort $(BUILD_DIR)/kernel8.elf > kernel8.sym
 	$(VB) echo KERNEL INSTALL
 	# WSL2: copy the kernel img to local dir, if exists
-	$(VB) if [ -d /mnt/d/tmp ]; then \
-		cp $(KERNEL) /mnt/d/tmp/$(KERNEL); \
+	$(VB) if [ -d /mnt/c/data/tmp ]; then \
+		cp $(KERNEL) /mnt/c/data/tmp/$(KERNEL); \
 	fi
 	# VM/Linux: copy to dir like "/media/student/bootfs/"
 	$(VB) if [ -d $(BOOTFS_DIR) ]; then \

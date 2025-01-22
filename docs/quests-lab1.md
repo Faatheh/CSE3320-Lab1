@@ -1,6 +1,6 @@
 # Quest Description for Lab1:"Baremetal"
 
-Total SLoC changed: <100; estimated time: ??? hours
+Total SLoC changed: <100; estimated time: 10 hours
 
 <!-- convert image-1.png -resize 500x image-1-resized.png -->
 

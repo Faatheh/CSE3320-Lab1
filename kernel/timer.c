@@ -13,7 +13,7 @@
 // - Chip-level "arm system timer": timekeeping, virtual timers w/ callbacks,
 //   sys_sleeep(), etc. 
 // It's possible to only use "arm generic timer" for all these purposes like
-// xv5 (+ software tricks like sched tick throttling, distinguishing timers on
+// xv6 (+ software tricks like sched tick throttling, distinguishing timers on
 // different cpus, etc) which however result in more complex design. 
 
 // Sched ticks should occur periodically, but not too often -- otherwise 
