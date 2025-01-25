@@ -1,3 +1,5 @@
+# changelog: 1/24/25 fixed qemu_full/min/small, so that "small" will still enable graphics
+
 p1-gen-hash-ports() {
     if [ "${USER}" = "student" ]; then
         export MYGDBPORT=53089  # special rule, for ease deployment of the VM image
@@ -54,7 +56,7 @@ echo "Using QEMU: ${QEMU}"
 
 KERNEL=./kernel/kernel8-rpi3qemu.img
 
-# qemu, grahpics
+# has grahpics, has usb kb, has sd
 qemu_full() {
     ${QEMU} -M raspi3b \
     -kernel ${KERNEL} -serial null -serial mon:stdio \
@@ -65,18 +67,19 @@ qemu_full() {
     -gdb tcp::${MYGDBPORT} -S
 }
 
-# qemu, no grahpics, no kb, with sd
+# has graphics, no kb, no sd
 qemu_small() {
     ${QEMU} -M raspi3b \
     -kernel ${KERNEL} -serial null -serial mon:stdio \
     -d int -D qemu.log \
-    -nographic \
     -gdb tcp::${MYGDBPORT} -S
 }
 
+# no graphics, no kb, no sd
 qemu_min () {
     ${QEMU} -M raspi3b \
-    -kernel ${KERNEL} -serial null -serial mon:stdio -nographic \
+    -kernel ${KERNEL} -serial null -serial mon:stdio \
+    -nographic \
     -d int -D qemu.log \
     -gdb tcp::${MYGDBPORT} -S
 }
