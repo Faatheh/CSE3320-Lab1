@@ -372,6 +372,8 @@ OVERVIEW: you will bring up sys_timer, which provide delays for timed animation.
 
 - in `timer.c`, complete the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
+This function allows us to determine the values of `cycles_per_ms` etc (which however may already be set in the student's code);
+it is also vital to later quests;
 
 - complete the delay functions (through busy waiting): `ms_delay()` and
 `us_delay()`.
