@@ -432,9 +432,13 @@ Explore the framebuffer virtual offsets.
 
 - read the code `test_fb_voffset()` in (unittest.c)  and understand its intended drawing behaviors.
 
-- try out the code: place a call to `test_fb_voffset()` in `kernel_main()`.
+The expected behavior as running on the actual rpi3 hardware:
 
-- understand what the virtual offsets are, and why the code does not work as expected.
+https://github.com/user-attachments/assets/45a9220d-042f-458a-9658-d2d086915057
+
+- try out the code on qemu: place a call to `test_fb_voffset()` in `kernel_main()`.
+
+- understand what the virtual offsets are, and why the code does not work as expected on QEMU.
 
 - find a fix (without modifying QEMU) so that the test works as expected.
 
