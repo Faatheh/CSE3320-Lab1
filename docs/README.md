@@ -57,7 +57,11 @@ export PLAT=rpi3
 | To clean up         | `./cleanall.sh`     |
 | To build everything | `./makeall.sh`      |
 
-(One time): get a blank SD card, burn the provided image with Win32DiskImager, 
-balenaEtcher, or Raspberry Pi Imager. 
+(One time): Prepare the SD card
+
+https://github.com/fxlin/uva-os-main/tree/main/make-sd
+
+<!-- get a blank SD card, burn the provided image with Win32DiskImager, 
+balenaEtcher, or Raspberry Pi Imager.  -->
 
 Copy the kernel image `kernel8.img` to the partition named `bootfs` and boot. 

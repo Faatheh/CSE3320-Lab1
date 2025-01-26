@@ -428,13 +428,11 @@ There is no DELIVERABLE for this quest.
 
 Explore the framebuffer virtual offsets.
 
-- try out `test_fb_voffset()` in (unittest.c). Read the code and understand what
-    it does.
+- read the code `test_fb_voffset()` in (unittest.c)  and understand its intended drawing behaviors.
 
-- place a call to `test_fb_voffset()` in `kernel_main()`.
+- try out the code: place a call to `test_fb_voffset()` in `kernel_main()`.
 
-- understand what the virtual offsets are, and why the code does not work as
-    expected.
+- understand what the virtual offsets are, and why the code does not work as expected.
 
 - find a fix (without modifying QEMU) so that the test works as expected.
 
@@ -508,7 +506,7 @@ if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 - see the donut animation with the virtual timers.
 
-😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation.
+😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation. visually, the donut would not appear different than the previous quest. your video can include debug messages or GDB screen showing that `donut()` was invoked to render the donut.   
 
 ## Quest12 (side): UART rx irq (receive interrupts)
 > This is a side quest.
