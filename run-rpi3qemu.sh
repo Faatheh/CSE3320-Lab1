@@ -61,8 +61,8 @@ qemu_small () {
 ### qemu v8, + grahpics, no kb, + sdls, no sd (until "rich user")
 qemu_full () {
     ${QEMU} -M raspi3b \
-    -kernel ${KERNEL} -serial null -serial mon:stdio \
-    -d int -D qemu.log
+    -kernel ${KERNEL} -serial null -serial mon:stdio
+    # -d int -D qemu.log
     # -usb -device usb-kbd \
     # -drive file=smallfat.bin,if=sd,format=raw    # SD 
 }
