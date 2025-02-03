@@ -98,6 +98,8 @@ BIN_OBJS += $(BUILD_DIR)/font_psf.o
 DEP_FILES = $(C_OBJS:%.o=%.d)
 -include $(DEP_FILES)
 
+#################################
+
 BOOTFS_DIR=/media/$(USER)/bootfs
 
 $(KERNEL): $(LINKSCR) $(C_OBJS) $(ASM_OBJS) $(BIN_OBJS)

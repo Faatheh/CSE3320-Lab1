@@ -22,7 +22,7 @@ Total SLoC changed: <100; estimated time: 10 hours
 | [Quest12 (side): UART rx irq](#quest12-side-uart-rx-irq) | Enable UART receive interrupts | 10 |
 | [Quest13 (side): rpi3](#quest13-side-rpi3) | Reproduce checkpoints on a real Rpi3 | 30 |
 
-#### Total credits: 130 (main 70; side 60)
+#### Total credits: 130
 Credits exceeding 100 will be considered as bonus.
 
 ![quests](quests.png)
