@@ -108,6 +108,7 @@ target remote :1234
 |---------------------------------------------|--------------------------------|
 | Print the value pointed by `mem_map`        | `print *mem_map`               |
 | Print the first 10 elements of `mem_map`    | `print (short[10])*mem_map`    |
+| Print the 0th task_struct (`struct task_struct *task[NR_TASKS]`) | `print *task[0]` |
 
 ### Disassemble instructions
 
