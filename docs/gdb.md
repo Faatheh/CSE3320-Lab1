@@ -102,6 +102,7 @@ target remote :1234
 | Dump memory at a given symbol as a textual string | `x/s _start`         |
 | Dump memory with register as base addr    | `x/s $x0`              |
 | Dump memory at a given addr               | `x/4i 0x9b8c`          |
+
 ### Print out variables/structures
 
 | Action                                      | Command                        |
@@ -109,6 +110,7 @@ target remote :1234
 | Print the value pointed by `mem_map`        | `print *mem_map`               |
 | Print the first 10 elements of `mem_map`    | `print (short[10])*mem_map`    |
 | Print the 0th task_struct (`struct task_struct *task[NR_TASKS]`) | `print *task[0]` |
+| Print the address of task_struct of the current task on cpu0 | `print cpus[0].proc` (and its name `print cpus[0].proc->name`) |
 
 ### Disassemble instructions
 
@@ -143,6 +145,7 @@ The command above will disassemble the entire function that contains the given a
 | Action                          | Command                    |
 |---------------------------------|----------------------------|
 | Break if the given memory addr is changed | `watch *0xffff0000` |
+| (... or watch an variable | `watch  (*idle_tasks[0]).parent `|
 
 ### Multicores (useful for debugging deadlock)
 
