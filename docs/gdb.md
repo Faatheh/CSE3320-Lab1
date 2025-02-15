@@ -99,9 +99,12 @@ target remote :1234
 | Dump memory at a given symbol as instructions | `x/20i _start`         |
 | Dump memory at a given symbol as hex (bytes) | `x/20xb _start`        |
 | Dump memory at a given symbol as hex (words) | `x/20xw _start`        |
+| Dump memory at a given symbol, as hex (64bit long)   | `x/2gx _start`          |
 | Dump memory at a given symbol as a textual string | `x/s _start`         |
 | Dump memory with register as base addr    | `x/s $x0`              |
-| Dump memory at a given addr               | `x/4i 0x9b8c`          |
+| Dump the current frame record (two 64-bit long at x29/fp)   | `x/2gx $x29`          |
+| Dump memory at a given addr, as four instructions               | `x/4i 0x9b8c`          |
+
 
 ### Print out variables/structures
 
