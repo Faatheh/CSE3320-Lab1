@@ -198,8 +198,11 @@ static int adjust_sys_timer(void)
 			if (timers[tt].elapseat < current_counter()) {
 				/* timer expired, but handler not called? this could happen on
 				qemu when cpu is slow. call the handler here */
-				(*timers[tt].handler)(tt, timers[tt].param, timers[tt].context);
-				timers[tt].handler = 0; 
+				if ((*timers[tt].handler)(tt, timers[tt].param, timers[tt].context) == 1) { 
+					// timer shall restart (fix by Tavis Palmer, 2025.01)
+					timers[tt].elapseat = current_counter() + TICKPERMS * timers[tt].delayms; 
+				} else // timer shall not restart
+					timers[tt].handler = 0;
 			} else 
 				// give "next" a bit slack so current_counter() won't exceed
 				// "next" before we retuen from this function
