@@ -99,15 +99,21 @@ target remote :1234
 | Dump memory at a given symbol as instructions | `x/20i _start`         |
 | Dump memory at a given symbol as hex (bytes) | `x/20xb _start`        |
 | Dump memory at a given symbol as hex (words) | `x/20xw _start`        |
+| Dump memory at a given symbol, as hex (64bit long)   | `x/2gx _start`          |
 | Dump memory at a given symbol as a textual string | `x/s _start`         |
 | Dump memory with register as base addr    | `x/s $x0`              |
-| Dump memory at a given addr               | `x/4i 0x9b8c`          |
+| Dump the current frame record (two 64-bit long at x29/fp)   | `x/2gx $x29`          |
+| Dump memory at a given addr, as four instructions               | `x/4i 0x9b8c`          |
+
+
 ### Print out variables/structures
 
 | Action                                      | Command                        |
 |---------------------------------------------|--------------------------------|
 | Print the value pointed by `mem_map`        | `print *mem_map`               |
 | Print the first 10 elements of `mem_map`    | `print (short[10])*mem_map`    |
+| Print the 0th task_struct (`struct task_struct *task[NR_TASKS]`) | `print *task[0]` |
+| Print the address of task_struct of the current task on cpu0 | `print cpus[0].proc` (and its name `print cpus[0].proc->name`) |
 
 ### Disassemble instructions
 
@@ -142,6 +148,7 @@ The command above will disassemble the entire function that contains the given a
 | Action                          | Command                    |
 |---------------------------------|----------------------------|
 | Break if the given memory addr is changed | `watch *0xffff0000` |
+| (... or watch an variable | `watch  (*idle_tasks[0]).parent `|
 
 ### Multicores (useful for debugging deadlock)
 
