@@ -150,6 +150,8 @@ The command above will disassemble the entire function that contains the given a
 | Break if the given memory addr is changed | `watch *0xffff0000` |
 | (... or watch an variable | `watch  (*idle_tasks[0]).parent `|
 
+watch an address *range* seems unsupported by GDB. 
+
 ### Multicores (useful for debugging deadlock)
 
 | Action                          | Command                    |
