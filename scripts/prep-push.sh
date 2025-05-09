@@ -14,7 +14,7 @@ GIT_COMMIT=$(git rev-parse --short HEAD)
 if [[ "$*" == *--no-code* ]]; then
     EXCLUDES="--exclude=kernel --exclude=usr --exclude=scripts"
     # Insert a new line after the 1st line in docs/README.md
-    sed -i '1a ## To UVA students: the code will become available in Sp25' docs/README.md
+    sed -i '1a ## To UVA students: the code will be available after the submission opens' docs/README.md
 else
     EXCLUDES=""
 fi
