@@ -1,5 +1,5 @@
 # UVA-OS Lab1 "Baremetal" 
-## To UVA students: the code will become available in Sp25
+## To UVA students: the code will become after the submission opens
 
 This is one part of the UVA-OS class (CS4414/CS6456). 
 
