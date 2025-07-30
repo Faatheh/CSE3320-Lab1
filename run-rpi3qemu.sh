@@ -26,7 +26,9 @@ echo "Using QEMU: ${QEMU}"
 
 #########################################
 
-KERNEL=./kernel/kernel8-rpi3qemu.img
+if [ -z "${KERNEL}" ]; then
+    KERNEL="./kernel/kernel8-rpi3qemu.img"
+fi
 
 qemu_mon() {
     # ${QEMU} -M raspi3b \
