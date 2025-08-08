@@ -229,6 +229,8 @@ if args.d:
 print("\nSummary:", file=sys.stderr)
 print(f"Total files processed: {files_processed}", file=sys.stderr)
 print(f"Total files changed: {files_changed}", file=sys.stderr)
+total_lines_removed=sum(lines_removed_summary.values())
+print(f"Total lines removed: {total_lines_removed}", file=sys.stderr)
 if files_changed > 0:
     for file_path, lines_removed in lines_removed_summary.items():
         print(f"{file_path}: {lines_removed} lines removed", file=sys.stderr)
