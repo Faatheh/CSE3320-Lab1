@@ -1,0 +1,69 @@
+// dot -Tpng quests.dot -o quests.png
+// dot -Tpdf quests-clean.dot -o quests-lab1-clean.pdf
+
+// a cleaner version, for paper inclusion
+
+// | Quest Name | Description | Credits |
+// |------------|-------------|---------|
+// | Quest01: setup | Install necessary tools and set up the environment | 5 |
+// | Quest02: kernel image | Build and inspect the kernel image | 5 |
+// | Quest03: boot | Complete boot.S to boot the kernel | 15 |
+// | Quest04: UART | Bring up UART for kernel debugging | 15 |
+// | Quest05: textual donut | Implement system timer for timed animation | 10 |
+// | Quest06: OS logo | Display OS logo and name on the screen | 10 |
+// | Quest07 debug level | Control debug messages using macros | 0 |
+// | Quest08 framebuffer offsets | Explore framebuffer virtual offsets | 5 |
+// | Quest09: sys_timer irq | Enable system timer interrupt | 0 |
+// | Quest10: pixel donut | Implement pixel donut animation | 15 |
+// | Quest11 virtual timers | Implement virtual timers for animations | 15 |
+// | Quest12 UART rx irq | Enable UART receive interrupts | 10 |
+// | Quest13 rpi3 | Reproduce checkpoints on a real Rpi3 | 30 |
+
+digraph QuestDependencies {
+    // Define node styles
+    node [shape=box, style=filled, color=lightblue];
+
+    // Special style for box w/ solid border
+    // these are key quests that require deliverables
+    quest03 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest04 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest05 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest06 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest08 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest10 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest11 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest12 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+    quest13 [penwidth=2, color=black, style="filled,solid", fillcolor=lightblue];
+
+    // Define the edges based on the relations
+    quest01 -> quest02;
+    quest02 -> quest03;
+    quest03 -> quest04;
+    quest04 -> quest05;
+    quest05 -> quest06;
+    quest06 -> quest07;
+    quest06 -> quest08;
+    quest06 -> quest09;
+    quest09 -> quest10;
+    quest10 -> quest11;
+    quest10 -> quest12;
+    quest10 -> quest13;
+    
+    // Define nodes with updated labels based on comments
+    quest01 [label="#1 Setup\nSet up dev environment\n(Toolchain)", fontsize=11];
+    quest02 [label="#2 Kernel Image\nBuild and inspect kernel image\n(elf, binary files)", fontsize=11];
+    quest03 [label="#3 Boot\nComplete boot.S to boot\n(GDB; HW/SW interactions)", fontsize=11];
+    quest04 [label="#4 UART\nBring up UART for debugging\n(IO)", fontsize=11];
+    quest05 [label="#5 Textual Donut\nImplement timed animation\n(IO)", fontsize=11];
+    quest06 [label="#6 OS Logo\nDisplay OS logo on screen\n(Framebuffer)", fontsize=11];
+    quest07 [label="#7 Debug Level\nEnable debug messages\n(Debug)", fontsize=11];
+    quest08 [label="#8 Framebuffer Offsets\nFramebuffer virtual offsets\n(Framebuffer)", fontsize=11];
+    quest09 [label="#9 Sys Timer IRQ\nEnable timer interrupts\n(IRQ)", fontsize=11];
+    quest10 [label="#10 Pixel Donut\nPixel donut animation\n(IRQ, Framebuffer)", fontsize=11];
+    quest11 [label="#11 Virtual Timers\nVirtual timers for animations\n(Virtualization)", fontsize=11];
+    quest12 [label="#12 UART RX IRQ\nUART receive interrupts\n(IO, IRQ)", fontsize=11];
+    quest13 [label="#13 Rpi3\nRun donuts on Rpi3\n(HW/SW interactions)", fontsize=11];
+
+    // Set graph layout
+    // rankdir=LR; // Left to Right layout
+}

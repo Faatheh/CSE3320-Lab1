@@ -42,10 +42,9 @@
     "editor.wordWrapColumn": 80
     },
     "todo-tree.general.tags": [
-        "quest",
+        "quest",         // can temporarily disable this for easy eyes...
         "!STUDENT_",
         "STUDENT_TODO"
-        // "xzl"
         ],
     // https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree
     "todo-tree.highlights.customHighlight": {
