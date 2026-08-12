@@ -46,15 +46,14 @@
 #define AUX_MU_STAT_REG (PBASE+0x00215064) // rx fifo stat
 #define AUX_MU_BAUD_REG (PBASE+0x00215068)
 
-// busy wait
-// quest: UART. complete below cf uart_recv()
+// busy wait. cf uart_recv() for the receive-side counterpart
 void uart_send (char c) {
 	while(1) {
         // read the status reg to check if the tx fifo is empty
-		if(get32(AUX_MU_LSR_REG) & 0x20) // !STUDENT_DONOT_SEE
-			break;                       // !STUDENT_DONOT_SEE
+		if(get32(AUX_MU_LSR_REG) & 0x20)
+			break;
 	}
-	put32(AUX_MU_IO_REG, c);    // !STUDENT_DONOT_SEE
+	put32(AUX_MU_IO_REG, c);    // write the char to the tx fifo
 }
  
 // busy wait until get a char 

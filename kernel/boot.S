@@ -59,19 +59,18 @@ el3: 		// Current EL: EL3
 
 	/* ------- Start of EL1 execution ------- */
 el1_entry:	
-	/* Below: clean up bss region. 
+	/* Below: clean up bss region.
 	  bss_begin/end must be 8 bytes aligned, per the linker script */
-	// quest: boot
-	// !STUDENT_DONOT_BEGIN
-	ldr	x0, =bss_begin		
+	// x0 = bss_begin, x1 = bss size (bss_end - bss_begin); memzero_aligned(x0, x1) zeroes it
+	ldr	x0, =bss_begin
 	ldr	x1, =bss_end
 	sub	x1, x1, x0
-	// !STUDENT_DONOT_END
 	bl 	memzero_aligned
-	
-setup_sp: 	
-	// quest: boot. set sp to somewhere above PHYS_BASE, far away from kernel image
-	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)  	// !STUDENT_DONOT_SEE
+
+setup_sp:
+	// set sp to somewhere above PHYS_BASE, far away from the kernel image (so the
+	// kernel's growing stack won't collide with kernel code/data)
+	mov sp, #(PHYS_BASE + 2 * SECTION_SIZE)
 	// NB: we aren't use sp yet -- until we start to execute kernel_main(below)
 
 	// install irq vectors

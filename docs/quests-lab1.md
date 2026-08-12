@@ -10,10 +10,10 @@ Total SLoC changed: <100; estimated time: 10 hours
 |------------|-------------|---------|
 | [Quest01: setup](#quest01-setup) | Install necessary tools and set up the environment | 0 |
 | [Quest02: kernel image](#quest02-kernel-image) | Build and inspect the kernel image | 5 |
-| [Quest03: boot](#quest03-boot) | Complete boot.S to boot the kernel | 15 |
-| [Quest04: UART](#quest04-uart) | Bring up UART for kernel debugging | 15 |
-| [Quest05: textual donut](#quest05-textual-donut) | Implement system timer for timed animation | 10 |
-| [Quest06: OS logo](#quest06-os-logo) | Display OS logo and name on the screen | 10 |
+| [Quest03: boot](#quest03-boot) | Understand boot.S, which boots the kernel | 15 |
+| [Quest04: UART](#quest04-uart) | Understand UART bring-up for kernel debugging | 15 |
+| [Quest05: textual donut](#quest05-textual-donut) | Understand the system timer for timed animation | 10 |
+| [Quest06: OS logo](#quest06-os-logo) | Understand how the OS logo and name are displayed on the screen | 10 |
 | [Quest07 (side): debug level](#quest07-side-debug-level) | Control debug messages using macros | 0 |
 | [Quest08 (side): framebuffer offsets](#quest08-side-framebuffer-offsets) | Explore framebuffer virtual offsets | 5 |
 | [Quest09: sys_timer irq](#quest09-sys_timer-irq) | Enable system timer interrupt | 0 |
@@ -282,8 +282,9 @@ Make sure you understand the difference between .elf and .img files
 
 ## Quest03: boot 
 
-OVERVIEW: complete boot.S so that the kernel boots to kernel_main() in kernel.c.
-This quest also shows how to use GDB (important). 
+OVERVIEW: boot.S is already complete and boots the kernel to kernel_main() in
+kernel.c. This quest is about reading and understanding how it does so, and
+shows how to use GDB (important). 
 
 > The credits for this quest are evenly split among multiple deliverables.
 
@@ -324,24 +325,25 @@ Do the single step until you execute the instruction `eret`. Have you observed c
 
 😀 DELIVERABLE: Take a photo of the GDB screen. Follow [requirements](./submission.md).
 
-### Coding: complete boot.S
+### Read and understand boot.S
 
 **NOTE**. In the description below (and in the future), we will refer to C function names and assembly
 labels. We do not always give out the full file paths. 
 To quickly locate them, use vscode `ctrl+t` for C functions and `ctrl+shift+f` for assembly labels.
 
-**NOTE**. In all coding exercise, always see the comments in the code for hints
-and instructions.
+**NOTE**. For quests that still require you to write code, always see the
+comments in the code for hints and instructions.
 
-**NOTE**. If you configured vscode and Todo-tree as described above, you can see all the quests lighlighted and listed in the Todo-tree panel.
+**NOTE**. If you configured vscode and Todo-tree as described above, you can see all the remaining coding quests lighlighted and listed in the Todo-tree panel.
 
 ![alt text](image-3.png)
 
 STEPS
 
-- complete the code at `el1_entry` (as instructed by the code comments)
+- read and understand the code at `el1_entry`, which zeroes out the BSS region
 
-- complete the code at `setup_sp` (as instructed by the code comments)
+- read and understand the code at `setup_sp`, which sets up the stack pointer
+above the kernel image
 
 - set a breakpoint at the first printf() call in kernel_main(). run the kernel
 until the breakpoint is hit. 
@@ -351,14 +353,15 @@ until the breakpoint is hit.
 ## Quest04: UART 
 
 This quest is about bringing up the UART (which does poll only at this time). 
-UART is our primary I/O device for kernel debugging. 
+UART is our primary I/O device for kernel debugging. The UART bring-up code is
+already complete; this quest is about reading and understanding it.
 
 Grasp the high-level idea of `mini_uart` (mini_uart.c) and `printf()` (printf.c).
 
-In `mini_uart.c`, complete `uart_send()` (as instructed by the code comments). 
+In `mini_uart.c`, read and understand `uart_send()`. 
 
-In `kernel_main()`, before the first call to `printf()`, call `uart_init()` and
-`init_printf()`, as instructed by the code comments. 
+In `kernel_main()`, note that `uart_init()` and `init_printf()` are called
+before the first call to `printf()` -- understand why this ordering matters. 
 
 😀 DELIVERABLE: take a photo of kernel printing the following messages: 
 ````
@@ -368,20 +371,20 @@ build time (kernel.c) ...
 
 ## Quest05: textual donut
 
-OVERVIEW: you will bring up sys_timer, which provide delays for timed animation. But no interrupts enabled yet.
+OVERVIEW: sys_timer is already brought up, providing delays for timed animation. But no interrupts enabled yet. This quest is about reading and understanding the timekeeping code.
 
-- in `timer.c`, complete the core function of kernel timekeeping: `current_counter()`, which
+- in `timer.c`, read and understand the core function of kernel timekeeping: `current_counter()`, which
 returns the current value of the system timer. 
-This function allows us to determine the values of `cycles_per_ms` etc (which however may already be set in the student's code);
+This function allows us to determine the values of `cycles_per_ms` etc (which however may already be set for you);
 it is also vital to later quests;
 
-- complete the delay functions (through busy waiting): `ms_delay()` and
+- read and understand the delay functions (through busy waiting): `ms_delay()` and
 `us_delay()`.
 
 - read `donut_text()` and roughly understand what it does. 
 
-- in `kernel_main()`, call `donut_text()` see the timed animation on uart
-    output. 
+- in `kernel_main()`, uncomment the call to `donut_text()` to see the timed
+    animation on uart output. 
 
 ![donut-text](donut-text.gif)
 
@@ -397,13 +400,14 @@ Reference (Note: your submission must meet the [requirements](submission.md)):
 
 ## Quest06: OS logo
 
-OVERVIEW: you will bring up the framebuffer, needed for graphical display.
+OVERVIEW: the framebuffer, needed for graphical display, is already brought
+up. This quest is about reading and understanding how it works.
 
 - Read `mbox.c`, grasp how framebuffer works in general. 
 
-- in `mbox.c`, complete the framebuffer initialization function `do_fb_init()`.
+- in `mbox.c`, read and understand the framebuffer initialization function `do_fb_init()`.
 
-- complete the function that displays the OS logo and name: `fb_showpicture()`.
+- read and understand the function that displays the OS logo and name: `fb_showpicture()`.
 
 ### change the OS logo and name (optional)
 

@@ -19,10 +19,8 @@ void uart_send_string(char* str);
 struct cpu cpus[NCPU]; 
 
 void kernel_main() {
-	// quest: UART. call uart_init() to initialize
-	uart_init();                      // !STUDENT_DONOT_SEE
-	// quest: UART. init printf by init_printf(NULL, XXX)
-	init_printf(NULL, putc);          // !STUDENT_DONOT_SEE
+	uart_init();                       // bring up the UART for kernel debugging
+	init_printf(NULL, putc);          // wire printf() to output via UART (putc)
 	printf("------ kernel boot ------  core %d\n\r", cpuid());
 	printf("build time (kernel.c) %s %s\n", __DATE__, __TIME__); // simplicity 
 
@@ -43,8 +41,7 @@ void kernel_main() {
 	/* to enable it,  irq handler must be modified to call sys_timer_irq_simple() */
 	// donut_simple();		// !STUDENT_DONOT_SEE		directly uses hw timer irq for animation
 	
-	// quest: textual donut. call donut_text()
-	// donut_text();		// !STUDENT_DONOT_SEE
+	// donut_text();		// uncomment to see the textual (uart) donut animation instead
 
 	while (1)
 		asm volatile("wfi");            // what happen here?

@@ -94,10 +94,9 @@ void handle_generic_timer_irq(void)  {
 // NB: use current_time() below to get converted time
 // static inline 
 unsigned long current_counter() {
-	// quest: textual donut. 
 	// read from TIMER_CHI and TIMER_CLO and return a 64bit counter
 	// (assume these two are consistent, since the clock is only 1MHz)
-	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);  //!STUDENT_WILL_SEE_AS( return 0; )
+	return ((unsigned long) get32(TIMER_CHI) << 32) | get32(TIMER_CLO);
 }
 
 ////////////  delay, timekeeping 
@@ -131,16 +130,16 @@ static void sys_timer_tune_delay() {
 	I("cycles_per_us %u cycles_per_ms %u", cycles_per_us, cycles_per_ms);
 }
 
-// quest: textual donut. implement by calling delay()
+// busy-wait for `ms` milliseconds, implemented via the cycle-counting delay()
 void ms_delay(unsigned ms) {
 	BUG_ON(!cycles_per_ms);
-	delay(cycles_per_ms * ms); 	// !STUDENT_DONOT_SEE
+	delay(cycles_per_ms * ms);
 }
 
-// quest: textual donut. implement by calling delay()
+// busy-wait for `us` microseconds, implemented via the cycle-counting delay()
 void us_delay(unsigned us) {
 	BUG_ON(!cycles_per_us);
-	delay(cycles_per_us * us); // !STUDENT_DONOT_SEE
+	delay(cycles_per_us * us);
 }
 
 // can only be called after va is on, timers are init'd
