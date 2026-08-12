@@ -106,7 +106,7 @@ void uart_irq(void) {
     if (IS_RECEIVE_INTERRUPT(iir)) {
         while (1) {
             // read a char, if there's no more, break
-            // quest (side): UART rx irq
+            // quest: UART rx irq
             c = uart_try_recv();   //!STUDENT_DONOT_SEE
             if (c == -1)  //!STUDENT_DONOT_SEE
                 break;      //!STUDENT_DONOT_SEE
@@ -145,7 +145,7 @@ void uart_init(void) {
 
 	// Disable receive and transmit interrupts
     put32(AUX_MU_IER_REG, (3 << 2) | (0xf << 4)); // bit 7:4 3:2 must be 1
-    // quest (side): UART rx irq
+    // quest: UART rx irq
 	{ // enable rx irq
 		unsigned int ier = get32(AUX_MU_IER_REG); 
         // flip the bits of ier that enable rx irq, and write back ier to the reg

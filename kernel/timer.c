@@ -329,7 +329,7 @@ void sys_timer_irq(void)
 		if (timers[t].elapseat <= cur) { // should fire  
 			// W("called, id %d h %lx", t, (unsigned long)timers[t].handler);	
 			// NB: exec the callback w/ timerlock held
-			// quest (side): virtual timers
+			// quest: virtual timers
 			ret = (*h)(t, timers[t].param, timers[t].context); //!STUDENT_WILL_SEE_AS( ret = 0; )
 			if (ret==1) { // restart the ktimer in place
 				timers[t].elapseat = cur + TICKPERMS * timers[t].delayms; //!STUDENT_WILL_SEE_AS( timers[t].elapseat = 0; )

@@ -14,15 +14,14 @@ Total SLoC changed: <100; estimated time: 10 hours
 | [Quest04: UART](#quest04-uart) | Understand UART bring-up for kernel debugging | 15 |
 | [Quest05: textual donut](#quest05-textual-donut) | Understand the system timer for timed animation | 10 |
 | [Quest06: OS logo](#quest06-os-logo) | Understand how the OS logo and name are displayed on the screen | 10 |
-| [Quest07 (side): debug level](#quest07-side-debug-level) | Control debug messages using macros | 0 |
-| [Quest08 (side): framebuffer offsets](#quest08-side-framebuffer-offsets) | Explore framebuffer virtual offsets | 5 |
+| [Quest07: debug level](#quest07-debug-level) | Control debug messages using macros | 0 |
+| [Quest08: framebuffer offsets](#quest08-framebuffer-offsets) | Explore framebuffer virtual offsets | 5 |
 | [Quest09: sys_timer irq](#quest09-sys_timer-irq) | Enable system timer interrupt | 0 |
 | [Quest10: pixel donut](#quest10-pixel-donut) | Implement pixel donut animation | 15 |
-| [Quest11 (side): virtual timers](#quest11-side-virtual-timers) | Implement virtual timers for animations | 15 |
-| [Quest12 (side): UART rx irq](#quest12-side-uart-rx-irq) | Enable UART receive interrupts | 10 |
-| [Quest13 (side): rpi3](#quest13-side-rpi3) | Reproduce checkpoints on a real Rpi3 | 30 |
+| [Quest11: virtual timers](#quest11-virtual-timers) | Implement virtual timers for animations | 15 |
+| [Quest12: UART rx irq](#quest12-uart-rx-irq) | Enable UART receive interrupts | 10 |
 
-#### Total credits: 130
+#### Total credits: 100
 Credits exceeding 100 will be considered as bonus.
 
 ![quests](quests.png)
@@ -197,14 +196,14 @@ My serial number is: 0000000000000000
 
 #### vscode (already done for VM users; non-VM users: optional but recommended)
 
-> This is a side quest. VM users: skip this quest; you already have vscode and plugins installed.
+> VM users: skip this quest; you already have vscode and plugins installed.
 
-    Side quests: 
+    These quests: 
     - carry bonus points. 
     - are fun and rewarding (e.g. building features that will help you in the main quests).
-    - are not prerequisites for main quests. Even if you skip all side quests, you can still get full credit.
-    - have fewer instructions than main quests.
-    - are numbered in the same way, and submitted in the same way, as main quests. 
+    - are not prerequisites for the main quests. Even if you skip all of them, you can still get full credit.
+    - have fewer instructions than the main quests.
+    - are numbered in the same way, and submitted in the same way, as the main quests. 
 
 install vscode on your local machine. 
 
@@ -414,8 +413,7 @@ up. This quest is about reading and understanding how it works.
 😀 DELIVERABLE: take a photo of the OS logo and name displayed on the
 screen.
 
-## Quest07 (side): debug level
-> This is a side quest.
+## Quest07: debug level
 
 - in mbox.c, switch the KERNEL DEBUG_XXX macro to show different sets of debug
     messages.
@@ -429,8 +427,7 @@ screen.
 There is no DELIVERABLE for this quest. 
 
 
-## Quest08 (side): framebuffer offsets
-> This is a side quest.
+## Quest08: framebuffer offsets
 
 Explore the framebuffer virtual offsets.
 
@@ -501,8 +498,7 @@ For WSL2 users, you just kill the faulty QEMU and start a new one
 if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 
-## Quest11 (side): virtual timers
-> This is a side quest.
+## Quest11: virtual timers
 
 - complete `sys_timer_irq()` and `adjust_sys_timer()` (timer.c).
 
@@ -518,8 +514,7 @@ if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation. visually, the donut would not appear different than the previous quest. your video can include debug messages or GDB screen showing that `donut()` was invoked to render the donut.   
 
-## Quest12 (side): UART rx irq (receive interrupts)
-> This is a side quest.
+## Quest12: UART rx irq (receive interrupts)
 
 - understand what `test_ktimer2()` (unittest.c) does.
 
@@ -532,12 +527,4 @@ if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 - Try: use terminal keystroke to start/kill periodic kernel messages as driven by virtual timers.
 
 😀 DELIVERABLE: shoot a short video (5-10sec)
-
-## Quest13 (side): rpi3 
-
-Reproduce all above CHECKPOINTS on a real Rpi3
-
-> This is a side quest.
-
-😀 DELIVERABLE: shoot multiple short videos (5-10sec each) of the real Rpi3 output. 
 
