@@ -107,11 +107,13 @@ void uart_irq(void) {
         while (1) {
             // read a char, if there's no more, break
             // quest: UART rx irq
-            c = uart_try_recv();   //!STUDENT_DONOT_SEE
-            if (c == -1)  //!STUDENT_DONOT_SEE
-                break;      //!STUDENT_DONOT_SEE
+//             c = uart_try_recv();   //!STUDENT_DONOT_SEE
+//             if (c == -1)  //!STUDENT_DONOT_SEE
+//                 break;      //!STUDENT_DONOT_SEE
+                /* STUDENT_TODO: your code here */
 			V("char %d", c); 
-			test_ktimer2(c);    //!STUDENT_DONOT_SEE
+// 			test_ktimer2(c);    //!STUDENT_DONOT_SEE
+			/* STUDENT_TODO: your code here */
         }
     }
 }
@@ -149,7 +151,8 @@ void uart_init(void) {
 	{ // enable rx irq
 		unsigned int ier = get32(AUX_MU_IER_REG); 
         // flip the bits of ier that enable rx irq, and write back ier to the reg
-  		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE); //!STUDENT_DONOT_SEE
+//   		put32(AUX_MU_IER_REG, ier | AUX_MU_IER_RXIRQ_ENABLE); //!STUDENT_DONOT_SEE
+  		/* STUDENT_TODO: your code here */
 	} // leave tx irq disabled
 
     put32(AUX_MU_LCR_REG, 3);    // Enable 8 bit mode

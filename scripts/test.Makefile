@@ -1,8 +1,8 @@
 test-makefile
 
 
-sys_timer_irq();         #!STUDENT_DONOT_SEE
+# STUDENT_TODO: your code here
 
-	sys_timer_irq();         #!STUDENT_DONOT_SEE
+# STUDENT_TODO: your code here
 
-XXXX #!STUDENT_WILL_SEE_AS (YYY)
+YYY # STUDENT_TODO: replace this !STUDENT_SHOULD_WRITE(XXXX)
