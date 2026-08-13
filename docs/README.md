@@ -1,15 +1,5 @@
 # UVA-OS Lab1 "Baremetal" 
 
-This is one part of the UVA-OS class (CS4414/CS6456). 
-
-[OVERVIEW](https://github.com/fxlin/cs4414-main) |
-[LAB1](https://github.com/fxlin/uva-os-world1) |
-[LAB2](https://github.com/fxlin/uva-os-world2) |
-[LAB3](https://github.com/fxlin/uva-os-world3) |
-[LAB4](https://github.com/fxlin/uva-os-world4) |
-[LAB5](https://github.com/fxlin/uva-os-world5) 
-
-
 ### Students: see [quests-lab1.md](quests-lab1.md)
 
 ## GALLERY
