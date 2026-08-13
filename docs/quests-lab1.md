@@ -21,11 +21,6 @@ Total SLoC changed: <100; estimated time: 10 hours
 | [Quest11: virtual timers](#quest11-virtual-timers) | Implement virtual timers for animations | 15 |
 | [Quest12: UART rx irq](#quest12-uart-rx-irq) | Enable UART receive interrupts | 10 |
 
-#### Total credits: 100
-Credits exceeding 100 will be considered as bonus.
-
-![quests](quests.png)
-
 ## Preface
 
 ### About this document
@@ -43,14 +38,11 @@ code. Search for "quest:" in the source code, or highlight them using vscode's
 TODO Tree plugin.
 
 ### What's the lab structure?
-The whole semester has five labs, each based on a specific OS codebase (1--5). Each lab comprises a sequence of "quests." 
-
-Labs are conceptually incremental; but they have low or weak dependencies. 
-This means that in most cases, even if you haven't finished certain features for earlier labs, you won't be disadvantaged in subsequent labs. 
+Each lab comprises a sequence of "quests." 
 
 Within a lab, quests may have dependencies, so you are advised to complete quests in order. 
 
-A quest comprises multiple steps; for quests in labs 1--3, these steps are largely sequential.
+A quest comprises multiple steps; these steps are largely sequential.
 
 ### What are CHECKPOINTS? 
 
@@ -66,13 +58,29 @@ There is nothing to submit for CHECKPOINTS.
 You will see "DELIVERABLES" in the quest description from time to time.
 They mean that you need to demonstrate a feature, e.g., showing an animation on screen. 
 
-In this course, DELIVERABLES are mostly 📷 videos or photos, or sometimes 📝 writeups, for which we have specific requirements. See [here](submission.md). 
+In this course, DELIVERABLES are mostly 📷 videos or photos, or sometimes 📝 writeups, for which we have specific requirements.
 
 Not all quests have DELIVERABLES. For instance, a quest without DELIVERABLE can be prerequisite for the later ones. 
 
 ### How does a lab submission look? 
 
-See [here](submission.md) for a detailed description of the submission format.
+A submission has two parts, which go to two different places: 
+
+- **DELIVERABLES** (videos, photos, writeups) are submitted on **Canvas**.
+
+- **Implementation** (your code) is pushed to the `main` branch of **your own** GitHub repo (your fork/clone of this lab -- not the shared class repo).
+
+For each quest that has coding STEPS (i.e. asks you to write code, not just read/understand it), use a standard branch workflow: 
+
+1. create a branch off `main`, named after the quest, e.g. `quest04-uart`
+2. implement the quest on that branch, committing as you go (reference the quest in your commit messages, e.g. "quest04: implement uart_send")
+3. push the branch to your GitHub repo
+4. open a pull request from the branch into `main` and merge it (use a merge commit rather than squashing, so the history still shows each quest's commits)
+5. do **not** delete the branch after merging -- keep it so the TA can trace which commits implement which quest
+
+Quests with no coding STEPS (e.g. read-and-understand quests, or setup/inspection quests) don't need a branch -- just commit directly to `main` if there's anything to commit at all.
+
+In your Canvas submission for each quest, include a link to the corresponding commit, PR, or branch on GitHub next to the required video/photo/writeup, so the TA can match your deliverable to your code. Type these links into the Canvas **Text Entry** box for the submission -- don't just paste them into a video/photo file or a separate doc, since the TA needs them directly on the submission page.
 
 
 ## Quest01: setup 
@@ -194,16 +202,7 @@ My serial number is: 0000000000000000
 >  Note: the test program runs an infinite loop which will cause high CPU usage
 >  on your host machine. Use ctrl-c to kill QEMU. 
 
-#### vscode (already done for VM users; non-VM users: optional but recommended)
-
-> VM users: skip this quest; you already have vscode and plugins installed.
-
-    These quests: 
-    - carry bonus points. 
-    - are fun and rewarding (e.g. building features that will help you in the main quests).
-    - are not prerequisites for the main quests. Even if you skip all of them, you can still get full credit.
-    - have fewer instructions than the main quests.
-    - are numbered in the same way, and submitted in the same way, as the main quests. 
+#### vscode
 
 install vscode on your local machine. 
 
