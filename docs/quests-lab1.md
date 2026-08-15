@@ -235,7 +235,7 @@ Read this [rpi-setup.md](rpi-setup.md)
 
 OVERVIEW: you will build the kernel image (kernel8.img) and inspect it.
 
-First, create a *private* github repo for lab1. Push the entire project to the repo. 
+Create a *private* github repo for lab1. Push the entire project to the repo. 
 
 On your VM, assume the path of lab 1 to be under your home path, e.g. 
 `~/uva-os-world1/`. 
