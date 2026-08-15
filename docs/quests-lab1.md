@@ -62,6 +62,16 @@ In this course, DELIVERABLES are mostly 📷 videos or photos, or sometimes 📝
 
 Not all quests have DELIVERABLES. For instance, a quest without DELIVERABLE can be prerequisite for the later ones. 
 
+### What are DEMOs? 
+
+A DEMO is a **peer explanation checkpoint**, done *before* you start writing
+code for a quest group. You need to walk other students through the specific
+code listed for that DEMO in class: what it
+does, why it's structured that way, and how the pieces fit together. This is
+not about having working code; it's about proving to yourself (via a
+listener) that you understand the existing code well enough to start
+implementing.
+
 ### How does a lab submission look? 
 
 A submission has two parts, which go to two different places: 
@@ -81,7 +91,6 @@ For each quest that has coding STEPS (i.e. asks you to write code, not just read
 Quests with no coding STEPS (e.g. read-and-understand quests, or setup/inspection quests) don't need a branch -- just commit directly to `main` if there's anything to commit at all.
 
 In your Canvas submission for each quest, include a link to the corresponding commit, PR, or branch on GitHub next to the required video/photo/writeup, so the TA can match your deliverable to your code. Type these links into the Canvas **Text Entry** box for the submission -- don't just paste them into a video/photo file or a separate doc, since the TA needs them directly on the submission page.
-
 
 ## Quest01: setup 
 
@@ -521,3 +530,40 @@ if it really bothers you, just compile QEMU from source with my [fixes](fb-bug).
 
 😀 DELIVERABLE: shoot a short video (5-10sec)
 
+## Demos
+
+This lab has four required DEMOs (see [What are DEMOs?](#what-are-demos)
+above). Each one is done *before* you start the coding steps of the
+corresponding quest group -- it checks that you understand the existing
+code well enough to start implementing, not that you've implemented
+anything yet.
+
+### DEMO 1 -- before Quest02-04 (kernel image, boot, UART)
+
+Explain to a peer:
+- **ELF vs IMG**: what `kernel8.elf` contains (sections, symbols) vs. how `kernel8.img` is derived from it; what EL1/EL2/EL3 are.
+- **`boot.S`**: the flow from `_start` through the EL2/EL3->EL1 `eret` switch, `el1_entry` (BSS zeroing), and `setup_sp` (stack pointer setup).
+- **UART bring-up**: `mini_uart.c`'s `uart_send()`, the high-level role of `printf.c`, and why `uart_init()`/`init_printf()` must run before the first `printf()` call in `kernel_main()`.
+
+### DEMO 2 -- before Quest05-06 (textual donut, OS logo)
+
+Explain to a peer:
+- **`timer.c`**: what `current_counter()` returns and why it's the basis for timekeeping; how `ms_delay()`/`us_delay()` busy-wait using it.
+- **`donut_text()`**: roughly how it renders the ASCII donut over UART using the delay functions.
+- **`mbox.c`**: the general framebuffer concept (mailbox protocol to VideoCore), `do_fb_init()`, and `fb_showpicture()`.
+
+### DEMO 3 -- before Quest08-10 (framebuffer offsets, sys_timer irq, pixel donut)
+
+Explain to a peer:
+- **`test_fb_voffset()`** (`unittests.c`) and what a framebuffer virtual offset is / why it matters.
+- **`entry.S`**: the `vectors:` exception vector table layout, where `el1_irq` belongs in it, and the role of the `kernel_entry`/`kernel_exit` macros (save/restore registers around an IRQ).
+- **`irq.c`**: how `handle_irq()` dispatches on an interrupt.
+- **`donut.c`**: `donut_simple()`, `sys_timer_irq_simple()`, and `draw_frame()` -- how a timer IRQ drives one animation frame.
+
+### DEMO 4 -- before Quest11-12 (virtual timers, UART rx irq)
+
+Explain to a peer:
+- **`timer.c`**: the intended behavior of `sys_timer_irq()` and `adjust_sys_timer()`, and how they differ from the single-purpose `sys_timer_irq_simple()` from DEMO 3 (i.e., what "virtual timer multiplexing" means).
+- **`unittests.c`**: what `test_ktimer()` and `test_ktimer2()` each verify.
+- **`donut.c`**: how `donut()` schedules itself using virtual timers, contrasted with `donut_simple()`.
+- **`mini_uart.c`**: the intended behavior of `uart_init()` (enabling the RX interrupt) and `uart_irq()` (handling a received byte).
