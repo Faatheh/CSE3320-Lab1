@@ -89,7 +89,6 @@ In your Canvas submission for each quest, include a link to the corresponding co
 - All: try VMWare first; 
 - If VMWare does not work for you (e.g. your machine is slow):
   - Windows users: try WSL2
-  - Mac users: get a loaner Windows laptop from CS IT
   - Linux users: try native. 
 
 In writing below, we will refer to users using VMware Player/Fusion as "VM users". 
@@ -103,28 +102,19 @@ In writing below, we will refer to users using VMware Player/Fusion as "VM users
 
 ### Instructions for VM users
 
-* Download VM images and installation packages.
-https://virginia.box.com/s/drrnvm7o7h6e7lvhh6jaq1ogwqrk3nx1
-
-
 * [instructions](vmware.md): How to install VMware Workstation Player on Windows or Mac. 
 
-### Instructions for non-VM users
-
-* [instructions](wsl2.md): How to install WSL2 on Windows
-
-* WSL2 must run Ubuntu 22.04. 
-
-* Other OS/compiler versions are possible but unsupported. 
-
-
-#### install toolchain (already done for VM users)
-
-VM users: skip the "apt" commands. Toolchains are already installed. 
+#### install toolchain 
 
 ````bash
 sudo apt update
+
+# Install gcc and g++ compilers for ARM/AARCH
+# If your processor architecture is not ARM, run 
 sudo apt install -y gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
+# Otherwise, run this command 
+sudo apt install -y gcc-9 g++-9
+
 sudo apt install -y gdb-multiarch
 # other useful goodies
 sudo apt install -y tmux build-essential git
@@ -149,7 +139,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ````
 
-#### install gdb (already done for VM users)
+#### install gdb
 VM users: skip the "apt" command. 
 ````
 sudo apt install -y gdb-multiarch
@@ -160,7 +150,7 @@ Install the "dashboard" enhancement
 wget -P ~ https://raw.githubusercontent.com/fxlin/uva-os-main/main/.gdbinit
 ````
 
-#### install qemu (already done for VM users)
+#### install qemu 
 VM users: skip the "apt" command
 ````
 sudo apt install -y qemu-system-aarch64
@@ -178,7 +168,7 @@ Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
 In addition, you may want to build qemu from source with our fixes. 
 cf quest "pixel donut" below. 
 
-#### test toolchain & qemu (already done for VM users)
+#### test toolchain & qemu
 
 The command below tests your QEMU installation with Rpi3 emulation (NOTE: this repo is for validating your
 toolchain & QEMU build; it is NOT our course project)
@@ -259,13 +249,19 @@ file kernel/build-rpi3qemu/kernel8.elf
 ````
 
 Inspect the kernel elf file. Refer to our short [writeup](dump.md) or ask
-ChatGPT. 
+ChatGPT questions, e.g.,
+
+- "Help me understand boot.S or show me the full flow in one picture"
 
 Make sure you understand the difference between .elf and .img files
 
 😀 DELIVERABLE. In 1-2 sentences, answer the questions below: 
 
+- What is the elf file?
+
 - What are these sections in the elf file?
+
+- What are EL1, EL2, and EL3?
 
 - What is the address of symbol kernel_main? What are the first 8 bytes at the
     symbol? What are the corresponding instructions? 
@@ -283,8 +279,6 @@ Make sure you understand the difference between .elf and .img files
 OVERVIEW: boot.S is already complete and boots the kernel to kernel_main() in
 kernel.c. This quest is about reading and understanding how it does so, and
 shows how to use GDB (important). 
-
-> The credits for this quest are evenly split among multiple deliverables.
 
 ### Launch GDB
 
@@ -321,7 +315,7 @@ the instructions displayed on GDB to the assembly code in `boot.S`.
 
 Do the single step until you execute the instruction `eret`. Have you observed change in the EL displayed by GDB? 
 
-😀 DELIVERABLE: Take a photo of the GDB screen. Follow [requirements](./submission.md).
+😀 DELIVERABLE: Take a photo of the GDB screen.
 
 ### Read and understand boot.S
 
@@ -346,7 +340,7 @@ above the kernel image
 - set a breakpoint at the first printf() call in kernel_main(). run the kernel
 until the breakpoint is hit. 
 
-😀 DELIVERABLE: take a photo of the GDB screen. Follow [requirements](./submission.md).
+😀 DELIVERABLE: take a photo of the GDB screen.
 
 ## Quest04: UART 
 
@@ -393,7 +387,7 @@ it is also vital to later quests;
 
 😀 DELIVERABLE: 
 shoot a short video of the donut animation. 
-Reference (Note: your submission must meet the [requirements](submission.md)): 
+Reference: 
 
 
 ## Quest06: OS logo
@@ -479,7 +473,7 @@ OVERVIEW: bring up the pixel donut animation.
 
 😀 DELIVERABLE: shoot a short video (5-10sec) of the donut animation.
 
-Reference below. Note: your submission must meet the [requirements](submission.md).
+Reference below.
 
 ![donut-pixel](donut-pixel.gif)
 
